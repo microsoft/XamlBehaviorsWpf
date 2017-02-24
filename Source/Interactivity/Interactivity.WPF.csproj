@@ -1,0 +1,150 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <AssemblyName>System.Windows.Interactivity</AssemblyName>
+    <FileExtension>dll</FileExtension>
+    <OutputType>Library</OutputType>
+    <SchemaVersion>2.0</SchemaVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ProjectGuid>{6992F454-F038-4038-938F-DF6CD99A5660}</ProjectGuid>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <BaseAddress>991952896</BaseAddress>
+    <Satellite_BaseAddress>992034816</Satellite_BaseAddress>
+    <Blend_ExtensionRoot>Libraries</Blend_ExtensionRoot>
+    <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
+    <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
+    <!-- Declare OutputRoot here, so common.targets will pick it up via Application.targets -->
+    <OutputRoot>$(Configuration)\$(Blend_ExtensionRoot)</OutputRoot>
+  </PropertyGroup>
+  <!--<Import Project="..\Application.targets" />-->
+  <!--<PropertyGroup>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>-->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AttachableCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Behavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BehaviorCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CustomPropertyValueEditorAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DefaultTriggerAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DependencyObjectHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EventObserver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EventTrigger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EventTriggerBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExceptionStringTable.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionStringTable.resx</DependentUpon>
+    </Compile>
+    <Compile Include="IAttachedObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interaction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InvokeCommandAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NameResolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TargetedTriggerAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TriggerAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TriggerActionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TriggerBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TriggerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TypeConstraintAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\RuntimeVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\Version.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <!-- Note that we build the StringTable both as an EmbeddedResource and a satellite assembly. This allows us to embed
+		the EN resources into the DLL as both the default and fallback language, while allowing localization of non-EN 
+		languages into the appropriate satellite assemblies -->
+    <!--<EmbeddedResource Include="ExceptionStringTable.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<StringTable Include="ExceptionStringTable.resx">
+			<SubType>Designer</SubType>
+		</StringTable>-->
+    <None Include="ExceptionStringTable.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionStringTable.Designer.cs</LastGenOutput>
+    </None>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="WindowsBase">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\WindowsBase.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\PresentationCore.dll</HintPath>
+    </Reference>
+    <!-- TODO jekelly: PresentationFramework may not be necessary eventually -->
+    <Reference Include="PresentationFramework">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\PresentationFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\System.Xaml.dll</HintPath>
+    </Reference>
+    <AppDesigner Include="obj\Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

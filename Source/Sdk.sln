@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26221.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interactivity.WPF", "Interactivity\Interactivity.WPF.csproj", "{6992F454-F038-4038-938F-DF6CD99A5660}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interactions.WPF", "Interactions\Interactions.WPF.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6992F454-F038-4038-938F-DF6CD99A5660} = {6992F454-F038-4038-938F-DF6CD99A5660}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{A4FD6544-3EE6-4D07-8CB5-4137F86FF1AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6992F454-F038-4038-938F-DF6CD99A5660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6992F454-F038-4038-938F-DF6CD99A5660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6992F454-F038-4038-938F-DF6CD99A5660}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{6992F454-F038-4038-938F-DF6CD99A5660}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = BlendSdk.vsmdi
+	EndGlobalSection
+EndGlobal
