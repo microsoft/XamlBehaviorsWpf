@@ -143,21 +143,11 @@
     <Compile Include="..\Version.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="ExceptionStringTable.resx">
+    <EmbeddedResource Include="ExceptionStringTable.resx">
       <Public>True</Public>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionStringTable.Designer.cs</LastGenOutput>
-    </None>
-    <!-- Note that we build the StringTable both as an EmbeddedResource and a satellite assembly. This allows us to embed
-			the EN resources into the DLL as both the default and fallback language, while allowing localization of non-EN 
-			languages into the appropriate satellite assemblies -->
-    <!--
-    <EmbeddedResource Include="ExceptionStringTable.resx">
-			<SubType>Designer</SubType>
-		</EmbeddedResource>
-		<StringTable Include="ExceptionStringTable.resx">
-			<SubType>Designer</SubType>
-		</StringTable>-->
+    </EmbeddedResource>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -173,7 +163,7 @@
       <Private>False</Private>
       <HintPath>$(WindowsPath)\PresentationFramework.dll</HintPath>
     </Reference>
-    <ProjectReference Include="..\Interactivity\Interactivity.WPF.csproj">
+    <ProjectReference Include="..\System.Windows.Interactivity\System.Windows.Interactivity.csproj">
       <Project>{6992F454-F038-4038-938F-DF6CD99A5660}</Project>
       <Name>System.Windows.Interactivity</Name>
       <Private>false</Private>

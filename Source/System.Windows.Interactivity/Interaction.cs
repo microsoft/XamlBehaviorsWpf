@@ -27,7 +27,6 @@ namespace System.Windows.Interactivity
 			set;
 		}
 
-		// Note that the parts of the xml document comments must be together in the source, even in the presense of #ifs
 		/// <summary>
 		/// This property is used as the internal backing store for the public Triggers attached property.
 		/// </summary>

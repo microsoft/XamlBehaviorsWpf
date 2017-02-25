@@ -109,19 +109,10 @@
     <Compile Include="..\Version.cs">
       <SubType>Code</SubType>
     </Compile>
-    <!-- Note that we build the StringTable both as an EmbeddedResource and a satellite assembly. This allows us to embed
-		the EN resources into the DLL as both the default and fallback language, while allowing localization of non-EN 
-		languages into the appropriate satellite assemblies -->
-    <!--<EmbeddedResource Include="ExceptionStringTable.resx">
-			<SubType>Designer</SubType>
-		</EmbeddedResource>
-		<StringTable Include="ExceptionStringTable.resx">
-			<SubType>Designer</SubType>
-		</StringTable>-->
-    <None Include="ExceptionStringTable.resx">
+    <EmbeddedResource Include="ExceptionStringTable.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionStringTable.Designer.cs</LastGenOutput>
-    </None>
+    </EmbeddedResource>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="WindowsBase">

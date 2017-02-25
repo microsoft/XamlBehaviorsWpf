@@ -191,7 +191,7 @@ namespace System.Windows.Interactivity
 				{
 					throw new InvalidOperationException();
 				}
-				// TODO jekelly 07/10/08: We don't want Behaviors to run on the design surface. Disable this in Blend rather than here.
+
 				if (Interaction.ShouldRunInDesignMode || !(bool)this.GetValue(DesignerProperties.IsInDesignModeProperty))
 				{
 					this.WritePreamble();

@@ -81,7 +81,6 @@ namespace System.Windows.Interactivity
 																									new FrameworkPropertyMetadata(
 																										new PropertyChangedCallback(OnTargetNameChanged)));
 
-		// todo jekelly: need UA review on this string
 		/// <summary>
 		/// Gets or sets the target object. If TargetObject is not set, the target will look for the object specified by TargetName. If an element referred to by TargetName cannot be found, the target will default to the AssociatedObject. This is a dependency property.
 		/// </summary>
@@ -92,7 +91,6 @@ namespace System.Windows.Interactivity
 			set { this.SetValue(TargetObjectProperty, value); }
 		}
 
-		// todo jekelly: need UA review on this string
 		/// <summary>
 		/// Gets or sets the name of the object this action targets. If Target is set, this property is ignored. If Target is not set and TargetName is not set or cannot be resolved, the target will default to the AssociatedObject. This is a dependency property.
 		/// </summary>
@@ -103,7 +101,6 @@ namespace System.Windows.Interactivity
 			set { this.SetValue(TargetNameProperty, value); }
 		}
 
-		// todo jekelly: need UA review on this string
 		/// <summary>
 		/// Gets the target object. If TargetObject is set, returns TargetObject. Else, if TargetName is not set or cannot be resolved, defaults to the AssociatedObject.
 		/// </summary>
