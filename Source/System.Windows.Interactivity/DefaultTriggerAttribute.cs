@@ -54,7 +54,7 @@ namespace System.Windows.Interactivity
 		/// </summary>
 		/// <param name="targetType">The type this attribute applies to.</param>
 		/// <param name="triggerType">The type of <see cref="TriggerBase"/> to instantiate.</param>
-		/// <param name="parameters">A single argument for the specified <see cref="TriggerBase"/>.</param>
+		/// <param name="parameter">A single argument for the specified <see cref="TriggerBase"/>.</param>
 		/// <exception cref="ArgumentException"><c cref="triggerType"/> is not derived from TriggerBase.</exception>
 		/// <remarks>This constructor is useful if the specifed <see cref="TriggerBase"/> has a single argument. The
 		/// resulting code will be CLS compliant.</remarks>

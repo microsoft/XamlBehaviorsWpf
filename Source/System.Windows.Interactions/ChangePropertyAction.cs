@@ -63,7 +63,6 @@ namespace Microsoft.Expression.Interactivity.Core
 			set { this.SetValue(DurationProperty, value); }
 		}
 
-		// UA_REVIEW:jekelly
 		/// <summary>
 		/// Increment by Value if true; otherwise, set the value directly. If the property cannot be incremented, it will instead try to set the value directly.
 		/// </summary>

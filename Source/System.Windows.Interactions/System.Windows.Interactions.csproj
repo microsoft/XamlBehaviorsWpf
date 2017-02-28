@@ -10,14 +10,13 @@
     <Blend_ExtensionRoot>Libraries</Blend_ExtensionRoot>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
     <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
-    <!-- Declare OutputRoot here, so common.targets will pick it up via Application.targets -->
-    <OutputRoot>$(Configuration)\$(Blend_ExtensionRoot)</OutputRoot>
+    <OutputPath>..\..\out\$(SolutionName)\bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\..\out\$(SolutionName)\obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,10 +24,10 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\out\$(SolutionName)\bin\AnyCPU\Release\Microsoft.Expression.Interactions.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <!-- This must come after the inclusion of the targets file -->
@@ -140,7 +139,7 @@
     <Compile Include="..\RuntimeVersion.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="..\Version.cs">
+    <Compile Include="..\Version\Version.cs">
       <SubType>Code</SubType>
     </Compile>
     <EmbeddedResource Include="ExceptionStringTable.resx">

@@ -758,7 +758,7 @@ namespace Microsoft.Expression.Interactivity.Layout
 		}
 	}
 
-		/// <summary>
+	/// <summary>
 	/// Simple helper class to allow any UIElements to be used as an Adorner.
 	/// </summary>
 	public class AdornerContainer: System.Windows.Documents.Adorner {
