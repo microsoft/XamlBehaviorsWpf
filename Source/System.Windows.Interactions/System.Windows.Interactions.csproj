@@ -94,6 +94,7 @@
     <Compile Include="ICondition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ITickTimer.cs" />
     <Compile Include="KeyTrigger.cs">
       <SubType>Code</SubType>
     </Compile>

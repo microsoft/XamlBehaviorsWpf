@@ -948,7 +948,7 @@ namespace Microsoft.Expression.Interactivity.Core
 			// Use RenderSize here because that works for SL Image and MediaElement - the other uses fo ActualWidth/Height are correct even for these element types
 			if ((element is Image || element is MediaElement))
 			{
-				if (element.Parent.GetType() == typeof(Canvas))
+				if (element.Parent is Canvas)
 				{
 					actualWidth = double.IsNaN(element.Width) ? actualWidth : element.Width;
 					actualHeight = double.IsNaN(element.Height) ? actualHeight : element.Height;

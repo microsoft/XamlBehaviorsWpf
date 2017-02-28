@@ -10,7 +10,7 @@ namespace Microsoft.Expression.Interactivity.Core
 	/// <summary>
 	/// A trigger that is triggered by a specified event occurring on its source and fires after a delay when that event is fired.
 	/// </summary>
-	public sealed class TimerTrigger : System.Windows.Interactivity.EventTrigger
+	public class TimerTrigger : System.Windows.Interactivity.EventTrigger
 	{
 		public static readonly DependencyProperty MillisecondsPerTickProperty = DependencyProperty.Register("MillisecondsPerTick",
 																									typeof(double),
@@ -24,16 +24,23 @@ namespace Microsoft.Expression.Interactivity.Core
 																									new FrameworkPropertyMetadata(-1)
 																									);
 
-		private DispatcherTimer timer;
+		private ITickTimer timer;
 		private EventArgs eventArgs;
 		private int tickCount;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TimerTrigger"/> class.
 		/// </summary>
-		public TimerTrigger()
+		public TimerTrigger() :
+			this(new DispatcherTickTimer())
 		{
 		}
+
+		internal TimerTrigger(ITickTimer timer)
+		{
+			this.timer = timer;
+		}
+
 
 		/// <summary>
 		/// Gets or sets the number of milliseconds to wait between ticks. This is a dependency property.
@@ -72,10 +79,12 @@ namespace Microsoft.Expression.Interactivity.Core
 
 		internal void StartTimer()
 		{
-			this.timer = new DispatcherTimer();
-			this.timer.Interval = TimeSpan.FromMilliseconds(this.MillisecondsPerTick);
-			this.timer.Tick += this.OnTimerTick;
-			this.timer.Start();
+			if (this.timer != null)
+			{
+				this.timer.Interval = TimeSpan.FromMilliseconds(this.MillisecondsPerTick);
+				this.timer.Tick += this.OnTimerTick;
+				this.timer.Start();
+			}
 		}
 
 		internal void StopTimer()
@@ -83,7 +92,7 @@ namespace Microsoft.Expression.Interactivity.Core
 			if (this.timer != null)
 			{
 				this.timer.Stop();
-				this.timer = null;
+				this.timer.Tick -= this.OnTimerTick;
 			}
 		}
 
@@ -95,6 +104,38 @@ namespace Microsoft.Expression.Interactivity.Core
 			}
 
 			this.InvokeActions(this.eventArgs);
+		}
+
+		internal class DispatcherTickTimer : ITickTimer
+		{
+			private DispatcherTimer dispatcherTimer;
+
+			public DispatcherTickTimer()
+			{
+				this.dispatcherTimer = new DispatcherTimer();
+			}
+
+			public event EventHandler Tick
+			{
+				add { this.dispatcherTimer.Tick += value; }
+				remove { this.dispatcherTimer.Tick -= value; }
+			}
+			
+			public TimeSpan Interval
+			{
+				get { return this.dispatcherTimer.Interval; }
+				set { this.dispatcherTimer.Interval = value; }
+			}
+
+			public void Start()
+			{
+				this.dispatcherTimer.Start();
+			}
+
+			public void Stop()
+			{
+				this.dispatcherTimer.Stop();
+			}
 		}
 	}
 }

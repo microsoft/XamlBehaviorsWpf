@@ -402,8 +402,8 @@ namespace Microsoft.Expression.Interactivity.UnitTests
 
 		private void VerifyOffset(Transform draggedTransform, double x, double y)
 		{
-			Assert.AreEqual((double)draggedTransform.Value.OffsetX, x, double.Epsilon, string.Format("Expected OffsetX of {0}, got {1}", x, draggedTransform.Value.OffsetX));
-			Assert.AreEqual((double)draggedTransform.Value.OffsetY, y, double.Epsilon, string.Format("Expected OffsetY of {0}, got {1}", y, draggedTransform.Value.OffsetY));
+			Assert.AreEqual((double)draggedTransform.Value.OffsetX, x, 0.000000000005, string.Format("Expected OffsetX of {0}, got {1}", x, draggedTransform.Value.OffsetX));
+			Assert.AreEqual((double)draggedTransform.Value.OffsetY, y, 0.000000000005, string.Format("Expected OffsetY of {0}, got {1}", y, draggedTransform.Value.OffsetY));
 		}
 
 		private Transform GetTransformAfterDrag(Transform transform, double x, double y)

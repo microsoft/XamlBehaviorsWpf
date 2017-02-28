@@ -10,7 +10,6 @@ namespace Microsoft.Expression.Interactivity.Core
 	using System.Globalization;
 	using System.Reflection;
 	using System.Windows;
-	using System.Windows.Controls.Primitives;
 	using System.Windows.Interactivity;
 	using System.Windows.Media;
 	using System.Windows.Media.Animation;
@@ -38,8 +37,15 @@ namespace Microsoft.Expression.Interactivity.Core
 		/// <value>The name of the property to change.</value>
 		public string PropertyName
 		{
-			get { return (string)this.GetValue(PropertyNameProperty); }
-			set { this.SetValue(PropertyNameProperty, value); }
+			get
+			{
+				return (string)this.GetValue(ChangePropertyAction.PropertyNameProperty);
+			}
+
+			set
+			{
+				this.SetValue(ChangePropertyAction.PropertyNameProperty, value);
+			}
 		}
 
 		/// <summary>
@@ -49,8 +55,15 @@ namespace Microsoft.Expression.Interactivity.Core
 		[SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
 		public object Value
 		{
-			get { return this.GetValue(ValueProperty); }
-			set { this.SetValue(ValueProperty, value); }
+			get
+			{
+				return this.GetValue(ChangePropertyAction.ValueProperty);
+			}
+
+			set
+			{
+				this.SetValue(ChangePropertyAction.ValueProperty, value);
+			}
 		}
 
 		/// <summary>
@@ -59,8 +72,15 @@ namespace Microsoft.Expression.Interactivity.Core
 		/// </summary>
 		public Duration Duration
 		{
-			get { return (Duration)this.GetValue(DurationProperty); }
-			set { this.SetValue(DurationProperty, value); }
+			get
+			{
+				return (Duration)this.GetValue(ChangePropertyAction.DurationProperty);
+			}
+
+			set
+			{
+				this.SetValue(ChangePropertyAction.DurationProperty, value);
+			}
 		}
 
 		/// <summary>
@@ -68,8 +88,15 @@ namespace Microsoft.Expression.Interactivity.Core
 		/// </summary>
 		public bool Increment
 		{
-			get { return (bool)this.GetValue(IncrementProperty); }
-			set { this.SetValue(IncrementProperty, value); }
+			get
+			{
+				return (bool)this.GetValue(ChangePropertyAction.IncrementProperty);
+			}
+
+			set
+			{
+				this.SetValue(ChangePropertyAction.IncrementProperty, value);
+			}
 		}
 
 		/// <summary>
@@ -108,7 +135,7 @@ namespace Microsoft.Expression.Interactivity.Core
 				{
 					if (converter != null && converter.CanConvertFrom(this.Value.GetType()))
 					{
-						newValue = converter.ConvertFrom(this.Value);
+						newValue = converter.ConvertFrom(context: null, culture: CultureInfo.InvariantCulture, value: this.Value);
 					}
 					else
 					{
@@ -116,7 +143,11 @@ namespace Microsoft.Expression.Interactivity.Core
 						converter = TypeConverterHelper.GetTypeConverter(this.Value.GetType());
 						if (converter != null && converter.CanConvertTo(propertyInfo.PropertyType))
 						{
-							newValue = converter.ConvertTo(this.Value, propertyInfo.PropertyType);
+							newValue = converter.ConvertTo(
+								context: null,
+								culture: CultureInfo.InvariantCulture,
+								value: this.Value,
+								destinationType: propertyInfo.PropertyType);
 						}
 					}
 				}
@@ -130,7 +161,7 @@ namespace Microsoft.Expression.Interactivity.Core
 				}
 				else
 				{
-					if(this.Increment)
+					if (this.Increment)
 					{
 						newValue = this.IncrementCurrentValue(propertyInfo);
 					}
@@ -151,12 +182,13 @@ namespace Microsoft.Expression.Interactivity.Core
 			}
 			if (innerException != null)
 			{
-				throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-												ExceptionStringTable.ChangePropertyActionCannotSetValueExceptionMessage,
-												this.Value != null ? this.Value.GetType().Name : "null",
-												this.PropertyName,
-												propertyInfo.PropertyType.Name),
-												innerException);
+				throw new ArgumentException(string.Format(
+					CultureInfo.CurrentCulture,
+					ExceptionStringTable.ChangePropertyActionCannotSetValueExceptionMessage,
+					this.Value != null ? this.Value.GetType().Name : "null",
+					this.PropertyName,
+					propertyInfo.PropertyType.Name),
+					innerException);
 			}
 		}
 
@@ -247,7 +279,8 @@ namespace Microsoft.Expression.Interactivity.Core
 			}
 			if (!typeof(DependencyObject).IsAssignableFrom(targetType))
 			{
-				throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
+				throw new InvalidOperationException(string.Format(
+					CultureInfo.CurrentCulture,
 					ExceptionStringTable.ChangePropertyActionCannotAnimateTargetTypeExceptionMessage,
 					targetType.Name));
 			}
@@ -307,18 +340,20 @@ namespace Microsoft.Expression.Interactivity.Core
 		{
 			if (propertyInfo == null)
 			{
-				throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-															ExceptionStringTable.ChangePropertyActionCannotFindPropertyNameExceptionMessage,
-															this.PropertyName,
-															this.Target.GetType().Name));
+				throw new ArgumentException(string.Format(
+					CultureInfo.CurrentCulture,
+					ExceptionStringTable.ChangePropertyActionCannotFindPropertyNameExceptionMessage,
+					this.PropertyName,
+					this.Target.GetType().Name));
 			}
 
 			if (!propertyInfo.CanWrite)
 			{
-				throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-															ExceptionStringTable.ChangePropertyActionPropertyIsReadOnlyExceptionMessage,
-															this.PropertyName,
-															this.Target.GetType().Name));
+				throw new ArgumentException(string.Format(
+					CultureInfo.CurrentCulture,
+					ExceptionStringTable.ChangePropertyActionPropertyIsReadOnlyExceptionMessage,
+					this.PropertyName,
+					this.Target.GetType().Name));
 			}
 		}
 
@@ -326,7 +361,8 @@ namespace Microsoft.Expression.Interactivity.Core
 		{
 			if (!propertyInfo.CanRead)
 			{
-				throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
+				throw new InvalidOperationException(string.Format(
+					CultureInfo.CurrentCulture,
 					ExceptionStringTable.ChangePropertyActionCannotIncrementWriteOnlyPropertyExceptionMessage,
 					propertyInfo.Name));
 			}
@@ -413,7 +449,8 @@ namespace Microsoft.Expression.Interactivity.Core
 
 				if (uniqueAdditionOperation != null)
 				{
-					throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
+					throw new ArgumentException(string.Format(
+						CultureInfo.CurrentCulture,
 						ExceptionStringTable.ChangePropertyActionAmbiguousAdditionOperationExceptionMessage,
 						additiveType.Name));
 				}

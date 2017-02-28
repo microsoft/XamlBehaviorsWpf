@@ -6,6 +6,7 @@ namespace Microsoft.Expression.Interactivity
 	using System.ComponentModel;
 	using System;
 	using System.Diagnostics.CodeAnalysis;
+	using System.Globalization;
 
 	internal static class TypeConverterHelper
 	{	
@@ -17,7 +18,8 @@ namespace Microsoft.Expression.Interactivity
 			{
 				if (converter != null && value != null && converter.CanConvertFrom(value.GetType()))
 				{
-					returnValue = converter.ConvertFrom(value);
+					// This utility class is used to convert value that come from XAML, so we should use the invariant culture.
+					returnValue = converter.ConvertFrom(context: null, culture: CultureInfo.InvariantCulture, value: value);
 				}
 			}
 			catch (Exception e)
@@ -44,7 +46,7 @@ namespace Microsoft.Expression.Interactivity
 			return shouldEat;
 		}
 
-		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification="Activator.CreateInstance could be calling user code which we don't want to bring us down.")]
+		[SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Activator.CreateInstance could be calling user code which we don't want to bring us down.")]
 		internal static TypeConverter GetTypeConverter(Type type)
 		{
 			return TypeDescriptor.GetConverter(type);
