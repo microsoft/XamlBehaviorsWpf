@@ -94,6 +94,7 @@
     <Compile Include="ICondition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="InteractionContext.cs" />
     <Compile Include="ITickTimer.cs" />
     <Compile Include="KeyTrigger.cs">
       <SubType>Code</SubType>
@@ -110,9 +111,12 @@
     <Compile Include="PropertyChangedTrigger.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PrototypingActions.cs" />
     <Compile Include="RemoveElementAction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ScreenType.cs" />
+    <Compile Include="Serializer.cs" />
     <Compile Include="SetDataStoreValueAction.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -151,6 +155,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
+    <Reference Include="System.XML" />
     <Reference Include="WindowsBase">
       <Private>False</Private>
       <HintPath>$(WindowsPath)\WindowsBase.dll</HintPath>
