@@ -11,7 +11,7 @@ namespace Microsoft.Xaml.Interactions.Core
     /// for this action.
     /// </summary>
     [DefaultTrigger(typeof(UIElement), typeof(Interactivity.EventTrigger), "Loaded")]
-	public class SetDataStoreValueAction : ChangePropertyAction
-	{
-	}
+    public class SetDataStoreValueAction : ChangePropertyAction
+    {
+    }
 }

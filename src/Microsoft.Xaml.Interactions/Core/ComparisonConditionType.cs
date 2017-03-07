@@ -2,16 +2,16 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 namespace Microsoft.Xaml.Interactions.Core
 {
-	/// <summary>
-	/// Enumeration of different comparison operators.
-	/// </summary>
-	public enum ComparisonConditionType
-	{
-		Equal,
-		NotEqual,
-		LessThan,
-		LessThanOrEqual,
-		GreaterThan,
-		GreaterThanOrEqual,
-	}
+    /// <summary>
+    /// Enumeration of different comparison operators.
+    /// </summary>
+    public enum ComparisonConditionType
+    {
+        Equal,
+        NotEqual,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual,
+    }
 }

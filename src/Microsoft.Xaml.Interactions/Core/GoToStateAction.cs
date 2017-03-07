@@ -3,8 +3,8 @@
 namespace Microsoft.Xaml.Interactions.Core
 {
     using System;
-	using System.Globalization;
-	using System.Windows;
+    using System.Globalization;
+    using System.Windows;
     using Microsoft.Xaml.Interactivity;
 
     /// <summary>
@@ -16,93 +16,93 @@ namespace Microsoft.Xaml.Interactions.Core
     /// two common possibilities.
     /// </remarks>
     public class GoToStateAction : TargetedTriggerAction<FrameworkElement>
-	{
-		public static readonly DependencyProperty UseTransitionsProperty = DependencyProperty.Register("UseTransitions", typeof(bool), typeof(GoToStateAction), new PropertyMetadata(true));
-		public static readonly DependencyProperty StateNameProperty = DependencyProperty.Register("StateName", typeof(string), typeof(GoToStateAction), new PropertyMetadata(string.Empty));
-		
-		/// <summary>
-		/// Determines whether or not to use a VisualTransition to transition between states.
-		/// </summary>
-		public bool UseTransitions
-		{
-			get { return (bool)this.GetValue(UseTransitionsProperty); }
-			set { this.SetValue(UseTransitionsProperty, value); }
-		}
+    {
+        public static readonly DependencyProperty UseTransitionsProperty = DependencyProperty.Register("UseTransitions", typeof(bool), typeof(GoToStateAction), new PropertyMetadata(true));
+        public static readonly DependencyProperty StateNameProperty = DependencyProperty.Register("StateName", typeof(string), typeof(GoToStateAction), new PropertyMetadata(string.Empty));
 
-		/// <summary>
-		/// The name of the VisualState.  
-		/// </summary>
-		public string StateName
-		{
-			get { return (string)this.GetValue(StateNameProperty); }
-			set { this.SetValue(StateNameProperty, value); }
-		}
+        /// <summary>
+        /// Determines whether or not to use a VisualTransition to transition between states.
+        /// </summary>
+        public bool UseTransitions
+        {
+            get { return (bool)this.GetValue(UseTransitionsProperty); }
+            set { this.SetValue(UseTransitionsProperty, value); }
+        }
 
-		private FrameworkElement StateTarget
-		{
-			get;
-			set;
-		}
+        /// <summary>
+        /// The name of the VisualState.  
+        /// </summary>
+        public string StateName
+        {
+            get { return (string)this.GetValue(StateNameProperty); }
+            set { this.SetValue(StateNameProperty, value); }
+        }
 
-		private bool IsTargetObjectSet
-		{
-			get
-			{
-				bool isLocallySet = this.ReadLocalValue(TargetedTriggerAction.TargetObjectProperty) != DependencyProperty.UnsetValue;
-				// if the value can be set indirectly (via trigger, style, etc), should also check ValueSource, but not a concern for behaviors right now.
-				return isLocallySet;
-			}
-		}
+        private FrameworkElement StateTarget
+        {
+            get;
+            set;
+        }
 
-		/// <summary>
-		/// Called when the target changes. If the TargetName property isn't set, this action has custom behavior.
-		/// </summary>
-		/// <param name="oldTarget"></param>
-		/// <param name="newTarget"></param>
-		/// <exception cref="InvalidOperationException">Could not locate an appropriate FrameworkElement with states.</exception>
-		protected override void OnTargetChanged(FrameworkElement oldTarget, FrameworkElement newTarget)
-		{
-			base.OnTargetChanged(oldTarget, newTarget);
+        private bool IsTargetObjectSet
+        {
+            get
+            {
+                bool isLocallySet = this.ReadLocalValue(TargetedTriggerAction.TargetObjectProperty) != DependencyProperty.UnsetValue;
+                // if the value can be set indirectly (via trigger, style, etc), should also check ValueSource, but not a concern for behaviors right now.
+                return isLocallySet;
+            }
+        }
 
-			FrameworkElement frameworkElement = null;
+        /// <summary>
+        /// Called when the target changes. If the TargetName property isn't set, this action has custom behavior.
+        /// </summary>
+        /// <param name="oldTarget"></param>
+        /// <param name="newTarget"></param>
+        /// <exception cref="InvalidOperationException">Could not locate an appropriate FrameworkElement with states.</exception>
+        protected override void OnTargetChanged(FrameworkElement oldTarget, FrameworkElement newTarget)
+        {
+            base.OnTargetChanged(oldTarget, newTarget);
 
-			if (string.IsNullOrEmpty(this.TargetName) && !this.IsTargetObjectSet)
-			{
-				bool successful = VisualStateUtilities.TryFindNearestStatefulControl(this.AssociatedObject as FrameworkElement, out frameworkElement);
-				if(!successful && frameworkElement != null)
-				{
-					throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-											ExceptionStringTable.GoToStateActionTargetHasNoStateGroups,
-											frameworkElement.Name));
-				}
-			}
-			else
-			{
-				frameworkElement = this.Target;
-			}
+            FrameworkElement frameworkElement = null;
 
-			this.StateTarget = frameworkElement;
-		}
+            if (string.IsNullOrEmpty(this.TargetName) && !this.IsTargetObjectSet)
+            {
+                bool successful = VisualStateUtilities.TryFindNearestStatefulControl(this.AssociatedObject as FrameworkElement, out frameworkElement);
+                if (!successful && frameworkElement != null)
+                {
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
+                                            ExceptionStringTable.GoToStateActionTargetHasNoStateGroups,
+                                            frameworkElement.Name));
+                }
+            }
+            else
+            {
+                frameworkElement = this.Target;
+            }
 
-		/// <summary>
-		/// This method is called when some criteria is met and the action is invoked.
-		/// </summary>
-		/// <param name="parameter"></param>
-		/// <exception cref="InvalidOperationException">Could not change the target to the specified StateName.</exception>
-		protected override void Invoke(object parameter)
-		{
-			if (this.AssociatedObject != null)
-			{
-				this.InvokeImpl(this.StateTarget);
-			}
-		}
+            this.StateTarget = frameworkElement;
+        }
 
-		internal void InvokeImpl(FrameworkElement stateTarget)
-		{
-			if (stateTarget != null)
-			{
-				VisualStateUtilities.GoToState(stateTarget, this.StateName, this.UseTransitions);
-			}
-		}
-	}
+        /// <summary>
+        /// This method is called when some criteria is met and the action is invoked.
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <exception cref="InvalidOperationException">Could not change the target to the specified StateName.</exception>
+        protected override void Invoke(object parameter)
+        {
+            if (this.AssociatedObject != null)
+            {
+                this.InvokeImpl(this.StateTarget);
+            }
+        }
+
+        internal void InvokeImpl(FrameworkElement stateTarget)
+        {
+            if (stateTarget != null)
+            {
+                VisualStateUtilities.GoToState(stateTarget, this.StateName, this.UseTransitions);
+            }
+        }
+    }
 }
