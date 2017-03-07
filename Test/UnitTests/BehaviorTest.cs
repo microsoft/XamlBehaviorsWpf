@@ -1,52 +1,52 @@
 ﻿// -------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // -------------------------------------------------------------------
-namespace Microsoft.Expression.Interactivity.UnitTests
+namespace Microsoft.Xaml.Interactions.UnitTests
 {
-	using System;
+    using System;
     using System.Windows.Controls;
-	using System.Windows.Interactivity;
-    using Microsoft.Expression.Interactivity.Core;
-	using System.Windows.Shapes;
+    using System.Windows.Shapes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Xaml.Interactions.Core;
+    using Microsoft.Xaml.Interactivity;
     using SysWindows = System.Windows;
 
-	[TestClass]
-	public class BehaviorTest
-	{
-		[TestInitialize]
-		public void Setup()
-		{
-			Interaction.ShouldRunInDesignMode = true;
-		}
+    [TestClass]
+    public class BehaviorTest
+    {
+        [TestInitialize]
+        public void Setup()
+        {
+            Interaction.ShouldRunInDesignMode = true;
+        }
 
-		[TestCleanup]
-		public void Teardown()
-		{
-			Interaction.ShouldRunInDesignMode = false;
-		}
+        [TestCleanup]
+        public void Teardown()
+        {
+            Interaction.ShouldRunInDesignMode = false;
+        }
 
-		[TestMethod]
-		public void AttachDetachTest()
-		{
-			StubBehavior stubBehavior = new StubBehavior();
-			BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)stubBehavior);
+        [TestMethod]
+        public void AttachDetachTest()
+        {
+            StubBehavior stubBehavior = new StubBehavior();
+            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)stubBehavior);
 
-			Rectangle rectangle = new Rectangle();
-			StubBehavior behavior = new StubBehavior();
-			BehaviorCollection behaviorCollection = Interaction.GetBehaviors(rectangle);
-			behaviorCollection.Add(behavior);
-			behaviorCollection.Detach();
-			BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)behaviorCollection);
-		}
+            Rectangle rectangle = new Rectangle();
+            StubBehavior behavior = new StubBehavior();
+            BehaviorCollection behaviorCollection = Interaction.GetBehaviors(rectangle);
+            behaviorCollection.Add(behavior);
+            behaviorCollection.Detach();
+            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)behaviorCollection);
+        }
 
-		[TestMethod]
-		public void TestCreateInstanceCore()
-		{
-			StubBehavior action = new StubBehavior();
-			SysWindows.Freezable freezable = action.GetCreateInstanceCore();
-			Assert.AreEqual(freezable.GetType(), typeof(StubBehavior), "freezable.GetType() == typeof(StubBehavior)");
-		}
+        [TestMethod]
+        public void TestCreateInstanceCore()
+        {
+            StubBehavior action = new StubBehavior();
+            SysWindows.Freezable freezable = action.GetCreateInstanceCore();
+            Assert.AreEqual(freezable.GetType(), typeof(StubBehavior), "freezable.GetType() == typeof(StubBehavior)");
+        }
 
         [TestMethod]
         public void AttachBehaviorMultipleElements_ShouldThrow()
@@ -99,22 +99,22 @@ namespace Microsoft.Expression.Interactivity.UnitTests
         }
 
         [TestMethod]
-		public void AttachBehaviorsTest()
-		{
-			StubBehavior behavior1 = new StubBehavior();
-			StubBehavior behavior2 = new StubBehavior();
+        public void AttachBehaviorsTest()
+        {
+            StubBehavior behavior1 = new StubBehavior();
+            StubBehavior behavior2 = new StubBehavior();
 
-			Button button1 = new Button();
+            Button button1 = new Button();
 
-			BehaviorCollection behaviors1 = Interaction.GetBehaviors(button1);
-			Assert.AreEqual(behaviors1.Count, 0, "behaviors.Count == 0");
-			behaviors1.Add(behavior1);
-			Assert.AreEqual(behaviors1.Count, 1, "behaviors.Count == 1");
-			Assert.AreEqual(behavior1.AttachedObject, button1, "behavior1.AssociatedObject == button");
-			behaviors1.Add(behavior2);
-			Assert.AreEqual(behaviors1.Count, 2, "behaviors.Count == 2");
-			Assert.AreEqual(behavior2.AttachedObject, button1, "behavior2.AssociatedObject == button");
-		}
+            BehaviorCollection behaviors1 = Interaction.GetBehaviors(button1);
+            Assert.AreEqual(behaviors1.Count, 0, "behaviors.Count == 0");
+            behaviors1.Add(behavior1);
+            Assert.AreEqual(behaviors1.Count, 1, "behaviors.Count == 1");
+            Assert.AreEqual(behavior1.AttachedObject, button1, "behavior1.AssociatedObject == button");
+            behaviors1.Add(behavior2);
+            Assert.AreEqual(behaviors1.Count, 2, "behaviors.Count == 2");
+            Assert.AreEqual(behavior2.AttachedObject, button1, "behavior2.AssociatedObject == button");
+        }
 
         [TestMethod]
         public void TestParameterlessActionCommand()
@@ -126,35 +126,35 @@ namespace Microsoft.Expression.Interactivity.UnitTests
             Assert.IsTrue(this.actionTestSucceeded, "parameterlessAction test succeeded.");
         }
 
-		[TestMethod]
-		public void TestParameterActionCommand()
-		{
-			ActionCommand parameterAction = new ActionCommand(new Action<object>(this.ParameterActionSuccessful));
-			this.actionTestSucceeded = false;
-			Assert.IsTrue(((SysWindows.Input.ICommand)parameterAction).CanExecute(null), "parameterAction CanExecute(null) == true");
-			parameterAction.Execute(this.actionTestButton);
-			Assert.IsTrue(this.actionTestSucceeded, "parameterlessAction test succeeded.");
-		}
+        [TestMethod]
+        public void TestParameterActionCommand()
+        {
+            ActionCommand parameterAction = new ActionCommand(new Action<object>(this.ParameterActionSuccessful));
+            this.actionTestSucceeded = false;
+            Assert.IsTrue(((SysWindows.Input.ICommand)parameterAction).CanExecute(null), "parameterAction CanExecute(null) == true");
+            parameterAction.Execute(this.actionTestButton);
+            Assert.IsTrue(this.actionTestSucceeded, "parameterlessAction test succeeded.");
+        }
 
-		#region ActionCommand test cross-function state
-		private bool actionTestSucceeded;
-		private Button actionTestButton = new Button();
+        #region ActionCommand test cross-function state
+        private bool actionTestSucceeded;
+        private Button actionTestButton = new Button();
 
-		private void ParameterlessActionSuccessful()
-		{
-			this.actionTestSucceeded = true;
-		}
+        private void ParameterlessActionSuccessful()
+        {
+            this.actionTestSucceeded = true;
+        }
 
-		private void ParameterActionSuccessful(object o)
-		{
-			Assert.AreEqual(o, this.actionTestButton, "parameter == this.actionTestButton");
-			this.actionTestSucceeded = true;
-		}
+        private void ParameterActionSuccessful(object o)
+        {
+            Assert.AreEqual(o, this.actionTestButton, "parameter == this.actionTestButton");
+            this.actionTestSucceeded = true;
+        }
 
-		private void command_CanExecuteChanged(object sender, EventArgs e)
-		{
-			Assert.Fail("ActionCommand.CanExecuteChanged should never be called.");
-		}
-		#endregion
-	}
+        private void command_CanExecuteChanged(object sender, EventArgs e)
+        {
+            Assert.Fail("ActionCommand.CanExecuteChanged should never be called.");
+        }
+        #endregion
+    }
 }

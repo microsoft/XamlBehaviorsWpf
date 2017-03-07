@@ -8,7 +8,7 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END
 )
 
-IF EXIST ..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Expression.Interactions.dll (
+IF EXIST ..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactions.dll (
 	IF "%1"=="" (
 		GOTO PackWithFileVersion
 	)
@@ -17,11 +17,11 @@ IF EXIST ..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Expression.Interaction
 	GOTO PACK
 	
 	:PackWithFileVersion
-        SET /p VERSION=<..\Source\Version\NuGetPackageVersion.txt
+        SET /p VERSION=<..\src\Version\NuGetPackageVersion.txt
 	GOTO PACK
 )
 
-ECHO The System.Windows.Interactions project has not been built in the "Any CPU - Release" configuration. Please build the project and then try again.
+ECHO The Microsoft.Xaml.Interactions project has not been built in the "Any CPU - Release" configuration. Please build the project and then try again.
 PAUSE
 GOTO END
 

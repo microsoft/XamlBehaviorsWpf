@@ -1,31 +1,31 @@
 // -------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // -------------------------------------------------------------------
-namespace Microsoft.Expression.Interactivity.UnitTests
+namespace Microsoft.Xaml.Interactions.UnitTests
 {
-	using System;
+    using System;
     using System.Windows;
     using System.Windows.Controls;
-	using System.Windows.Documents;
-	using System.Windows.Interactivity;
-	using System.Windows.Shapes;
-    using Microsoft.Expression.Interactivity.Core;
+    using System.Windows.Documents;
+    using System.Windows.Shapes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Xaml.Interactivity;
+    using Microsoft.Xaml.Interactions.Core;
 
-	[TestClass]
-	public class RemoveElementActionTests
-	{
-		[TestInitialize]
-		public void Setup()
-		{
-			Interaction.ShouldRunInDesignMode = true;
-		}
+    [TestClass]
+    public class RemoveElementActionTests
+    {
+        [TestInitialize]
+        public void Setup()
+        {
+            Interaction.ShouldRunInDesignMode = true;
+        }
 
-		[TestCleanup]
-		public void Teardown()
-		{
-			Interaction.ShouldRunInDesignMode = false;
-		}
+        [TestCleanup]
+        public void Teardown()
+        {
+            Interaction.ShouldRunInDesignMode = false;
+        }
 
         private StubTrigger SetupRemoveAction(DependencyObject target)
         {
@@ -114,9 +114,9 @@ namespace Microsoft.Expression.Interactivity.UnitTests
             trigger.FireStubTrigger();
         }
 
-		[TestMethod]
-		public void RemoveReadd()
-		{
+        [TestMethod]
+        public void RemoveReadd()
+        {
             Rectangle rectangle = new Rectangle();
             StubTrigger trigger = SetupRemoveAction(rectangle);
             Canvas canvas = new Canvas();
@@ -133,20 +133,20 @@ namespace Microsoft.Expression.Interactivity.UnitTests
             trigger.FireStubTrigger();
         }
 
-		[TestMethod]
-		public void Invoke_TargetObjectSetButNotAttached_DoesNotRemove()
-		{
-			Grid grid = new Grid();
-			Rectangle rectangle = new Rectangle();
-			RemoveElementAction action = new RemoveElementAction();
-			StubTrigger trigger = new StubTrigger();
+        [TestMethod]
+        public void Invoke_TargetObjectSetButNotAttached_DoesNotRemove()
+        {
+            Grid grid = new Grid();
+            Rectangle rectangle = new Rectangle();
+            RemoveElementAction action = new RemoveElementAction();
+            StubTrigger trigger = new StubTrigger();
 
-			trigger.Actions.Add(action);
-			grid.Children.Add(rectangle);
-			action.TargetObject = rectangle;
-			trigger.FireStubTrigger();
+            trigger.Actions.Add(action);
+            grid.Children.Add(rectangle);
+            action.TargetObject = rectangle;
+            trigger.FireStubTrigger();
 
-			Assert.AreEqual(rectangle.Parent, grid, "Because the action is not attached to anything, invoking it should not do anything.");
-		}
-	}
+            Assert.AreEqual(rectangle.Parent, grid, "Because the action is not attached to anything, invoking it should not do anything.");
+        }
+    }
 }

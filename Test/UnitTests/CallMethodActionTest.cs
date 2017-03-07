@@ -1,231 +1,231 @@
 // -------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // -------------------------------------------------------------------
-namespace Microsoft.Expression.Interactivity.UnitTests
+namespace Microsoft.Xaml.Interactions.UnitTests
 {
-	using System;
-	using System.Windows;
-	using System.Windows.Interactivity;
-	using System.Windows.Shapes;
-    using Microsoft.Expression.Interactivity.Core;
+    using System;
+    using System.Windows;
+    using System.Windows.Shapes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Xaml.Interactions.Core;
+    using Microsoft.Xaml.Interactivity;
 
-	[TestClass]
-	public sealed class CallMethodActionTest
-	{
-		#region Setup/teardown
+    [TestClass]
+    public sealed class CallMethodActionTest
+    {
+        #region Setup/teardown
 
-		[TestInitialize]
-		public void Setup()
-		{
-			Interaction.ShouldRunInDesignMode = true;
-		}
+        [TestInitialize]
+        public void Setup()
+        {
+            Interaction.ShouldRunInDesignMode = true;
+        }
 
-		[TestCleanup]
-		public void Teardown()
-		{
-			Interaction.ShouldRunInDesignMode = false;
-		}
+        [TestCleanup]
+        public void Teardown()
+        {
+            Interaction.ShouldRunInDesignMode = false;
+        }
 
-		#endregion
+        #endregion
 
-		#region Test methods
-		[TestMethod]
-		public void Invoke_UniqueMethodWithNoParameters_IsCalled()
-		{
-			MethodObjectStub methodObject = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("UniqueMethodWithNoParameters");
-			StubTrigger trigger = AttachAction(action, methodObject);
+        #region Test methods
+        [TestMethod]
+        public void Invoke_UniqueMethodWithNoParameters_IsCalled()
+        {
+            MethodObjectStub methodObject = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("UniqueMethodWithNoParameters");
+            StubTrigger trigger = AttachAction(action, methodObject);
 
-			trigger.FireStubTrigger();
+            trigger.FireStubTrigger();
 
-			Assert.AreEqual(methodObject.LastMethodCalled, "UniqueMethodWithNoParameters", "UniqueMethodWithNoParameters was not called."); 
-		}
+            Assert.AreEqual(methodObject.LastMethodCalled, "UniqueMethodWithNoParameters", "UniqueMethodWithNoParameters was not called.");
+        }
 
-		[TestMethod]
-		public void Invoke_MultipleMethodsWithSameName_EventHandlerSignatureIsCalled()
-		{
-			MethodObjectStub methodObject = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("DuplicatedMethod");
-			StubTrigger trigger = AttachAction(action, methodObject);
+        [TestMethod]
+        public void Invoke_MultipleMethodsWithSameName_EventHandlerSignatureIsCalled()
+        {
+            MethodObjectStub methodObject = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("DuplicatedMethod");
+            StubTrigger trigger = AttachAction(action, methodObject);
 
-			trigger.FireStubTrigger(EventArgs.Empty);
+            trigger.FireStubTrigger(EventArgs.Empty);
 
-			Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithEventHandlerSignature", "DuplicatedMethodWithEventHandlerSignature was not called."); 
-		}
+            Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithEventHandlerSignature", "DuplicatedMethodWithEventHandlerSignature was not called.");
+        }
 
-		[TestMethod]
-		public void Invoke_MultipleMethodsWithSpecificParameter_MostDerivedSignatureIsCalled()
-		{
-			MethodObjectStub methodObject = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("DuplicatedMethod");
-			StubTrigger trigger = AttachAction(action, methodObject);
+        [TestMethod]
+        public void Invoke_MultipleMethodsWithSpecificParameter_MostDerivedSignatureIsCalled()
+        {
+            MethodObjectStub methodObject = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("DuplicatedMethod");
+            StubTrigger trigger = AttachAction(action, methodObject);
 
-			trigger.FireStubTrigger(new StubEventArgs());
+            trigger.FireStubTrigger(new StubEventArgs());
 
-			Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithStubEventArgsSignature", "DuplicatedMethodWithStubEventArgsSignature was not called.");
-		}
+            Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithStubEventArgsSignature", "DuplicatedMethodWithStubEventArgsSignature was not called.");
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(ArgumentException))]
-		public void Invoke_NonExistantMethodWithTargetSet_ThrowsArgumentException()
-		{
-			Rectangle host = CreateRectangle();
-			MethodObjectStub target = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("NonExistantMethodName");
-			StubTrigger trigger = AttachAction(action, host);
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Invoke_NonExistantMethodWithTargetSet_ThrowsArgumentException()
+        {
+            Rectangle host = CreateRectangle();
+            MethodObjectStub target = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("NonExistantMethodName");
+            StubTrigger trigger = AttachAction(action, host);
 
-			action.TargetObject = target;
-			trigger.FireStubTrigger();
-		}
+            action.TargetObject = target;
+            trigger.FireStubTrigger();
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(ArgumentException))]
-		public void Invoke_IncorrectReturnTypeWithTargetSet_ThrowsArgumentException()
-		{
-			Rectangle host = CreateRectangle();
-			MethodObjectStub target = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("IncompatibleReturnType");
-			StubTrigger trigger = AttachAction(action, host);
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Invoke_IncorrectReturnTypeWithTargetSet_ThrowsArgumentException()
+        {
+            Rectangle host = CreateRectangle();
+            MethodObjectStub target = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("IncompatibleReturnType");
+            StubTrigger trigger = AttachAction(action, host);
 
-			action.TargetObject = target;
-			trigger.FireStubTrigger();
-		}
+            action.TargetObject = target;
+            trigger.FireStubTrigger();
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(ArgumentException))]
-		public void Invoke_IncorrectParametersWithTargetSet_ThrowsArgumentException()
-		{
-			Rectangle host = CreateRectangle();
-			MethodObjectStub target = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("IncompatibleParameters");
-			StubTrigger trigger = AttachAction(action, host);
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Invoke_IncorrectParametersWithTargetSet_ThrowsArgumentException()
+        {
+            Rectangle host = CreateRectangle();
+            MethodObjectStub target = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("IncompatibleParameters");
+            StubTrigger trigger = AttachAction(action, host);
 
-			action.TargetObject = target;
-			trigger.FireStubTrigger();
-		}
+            action.TargetObject = target;
+            trigger.FireStubTrigger();
+        }
 
-		[TestMethod]
-		public void Invoke_NonExistantMethodWithNoTarget_DoesNothing()
-		{
-			MethodObjectStub host = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("NonExistantMethodName");
-			StubTrigger trigger = AttachAction(action, host);
+        [TestMethod]
+        public void Invoke_NonExistantMethodWithNoTarget_DoesNothing()
+        {
+            MethodObjectStub host = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("NonExistantMethodName");
+            StubTrigger trigger = AttachAction(action, host);
 
-			trigger.FireStubTrigger();
-			Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
-		}
+            trigger.FireStubTrigger();
+            Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
+        }
 
-		[TestMethod]
-		public void Invoke_IncorrectReturnTypeWithTargetSet_DoesNothing()
-		{
-			MethodObjectStub host = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("IncompatibleReturnType");
-			StubTrigger trigger = AttachAction(action, host);
+        [TestMethod]
+        public void Invoke_IncorrectReturnTypeWithTargetSet_DoesNothing()
+        {
+            MethodObjectStub host = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("IncompatibleReturnType");
+            StubTrigger trigger = AttachAction(action, host);
 
-			trigger.FireStubTrigger();
-			Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
-		}
+            trigger.FireStubTrigger();
+            Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
+        }
 
-		[TestMethod]
-		public void Invoke_IncorrectParametersWithTargetSet_DoesNothing()
-		{
-			MethodObjectStub host = CreateMethodObject();
-			CallMethodAction action = CreateCallMethodAction("IncompatibleParameters");
-			StubTrigger trigger = AttachAction(action, host);
+        [TestMethod]
+        public void Invoke_IncorrectParametersWithTargetSet_DoesNothing()
+        {
+            MethodObjectStub host = CreateMethodObject();
+            CallMethodAction action = CreateCallMethodAction("IncompatibleParameters");
+            StubTrigger trigger = AttachAction(action, host);
 
-			trigger.FireStubTrigger();
-			Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
-		}
-		#endregion
+            trigger.FireStubTrigger();
+            Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
+        }
+        #endregion
 
-		#region Helper methods and classes
+        #region Helper methods and classes
 
-		private StubTrigger AttachAction(CallMethodAction action, DependencyObject host)
-		{
-			StubTrigger trigger = CreateTrigger();
-			trigger.Actions.Add(action);
-			Interaction.GetTriggers(host).Add(trigger);
-			return trigger;
-		}
+        private StubTrigger AttachAction(CallMethodAction action, DependencyObject host)
+        {
+            StubTrigger trigger = CreateTrigger();
+            trigger.Actions.Add(action);
+            Interaction.GetTriggers(host).Add(trigger);
+            return trigger;
+        }
 
-		private class MethodObjectStub : DependencyObject
-		{
-			public string LastMethodCalled
-			{
-				get;
-				private set;
-			}
+        private class MethodObjectStub : DependencyObject
+        {
+            public string LastMethodCalled
+            {
+                get;
+                private set;
+            }
 
-			public MethodObjectStub()
-			{
-				this.LastMethodCalled = "None";
-			}
+            public MethodObjectStub()
+            {
+                this.LastMethodCalled = "None";
+            }
 
-			public void UniqueMethodWithNoParameters()
-			{
-				this.LastMethodCalled = "UniqueMethodWithNoParameters";
-			}
+            public void UniqueMethodWithNoParameters()
+            {
+                this.LastMethodCalled = "UniqueMethodWithNoParameters";
+            }
 
-			public void DuplicatedMethod()
-			{
-				this.LastMethodCalled = "DuplicatedMethodWithNoParameters";
-			}
+            public void DuplicatedMethod()
+            {
+                this.LastMethodCalled = "DuplicatedMethodWithNoParameters";
+            }
 
-			public void DuplicatedMethod(object sender, EventArgs args)
-			{
-				this.LastMethodCalled = "DuplicatedMethodWithEventHandlerSignature";
-			}
+            public void DuplicatedMethod(object sender, EventArgs args)
+            {
+                this.LastMethodCalled = "DuplicatedMethodWithEventHandlerSignature";
+            }
 
-			public void DuplicatedMethod(object sender, StubEventArgs args)
-			{
-				this.LastMethodCalled = "DuplicatedMethodWithStubEventArgsSignature";
-			}
+            public void DuplicatedMethod(object sender, StubEventArgs args)
+            {
+                this.LastMethodCalled = "DuplicatedMethodWithStubEventArgsSignature";
+            }
 
-			public int IncompatibleReturnType()
-			{
-				this.LastMethodCalled = "IncompatibleReturnType";
-				return 0;
-			}
+            public int IncompatibleReturnType()
+            {
+                this.LastMethodCalled = "IncompatibleReturnType";
+                return 0;
+            }
 
-			public void IncompatibleParameters(double d)
-			{
-				this.LastMethodCalled = "IncompatibleParameters";
-			}
-		}
+            public void IncompatibleParameters(double d)
+            {
+                this.LastMethodCalled = "IncompatibleParameters";
+            }
+        }
 
-		private class StubEventArgs : EventArgs
-		{
+        private class StubEventArgs : EventArgs
+        {
 
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Factory methods
+        #region Factory methods
 
-		private CallMethodAction CreateCallMethodAction(string methodName)
-		{
-			CallMethodAction action = new CallMethodAction();
-			action.MethodName = methodName;
-			return action;
-		}
+        private CallMethodAction CreateCallMethodAction(string methodName)
+        {
+            CallMethodAction action = new CallMethodAction();
+            action.MethodName = methodName;
+            return action;
+        }
 
-		private Rectangle CreateRectangle()
-		{
-			return new Rectangle();
-		}
+        private Rectangle CreateRectangle()
+        {
+            return new Rectangle();
+        }
 
-		private MethodObjectStub CreateMethodObject()
-		{
-			return new MethodObjectStub();
-		}
+        private MethodObjectStub CreateMethodObject()
+        {
+            return new MethodObjectStub();
+        }
 
-		private StubTrigger CreateTrigger()
-		{
-			return new StubTrigger();
-		}
+        private StubTrigger CreateTrigger()
+        {
+            return new StubTrigger();
+        }
 
-#endregion
+        #endregion
 
-	}
+    }
 }
