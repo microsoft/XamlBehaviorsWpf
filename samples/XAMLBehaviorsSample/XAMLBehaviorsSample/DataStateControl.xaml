@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="XAMLBehaviorsSample.DataStateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XAMLBehaviorsSample"
+             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="7*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Viewbox VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,10">
+                <TextBlock Text="DataStateBehavior" FontSize="40" VerticalAlignment="Stretch" Foreground="DarkGray" />
+            </Viewbox>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" x:Name="MyText" />
+
+                <Button x:Name="sampleStateButton" Grid.Row="0" Content="Sample Button" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0" Background="#FFDDDDDD">
+                    <Button.Resources>
+                        <Style TargetType="Button" >
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid x:Name="BaseGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="DeepPink">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup>
+                                                    <VisualState x:Name="Normal">
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetName="BaseGrid" Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)" To="DeepPink" From="DeepPink" />
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Blue">
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetName="BaseGrid" Storyboard.TargetProperty="(Background).(SolidColorBrush.Color)" To="DarkBlue" From="DarkBlue" Duration="Forever" />
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <Interactivity:Interaction.Behaviors>
+                                                <Interactions:DataStateBehavior Binding="{Binding Text, ElementName=MyText}" Value="" TrueState="Normal" FalseState="Blue" />
+                                            </Interactivity:Interaction.Behaviors>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+
+            <ScrollViewer Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
+                        <TextBlock.Text>DataStateBehavior represents a state that changes the state of an object based on if some condition is true. Typing any value in the text box will cause the button to change color.</TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Behaviors>
+    &lt;Interactions:DataStateBehavior Binding="{Binding Text, ElementName=MyText}" Value="" TrueState="Normal" FalseState="Blue" />
+&lt;/Interactivity:Interaction.Behaviors>
+                    </TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+    </Grid>
+</UserControl>

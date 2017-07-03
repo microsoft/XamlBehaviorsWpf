@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="XAMLBehaviorsSample.GoToStateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XAMLBehaviorsSample"
+             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions"
+             mc:Ignorable="d"
+             d:DesignHeight="600"
+             d:DesignWidth="800">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="7*" />
+        </Grid.RowDefinitions>
+
+        <Viewbox VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,10">
+            <TextBlock Text="GoToStateAction" FontSize="40" VerticalAlignment="Stretch" Foreground="DarkGray" />
+        </Viewbox>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
+                        <TextBlock.Text>
+                            GoToStateAction represents an action that will transition a FrameworkElement (i.e. Button) to a specified VisualState when triggered. 
+                        In this example, clicking the below checkbox will trigger the GoToStateAction to make the sample button transition into a disabled state.
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Triggers>
+    &lt;Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
+        &lt;Interactions:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
+    &lt;/Interactions:DataTrigger>
+    &lt;Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
+        &lt;Interactions:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
+    &lt;/Interactions:DataTrigger>
+&lt;/Interactivity:Interaction.Triggers></TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Grid Grid.Column="0" Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Button x:Name="sampleStateButton" Grid.Row="0" Content="Sample Button" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+                    <Button.Resources>
+                        <Style TargetType="Button" >
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid x:Name="BaseGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="DeepPink">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup>
+                                                    <VisualState x:Name="Normal">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="BaseGrid" Storyboard.TargetProperty="Opacity" To="1.0" From="1.0"/>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Disabled">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetName="BaseGrid" Storyboard.TargetProperty="Opacity" To="0.25" From="1.0"/>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <CheckBox x:Name="checkBox" Content="Toggle Disable State" HorizontalAlignment="Center" VerticalAlignment="Stretch" Grid.Row="1" d:LayoutOverrides="Width, Height" Foreground="DarkGray" FontSize="33.333" VerticalContentAlignment="Center"  >
+                    <CheckBox.Resources>
+                        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Padding" Value="8,5,0,0"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="VerticalContentAlignment" Value="Top"/>
+                            <Setter Property="MinWidth" Value="120"/>
+                            <Setter Property="MinHeight" Value="32"/>
+                        </Style>
+                    </CheckBox.Resources>
+                    <Interactivity:Interaction.Triggers>
+                        <Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
+                            <Interactions:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
+                        </Interactions:DataTrigger>
+                        <Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
+                            <Interactions:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
+                        </Interactions:DataTrigger>
+                    </Interactivity:Interaction.Triggers>
+                    <CheckBox.Style>
+                        <StaticResource ResourceKey="CheckBoxStyle"/>
+                    </CheckBox.Style>
+                </CheckBox>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -21,8 +21,8 @@ using Microsoft.Expression.BlendSDK;
 [assembly: AssemblyVersion(RuntimeVersion.AssemblyVersion)]
 [assembly: AssemblyFileVersion(VersionConstants.AssemblyFileVersion)]
 
-[assembly: System.Windows.Markup.XmlnsPrefix(@"http://schemas.microsoft.com/expression/2010/interactivity", "i")]
-[assembly: System.Windows.Markup.XmlnsDefinition(@"http://schemas.microsoft.com/expression/2010/interactivity", "System.Windows.Interactivity")]
+[assembly: System.Windows.Markup.XmlnsPrefix(@"http://schemas.microsoft.com/expression/2010/interactivity", "Interactions")]
+[assembly: System.Windows.Markup.XmlnsDefinition(@"http://schemas.microsoft.com/expression/2010/interactivity", "Microsoft.Xaml.Interactivity")]
 
 [assembly: SuppressMessage("Microsoft.Performance", "CA1824:MarkAssembliesWithNeutralResourcesLanguage")]
 [assembly: NeutralResourcesLanguage("en", UltimateResourceFallbackLocation.MainAssembly)]

@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="XAMLBehaviorsSample.FluidMoveControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:XAMLBehaviorsSample"
+             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="7*" />
+        </Grid.RowDefinitions>
+
+        <Viewbox VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,0,10">
+            <TextBlock Text="FluidMoveBehavior" FontSize="40" VerticalAlignment="Stretch" Foreground="DarkGray" />
+        </Viewbox>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
+                        <TextBlock.Text>FluidMoveBehavior represents a behavior that allows a component to move smoothly. In this example, pressing the Remove Rectangle button causes the pink square to move from the bottom of the window to the top.</TextBlock.Text>
+                    </TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Behaviors>
+    &lt;Interactions:FluidMoveBehavior Duration="00:00:01" AppliesTo="Children">
+        &lt;Interactions:FluidMoveBehavior.EaseY>
+            &lt;BounceEase EasingMode="EaseOut" Bounces="2" />
+        &lt;/Interactions:FluidMoveBehavior.EaseY>
+    &lt;/Interactions:FluidMoveBehavior>
+&lt;/Interactivity:Interaction.Behaviors>
+                    </TextBlock>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Grid Grid.Column="0" Margin="0,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="Panel" Grid.Row="0">
+                    <Interactivity:Interaction.Behaviors>
+                        <Interactions:FluidMoveBehavior Duration="00:00:01" AppliesTo="Children">
+                            <Interactions:FluidMoveBehavior.EaseY>
+                                <BounceEase EasingMode="EaseOut" Bounces="2" />
+                            </Interactions:FluidMoveBehavior.EaseY>
+                        </Interactions:FluidMoveBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </StackPanel>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Stretch" FlowDirection="LeftToRight">
+                    <Button x:Name="AddButton" Click="AddButton_Click" Content="Add Rectangle" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Margin="0,10,0,10" d:LayoutOverrides="Width, Height" FontSize="20" Foreground="LightGray" Background="DarkGray" BorderBrush="LightYellow" />
+                    <Button x:Name="RemoveButton" Click="RemoveButton_Click" Content="Remove Rectangle" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Stretch" Margin="0,10,0,10" d:LayoutOverrides="Width, Height" FontSize="20" Foreground="LightGray" Background="DarkGray" BorderBrush="LightYellow" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>
