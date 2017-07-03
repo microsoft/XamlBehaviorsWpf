@@ -31,3 +31,7 @@ Buiding Behaviors from Source
  - Install the latest NuGet command-line tool by running **scripts/download-nuget.cmd**
  - Run **scripts/CreateNuGet.cmd** 
    - *(Optional)* Provide a version number to the command line to override the default version 	
+
+# Contributing
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
