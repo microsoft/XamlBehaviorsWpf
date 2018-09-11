@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="AfterBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" />
+
+  <!-- Configuration/global properties -->
+  <PropertyGroup>
+    <CommonMSBuildProperties>
+      Configuration=$(Configuration);
+      ReleaseLabel=$(ReleaseLabel);
+      BuildNumber=#(BuildNumber);
+      BuildRTM=$(BuildRTM);
+    </CommonMSBuildProperties>
+    <OutDir>$(RepositoryRootDirectory)</OutDir>
+    <SignTargetsDependOn>BatchSign</SignTargetsDependOn>
+    <SignTargetsDependOn Condition="'$(SignPackages)' == 'true'">BatchSign;SignOutputNupkgs</SignTargetsDependOn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <Target Name="BatchSign">
+    <ItemGroup>
+      <FilesToSign Include="Microsoft.Xaml.Interactivity.dll">
+        <Authenticode>Microsoft</Authenticode>
+      </FilesToSign>
+      <FilesToSign Include="Microsoft.Xaml.Interactions.dll">
+        <Authenticode>Microsoft</Authenticode>
+      </FilesToSign>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="SignOutputNupkgs">
+    <FilesToSign Include="$(NupkgOutputDirectory)**\*.nupkg">
+      <Authenticode>NuGet</Authenticode>
+    </FilesToSign>
+  </Target>
+
+  <Target Name="AfterBuild" DependsOnTargets="$(SignTargetsDependsOn)"/>
+  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\Microbuild.Core.targets"/>
+</Project>
