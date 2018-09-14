@@ -13,21 +13,17 @@
     <RepositoryRootDirectory>..\..\</RepositoryRootDirectory>
     <OutDir>$(RepositoryRootDirectory)</OutDir>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <SignTargetsDependOn>SignNupkg</SignTargetsDependOn>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <Target Name="SignNupkg">
-    <ItemGroup>
-      <FilesToSign Include="$(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg">
-        <Authenticode>Microsoft</Authenticode>
-      </FilesToSign>
-    </ItemGroup>
-  </Target>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <FilesToSign Include="$(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg">
+      <Authenticode>Microsoft</Authenticode>
+    </FilesToSign>
+  </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="Build">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
@@ -36,6 +32,6 @@
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
     <Message Text="Signing nupkgs under $(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg" />
   </Target>
-  <Target Name="Build" DependsOnTargets="$(SignTargetsDependOn)"/>
+  <Target Name="Build" />
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
