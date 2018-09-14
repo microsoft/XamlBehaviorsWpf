@@ -10,6 +10,7 @@
       BuildNumber=#(BuildNumber);
       BuildRTM=$(BuildRTM);
     </CommonMSBuildProperties>
+    <RepositoryRootDirectory>..\..</RepositoryRootDirectory>
     <OutDir>$(RepositoryRootDirectory)</OutDir>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <SignTargetsDependOn>SignNupkg</SignTargetsDependOn>
@@ -33,6 +34,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props'))" />
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
+    <Message Text="Signing nupkgs under $(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg" />
   </Target>
   <Target Name="Build" DependsOnTargets="$(SignTargetsDependOn)"/>
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
