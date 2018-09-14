@@ -12,8 +12,12 @@
     </CommonMSBuildProperties>
     <OutDir>$(RepositoryRootDirectory)</OutDir>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg">
       <Authenticode>Microsoft</Authenticode>
