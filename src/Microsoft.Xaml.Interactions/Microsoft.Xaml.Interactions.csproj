@@ -130,7 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(OutDir)$(AssemblyName).$(FileExtension)">
-      <Authenticode>Microsfot</Authenticode>
+      <Authenticode>Microsoft</Authenticode>
     </FilesToSign>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
