@@ -11,26 +11,16 @@
       BuildRTM=$(BuildRTM);
     </CommonMSBuildProperties>
     <OutDir>$(RepositoryRootDirectory)</OutDir>
-    <SignTargetsDependOn>BatchSign</SignTargetsDependOn>
-    <SignTargetsDependOn Condition="'$(SignPackages)' == 'true'">BatchSign;SignOutputNupkgs</SignTargetsDependOn>
+    <SignTargetsDependOn>SignOutputNupkgs</SignTargetsDependOn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <Target Name="BatchSign">
+  <Target Name="SignOutputNupkgs">
     <ItemGroup>
-      <FilesToSign Include="Microsoft.Xaml.Interactivity.dll">
-        <Authenticode>Microsoft</Authenticode>
-      </FilesToSign>
-      <FilesToSign Include="Microsoft.Xaml.Interactions.dll">
-        <Authenticode>Microsoft</Authenticode>
+      <FilesToSign Include="$(NupkgOutputDirectory)**\*.nupkg">
+        <Authenticode>NuGet</Authenticode>
       </FilesToSign>
     </ItemGroup>
-  </Target>
-
-  <Target Name="SignOutputNupkgs">
-    <FilesToSign Include="$(NupkgOutputDirectory)**\*.nupkg">
-      <Authenticode>NuGet</Authenticode>
-    </FilesToSign>
   </Target>
 
   <Target Name="AfterBuild" DependsOnTargets="$(SignTargetsDependsOn)"/>
