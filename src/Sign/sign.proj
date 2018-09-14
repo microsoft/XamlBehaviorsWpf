@@ -12,17 +12,20 @@
     </CommonMSBuildProperties>
     <OutDir>$(RepositoryRootDirectory)</OutDir>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <SignTargetsDependOn>SignNupkg</SignTargetsDependOn>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <FilesToSign Include="$(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg">
-      <Authenticode>Microsoft</Authenticode>
-    </FilesToSign>
-  </ItemGroup>
+  <Target Name="SignNupkg">
+    <ItemGroup>
+      <FilesToSign Include="$(RepositoryRootDirectory)**\Microsoft.Xaml.Behaviors.Wpf.*.nupkg">
+        <Authenticode>Microsoft</Authenticode>
+      </FilesToSign>
+    </ItemGroup>
+  </Target>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -31,5 +34,6 @@
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props'))" />
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
   </Target>
+  <Target Name="AfterBuild" DependsOnTargets="$(SignTargetsDependOn)"/>
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
