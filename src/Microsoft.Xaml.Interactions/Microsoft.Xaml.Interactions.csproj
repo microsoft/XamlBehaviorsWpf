@@ -128,6 +128,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <FilesToSign Include="$(OutDir)$(AssemblyName).$(FileExtension)">
+      <Authenticode>Microsfot</Authenticode>
+    </FilesToSign>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
