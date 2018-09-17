@@ -162,13 +162,14 @@
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyMMddHHmm))</CurrentDate>
       <FullPackageVersion>$(PackageVersion).CI-$(CurrentDate)</FullPackageVersion>
-      <NuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(FullPackageVersion).nupkg</NuGetPackOutput>
+      <CINuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(FullPackageVersion).nupkg</CINuGetPackOutput>
+      <OriginalNuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg</OriginalNuGetPackOutput>
     </PropertyGroup>
-    <Move SourceFiles="$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg" DestinationFiles="$(NuGetPackOutput)" />
+    <Move SourceFiles="$(OriginalNuGetPackOutput)" DestinationFiles="$(CINuGetPackOutput)" />
     <ItemGroup>
-      <NuGetPackOutput Include="$(NuGetPackOutput)" />
+      <NuGetPackOutput Remove="@(NuGetPackOutput)" />
+      <NuGetPackOutput Include="$(CINuGetPackOutput)" />
     </ItemGroup>
-    <Message Text="Package version should be $(NuGetPackOutput)" />
   </Target>
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
