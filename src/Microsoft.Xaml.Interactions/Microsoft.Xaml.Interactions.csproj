@@ -165,6 +165,9 @@
       <NuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(FullPackageVersion).nupkg</NuGetPackOutput>
     </PropertyGroup>
     <Move SourceFiles="$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg" DestinationFiles="$(NuGetPackOutput)" />
+    <ItemGroup>
+      <NuGetPackOutput Include="$(NuGetPackOutput)" />
+    </ItemGroup>
     <Message Text="Package version should be $(NuGetPackOutput)" />
   </Target>
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
