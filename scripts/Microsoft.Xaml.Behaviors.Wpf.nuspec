@@ -2,7 +2,7 @@
 <package >
     <metadata>
         <id>Microsoft.Xaml.Behaviors.Wpf</id>
-        <version>0.0.0</version><!--Overridden using -Version switch in nuget pack command-->
+        <version>$version$</version><!--Overridden using -Version switch in nuget pack command-->
         <title>Microsoft.Xaml.Behaviors.Wpf</title>
         <authors>Microsoft</authors>
         <owners>xamlexperiencesteam,Microsoft</owners>

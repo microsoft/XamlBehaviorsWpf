@@ -51,7 +51,7 @@
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
     <PackageOutputPath>..\..\scripts</PackageOutputPath>
     <NuspecFile>..\..\scripts\Microsoft.Xaml.Behaviors.Wpf.nuspec</NuspecFile>
-    <SignNuGetPackageDependsOn>$(SignNuGetPackageDependsOn);TimestampNugetPackage</SignNuGetPackageDependsOn>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -158,18 +158,12 @@
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
     <Error Condition="!Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets'))" />
   </Target>
-  <Target Name="TimestampNugetPackage" AfterTargets="Pack">
+  <Target Name="TimestampNugetPackage">
     <PropertyGroup>
-      <CurrentDate>$([System.DateTime]::Now.ToString(yyyMMddHHmm))</CurrentDate>
-      <FullPackageVersion>$(PackageVersion).CI-$(CurrentDate)</FullPackageVersion>
-      <CINuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(FullPackageVersion).nupkg</CINuGetPackOutput>
-      <OriginalNuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg</OriginalNuGetPackOutput>
+      <CurrentDate>$([System.DateTime]::Now.ToString(yyyMMdd-HHmm))</CurrentDate>
+      <PackageVersion>$(PackageVersion)-CI-$(CurrentDate)</PackageVersion>
+      <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
-    <Move SourceFiles="$(OriginalNuGetPackOutput)" DestinationFiles="$(CINuGetPackOutput)" />
-    <ItemGroup>
-      <NuGetPackOutput Remove="@(NuGetPackOutput)" />
-      <NuGetPackOutput Include="$(CINuGetPackOutput)" />
-    </ItemGroup>
   </Target>
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
