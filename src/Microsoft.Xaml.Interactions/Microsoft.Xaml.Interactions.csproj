@@ -51,7 +51,7 @@
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
     <PackageOutputPath>..\..\scripts</PackageOutputPath>
     <NuspecFile>..\..\scripts\Microsoft.Xaml.Behaviors.Wpf.nuspec</NuspecFile>
-    <NuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg</NuGetPackOutput>
+    <SignNuGetPackageDependsOn>$(SignNuGetPackageDependsOn);TimestampNugetPackage</SignNuGetPackageDependsOn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -157,6 +157,15 @@
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props'))" />
     <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
     <Error Condition="!Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets'))" />
+  </Target>
+  <Target Name="TimestampNugetPackage" AfterTargets="Pack">
+    <PropertyGroup>
+      <CurrentDate>$([System.DateTime]::Now.ToString(yyyMMddHHmm))</CurrentDate>
+      <FullPackageVersion>$(PackageVersion).CI-$(CurrentDate)</FullPackageVersion>
+      <NuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(FullPackageVersion).nupkg</NuGetPackOutput>
+    </PropertyGroup>
+    <Move SourceFiles="$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg" DestinationFiles="$(NuGetPackOutput)" />
+    <Message Text="Package version should be $(NuGetPackOutput)" />
   </Target>
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
