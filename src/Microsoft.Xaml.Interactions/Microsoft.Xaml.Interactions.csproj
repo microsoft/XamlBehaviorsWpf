@@ -49,7 +49,7 @@
     <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=708511</PackageIconUrl>
     <Copyright>Copyright © Microsoft Corporation</Copyright>
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
-    <PackageOutputPath>..\..\out\BehaviorsSdk\bin\AnyCPU\Release</PackageOutputPath>
+    <PackageOutputPath>..\..\scripts</PackageOutputPath>
     <NuspecFile>..\..\scripts\Microsoft.Xaml.Behaviors.Wpf.nuspec</NuspecFile>
     <NuGetPackOutput>$(PackageOutputPath)\Microsoft.Xaml.Behaviors.Wpf.$(PackageVersion).nupkg</NuGetPackOutput>
   </PropertyGroup>
