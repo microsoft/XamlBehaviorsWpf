@@ -5,10 +5,14 @@ XAML Behaviors is an easy-to-use means of adding common and reusable interactivi
 Getting Started
 -------------------
 **Where to get it**
+ - [Source Code](https://github.com/Microsoft/XamlBehaviorsWpf)
 
 **Resources**
+ - [Samples](https://github.com/Microsoft/XamlBehaviorsWpf/tree/master/samples)
 
 **More Info**
+ - [Report a bug](https://github.com/Microsoft/XamlBehaviorsWpf/issues)
+ - [License](https://opensource.org/licenses/MIT)
 
 Using Behaviors SDK
 -------------------
@@ -22,15 +26,12 @@ Buiding Behaviors from Source
 **Clone the Repository**
 
  - Go to 'View' -> 'Team Explorer' -> 'Local Git Repositories' -> 'Clone'
- - Add the XAML Behaviors repository URL (URL GOES HERE) and hit 'Clone'
+ - Add the XAML Behaviors for WPF repository URL (https://github.com/Microsoft/XamlBehaviorsWpf) and hit 'Clone'
 
 **Build and Create XAML Behaviors NuGet**
- - Open the "BehaviorsSDK.sln" solution in Visual Studio
- - Change Build Configuration to Release
- - Build [Ctrl + B]
- - Install the latest NuGet command-line tool by running **scripts/download-nuget.cmd**
- - Run **scripts/CreateNuGet.cmd** 
-   - *(Optional)* Provide a version number to the command line to override the default version 	
+ - Open a Visual Studio developer command prompt
+ - Navigate to the XAML Behaviors for WPF repository
+ - Run msbuild src\Microsoft.Xaml.Interactions\Microsoft.Xaml.Interactions.csproj /t:Pack
 
 # Contributing
 
