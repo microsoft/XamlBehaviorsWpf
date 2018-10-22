@@ -47,7 +47,7 @@
     <PackageLicenseUrl>http://go.microsoft.com/fwlink/?LinkID=708401</PackageLicenseUrl>
     <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkID=651678</PackageProjectUrl>
     <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=708511</PackageIconUrl>
-    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>&#169; Microsoft Corporation. All rights reserved.</Copyright>
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
     <PackageOutputPath>..\..\scripts</PackageOutputPath>
     <NuspecFile>..\..\scripts\Microsoft.Xaml.Behaviors.Wpf.nuspec</NuspecFile>
