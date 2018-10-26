@@ -145,6 +145,7 @@
   <ItemGroup>
     <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
       <Authenticode>Microsoft</Authenticode>
+      <StrongName>67</StrongName>
     </FilesToSign>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
