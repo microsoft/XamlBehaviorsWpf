@@ -39,6 +39,11 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\..\out\$(SolutionName)\bin\AnyCPU\Release\Microsoft.Xaml.Interactivity.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(SignType)' == 'real'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -140,12 +145,13 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FinalPublicKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
       <Authenticode>Microsoft</Authenticode>
-      <StrongName>67</StrongName>
+      <StrongName>72</StrongName>
     </FilesToSign>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

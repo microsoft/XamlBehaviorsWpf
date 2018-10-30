@@ -1,6 +1,6 @@
 ﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" />
-  <Import Project="..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets"  Condition="Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" />
+  <Import Project="..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets" Condition="Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <AssemblyName>Microsoft.Xaml.Interactions</AssemblyName>
@@ -52,6 +52,11 @@
     <PackageOutputPath>..\..\scripts</PackageOutputPath>
     <NuspecFile>..\..\scripts\Microsoft.Xaml.Behaviors.Wpf.nuspec</NuspecFile>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SignType)' == 'real'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs">
@@ -142,12 +147,13 @@
     <AppDesigner Include="obj\Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="FinalPublicKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
       <Authenticode>Microsoft</Authenticode>
-      <StrongName>67</StrongName>
+      <StrongName>72</StrongName>
     </FilesToSign>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
