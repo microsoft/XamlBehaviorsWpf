@@ -85,6 +85,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
+      <Authenticode>Microsoft</Authenticode>
+      <StrongName>72</StrongName>
+    </FilesToSign>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Xaml.Interactions\Microsoft.Xaml.Interactions.csproj">
       <Project>{8620c598-b704-429e-bca5-7e5dde506923}</Project>
       <Name>Interactions.WPF</Name>
