@@ -44,8 +44,8 @@
     <Title>Microsoft.Xaml.Behaviors.Wpf</Title>
     <Authors>Microsoft</Authors>
     <Description>Easily add interactivity to your apps using XAML Behaviors for WPF. Behaviors encapsulate reusable functionalities for elements that can be easily added to your XAML without the need for more imperative code.</Description>
-    <PackageLicenseUrl>http://go.microsoft.com/fwlink/?LinkID=708401</PackageLicenseUrl>
-    <PackageProjectUrl>http://go.microsoft.com/fwlink/?LinkID=651678</PackageProjectUrl>
+    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2038239</PackageLicenseUrl>
+    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2026353</PackageProjectUrl>
     <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=708511</PackageIconUrl>
     <Copyright>&#169; Microsoft Corporation. All rights reserved.</Copyright>
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
