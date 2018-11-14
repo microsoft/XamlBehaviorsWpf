@@ -4,8 +4,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 {
     using System.Windows.Shapes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactions.Core;
-    using Microsoft.Xaml.Interactivity;
+    using Microsoft.Xaml.Behaviors;
+    using Microsoft.Xaml.Behaviors.Core;
     using SysWindows = System.Windows;
 
     [TestClass]

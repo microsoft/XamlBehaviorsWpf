@@ -239,13 +239,9 @@
     <Resource Include="SampleData\SampleDataSource\SampleDataSource_Files\image01.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Microsoft.Xaml.Interactions\Microsoft.Xaml.Interactions.csproj">
+    <ProjectReference Include="..\..\..\src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj">
       <Project>{8620c598-b704-429e-bca5-7e5dde506923}</Project>
-      <Name>Microsoft.Xaml.Interactions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Microsoft.Xaml.Interactivity\Microsoft.Xaml.Interactivity.csproj">
-      <Project>{6992f454-f038-4038-938f-df6cd99a5660}</Project>
-      <Name>Microsoft.Xaml.Interactivity</Name>
+      <Name>Microsoft.Xaml.Behaviors</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

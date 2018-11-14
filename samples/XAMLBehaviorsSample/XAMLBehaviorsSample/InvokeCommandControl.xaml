@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XAMLBehaviorsSample"
              mc:Ignorable="d"
-             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -33,11 +33,11 @@
 
                 <Grid x:Name="Grid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="DeepPink" Grid.Row="0"/>
                 <Button x:Name="button" Content="Click Me" HorizontalAlignment="Stretch" Grid.Row="1" Margin="0,10,0,10">
-                    <Interactivity:Interaction.Triggers>
-                        <Interactivity:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-                            <Interactivity:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
-                        </Interactivity:EventTrigger>
-                    </Interactivity:Interaction.Triggers>
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
+                            <Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
                 </Button>
             </Grid>
 
@@ -46,11 +46,11 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>InvokeCommandAction causes an ICommand to be invoked whenever a particular event occurs. Clicking the button will cause the rectangle to change color.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Triggers>
-    &lt;Interactivity:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-        &lt;Interactivity:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
-    &lt;/Interactivity:EventTrigger>
-&lt;/Interactivity:Interaction.Triggers>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
+    &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
+        &lt;Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
+    &lt;/Behaviors:EventTrigger>
+&lt;/Behaviors:Interaction.Triggers>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

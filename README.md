@@ -31,7 +31,7 @@ Buiding Behaviors from Source
 **Build and Create XAML Behaviors NuGet**
  - Open a Visual Studio developer command prompt
  - Navigate to the XAML Behaviors for WPF repository
- - Run msbuild src\Microsoft.Xaml.Interactions\Microsoft.Xaml.Interactions.csproj /t:Pack
+ - Run msbuild src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj /t:Pack
 
 # Contributing
 

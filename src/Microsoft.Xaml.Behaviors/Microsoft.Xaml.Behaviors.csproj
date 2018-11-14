@@ -1,0 +1,199 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" />
+  <Import Project="..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets" Condition="Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <AssemblyName>Microsoft.Xaml.Behaviors</AssemblyName>
+    <OutputType>Library</OutputType>
+    <SchemaVersion>2.0</SchemaVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ProjectGuid>{8620C598-B704-429E-BCA5-7E5DDE506923}</ProjectGuid>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Blend_ExtensionRoot>Libraries</Blend_ExtensionRoot>
+    <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
+    <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
+    <OutputPath>..\..\out\$(SolutionName)\bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\..\out\$(SolutionName)\obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <OutputPath>..\..\BehaviorsSDK\bin\AnyCPU\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\out\BehaviorsSdk\bin\AnyCPU\Release\Microsoft.Xaml.Behaviors.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- This must come after the inclusion of the targets file -->
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
+    <PackageVersion>0.0.0</PackageVersion>
+    <Title>Microsoft.Xaml.Behaviors.Wpf</Title>
+    <Authors>Microsoft</Authors>
+    <Description>Easily add interactivity to your apps using XAML Behaviors for WPF. Behaviors encapsulate reusable functionalities for elements that can be easily added to your XAML without the need for more imperative code.</Description>
+    <PackageLicenseUrl>https://go.microsoft.com/fwlink/?linkid=2038239</PackageLicenseUrl>
+    <PackageProjectUrl>https://go.microsoft.com/fwlink/?linkid=2026353</PackageProjectUrl>
+    <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=708511</PackageIconUrl>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
+    <PackageOutputPath>..\..\scripts</PackageOutputPath>
+    <NuspecFile>..\..\scripts\Microsoft.Xaml.Behaviors.Wpf.nuspec</NuspecFile>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SignType)' == 'real'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AttachableCollection.cs" />
+    <Compile Include="Behavior.cs" />
+    <Compile Include="BehaviorCollection.cs" />
+    <Compile Include="ComparisonLogic.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Core\ActionCommand.cs" />
+    <Compile Include="Core\CallMethodAction.cs" />
+    <Compile Include="Core\ChangePropertyAction.cs" />
+    <Compile Include="Core\ComparisonCondition.cs" />
+    <Compile Include="Core\ComparisonConditionType.cs" />
+    <Compile Include="Core\ConditionalExpression.cs" />
+    <Compile Include="Core\ConditionBehavior.cs" />
+    <Compile Include="Core\ConditionCollection.cs" />
+    <Compile Include="Core\DataStateBehavior.cs" />
+    <Compile Include="Core\DataStoreChangedTrigger.cs" />
+    <Compile Include="Core\DataTrigger.cs" />
+    <Compile Include="Core\ExtendedVisualStateManager.cs" />
+    <Compile Include="Core\GoToStateAction.cs" />
+    <Compile Include="Core\ICondition.cs" />
+    <Compile Include="Core\LaunchUriOrFileAction.cs" />
+    <Compile Include="Core\PropertyChangedTrigger.cs" />
+    <Compile Include="Core\PrototypingActions.cs" />
+    <Compile Include="Core\RemoveElementAction.cs" />
+    <Compile Include="Core\SetDataStoreValueAction.cs" />
+    <Compile Include="Core\TimerTrigger.cs" />
+    <Compile Include="CustomPropertyValueEditorAttribute.cs" />
+    <Compile Include="DataBindingHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DefaultTriggerAttribute.cs" />
+    <Compile Include="DependencyObjectHelper.cs" />
+    <Compile Include="EventObserver.cs" />
+    <Compile Include="EventTrigger.cs" />
+    <Compile Include="EventTriggerBase.cs" />
+    <Compile Include="ExceptionStringTable.Designer.cs">
+      <SubType>Code</SubType>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionStringTable.resx</DependentUpon>
+    </Compile>
+    <Compile Include="IAttachedObject.cs" />
+    <Compile Include="Input\KeyTrigger.cs" />
+    <Compile Include="Input\TranslateZoomRotateBehavior.cs" />
+    <Compile Include="Interaction.cs" />
+    <Compile Include="InteractionContext.cs" />
+    <Compile Include="InvokeCommandAction.cs" />
+    <Compile Include="ITickTimer.cs" />
+    <Compile Include="Layout\FluidMoveBehavior.cs" />
+    <Compile Include="Layout\MouseDragElementBehavior.cs" />
+    <Compile Include="Media\PlaySoundAction.cs" />
+    <Compile Include="Media\StoryboardAction.cs" />
+    <Compile Include="Media\StoryboardTrigger.cs" />
+    <Compile Include="Media\TransitionEffect.cs" />
+    <Compile Include="NameResolver.cs" />
+    <Compile Include="ScreenType.cs" />
+    <Compile Include="Serializer.cs" />
+    <Compile Include="TargetedTriggerAction.cs" />
+    <Compile Include="TriggerAction.cs" />
+    <Compile Include="TriggerActionCollection.cs" />
+    <Compile Include="TriggerBase.cs" />
+    <Compile Include="TriggerCollection.cs" />
+    <Compile Include="TypeConstraintAttribute.cs" />
+    <Compile Include="TypeConverterHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="VisualStateUtilities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\RuntimeVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="..\Version\Version.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="ExceptionStringTable.resx">
+      <Public>True</Public>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionStringTable.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.XML" />
+    <Reference Include="WindowsBase">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\WindowsBase.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\PresentationCore.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <Private>False</Private>
+      <HintPath>$(WindowsPath)\PresentationFramework.dll</HintPath>
+    </Reference>
+    <AppDesigner Include="obj\Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FinalPublicKey.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
+      <Authenticode>Microsoft</Authenticode>
+      <StrongName>67</StrongName>
+    </FilesToSign>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props'))" />
+    <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets'))" />
+  </Target>
+  <Target Name="TimestampNugetPackage">
+    <PropertyGroup>
+      <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
+      <PackageVersion Condition="'$(TimestampPackage)' == 'true'">$(PackageVersion)-CI-$(CurrentDate)</PackageVersion>
+      <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
+    </PropertyGroup>
+  </Target>
+  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
+</Project>

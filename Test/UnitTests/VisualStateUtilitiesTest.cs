@@ -8,6 +8,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using System.Windows.Controls;
     using System.Windows.Media;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Xaml.Behaviors;
 
     [TestClass]
     public sealed class VisualStateUtilitiesTest

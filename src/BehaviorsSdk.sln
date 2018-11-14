@@ -3,12 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26222.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Interactivity", "Microsoft.Xaml.Interactivity\Microsoft.Xaml.Interactivity.csproj", "{6992F454-F038-4038-938F-DF6CD99A5660}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Interactions", "Microsoft.Xaml.Interactions\Microsoft.Xaml.Interactions.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6992F454-F038-4038-938F-DF6CD99A5660} = {6992F454-F038-4038-938F-DF6CD99A5660}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Behaviors", "Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "..\Test\UnitTests\UnitTests.csproj", "{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}"
 EndProject

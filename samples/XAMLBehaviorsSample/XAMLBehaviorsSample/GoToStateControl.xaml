@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XAMLBehaviorsSample"
-             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              d:DesignHeight="600"
              d:DesignWidth="800">
@@ -33,14 +33,14 @@
                         In this example, clicking the below checkbox will trigger the GoToStateAction to make the sample button transition into a disabled state.
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Triggers>
-    &lt;Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
-        &lt;Interactions:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
-    &lt;/Interactions:DataTrigger>
-    &lt;Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
-        &lt;Interactions:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
-    &lt;/Interactions:DataTrigger>
-&lt;/Interactivity:Interaction.Triggers></TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
+    &lt;Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
+        &lt;Behaviors:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
+    &lt;/Behaviors:DataTrigger>
+    &lt;Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
+        &lt;Behaviors:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
+    &lt;/Behaviors:DataTrigger>
+&lt;/Behaviors:Interaction.Triggers></TextBlock>
                 </StackPanel>
             </ScrollViewer>
 
@@ -92,14 +92,14 @@
                             <Setter Property="MinHeight" Value="32"/>
                         </Style>
                     </CheckBox.Resources>
-                    <Interactivity:Interaction.Triggers>
-                        <Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
-                            <Interactions:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
-                        </Interactions:DataTrigger>
-                        <Interactions:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
-                            <Interactions:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
-                        </Interactions:DataTrigger>
-                    </Interactivity:Interaction.Triggers>
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
+                            <Behaviors:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
+                        </Behaviors:DataTrigger>
+                        <Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
+                            <Behaviors:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
+                        </Behaviors:DataTrigger>
+                    </Behaviors:Interaction.Triggers>
                     <CheckBox.Style>
                         <StaticResource ResourceKey="CheckBoxStyle"/>
                     </CheckBox.Style>

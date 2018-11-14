@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26621.2
+# Blend for Visual Studio Version 16
+VisualStudioVersion = 16.0.28309.66
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XAMLBehaviorsSample", "XAMLBehaviorsSample\XAMLBehaviorsSample.csproj", "{80AD6652-D782-44F9-808E-56E73F4DC6C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Interactions", "..\..\src\Microsoft.Xaml.Interactions\Microsoft.Xaml.Interactions.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Interactivity", "..\..\src\Microsoft.Xaml.Interactivity\Microsoft.Xaml.Interactivity.csproj", "{6992F454-F038-4038-938F-DF6CD99A5660}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Behaviors", "..\..\src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{8620C598-B704-429E-BCA5-7E5DDE506923}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8620C598-B704-429E-BCA5-7E5DDE506923}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8620C598-B704-429E-BCA5-7E5DDE506923}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6992F454-F038-4038-938F-DF6CD99A5660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6992F454-F038-4038-938F-DF6CD99A5660}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6992F454-F038-4038-938F-DF6CD99A5660}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6992F454-F038-4038-938F-DF6CD99A5660}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

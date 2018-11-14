@@ -7,7 +7,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using System.Windows.Controls;
     using System.Windows.Shapes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactivity;
+    using Microsoft.Xaml.Behaviors;
     using WindowsBase = System.Windows;
 
     [TestClass]

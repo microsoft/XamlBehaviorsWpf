@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XAMLBehaviorsSample"
-             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:DataStore="clr-namespace:Expression.Blend.DataStore.DataStore" x:Class="XAMLBehaviorsSample.SetDataValueControl"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
@@ -39,13 +39,13 @@
                 <TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" Background="LightGray" Height="15"
                            Text="{Binding TextBlockText, Mode=OneWay}"/>
                 <TextBox Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5" x:Name="MyText">
-                    <Interactivity:Interaction.Triggers>
-                        <Interactivity:EventTrigger EventName="KeyUp">
-                            <Interactions:SetDataStoreValueAction PropertyName="TextBlockText" 
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="KeyUp">
+                            <Behaviors:SetDataStoreValueAction PropertyName="TextBlockText" 
                                                         TargetObject="{Binding Mode=OneWay, Source={StaticResource DataStore}}" 
                                                         Value="{Binding Text, ElementName=MyText}"/>
-                        </Interactivity:EventTrigger>
-                    </Interactivity:Interaction.Triggers>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
                 </TextBox>
             </Grid>
 
@@ -54,13 +54,13 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>SetDataStoreValueAction sets the value of some property in a data store. Type in the text box on the left, and the text block will automatically populate with the same text.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Triggers>
-    &lt;Interactivity:EventTrigger EventName="KeyUp">
-        &lt;Interactions:SetDataStoreValueAction PropertyName="TextBlockText" 
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
+    &lt;Behaviors:EventTrigger EventName="KeyUp">
+        &lt;Behaviors:SetDataStoreValueAction PropertyName="TextBlockText" 
                     TargetObject="{Binding Mode=OneWay, Source={StaticResource DataStore}}" 
                     Value="{Binding Text, ElementName=MyText}"/>
-        &lt;/Interactivity:EventTrigger>
-&lt;/Interactivity:Interaction.Triggers>
+        &lt;/Behaviors:EventTrigger>
+&lt;/Behaviors:Interaction.Triggers>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

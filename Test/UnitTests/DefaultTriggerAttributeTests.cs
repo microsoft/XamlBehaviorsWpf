@@ -7,7 +7,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using System.Diagnostics;
     using System.Windows.Controls;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactivity;
+    using Microsoft.Xaml.Behaviors;
 
     [TestClass]
     public class DefaultTriggerAttributeTests

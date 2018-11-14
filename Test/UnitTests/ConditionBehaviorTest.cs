@@ -3,8 +3,8 @@
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactions.Core;
-    using Microsoft.Xaml.Interactivity;
+    using Microsoft.Xaml.Behaviors;
+    using Microsoft.Xaml.Behaviors.Core;
 
     [TestClass]
     public class ConditionBehaviorTest

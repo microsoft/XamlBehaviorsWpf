@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XAMLBehaviorsSample"
-             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions" 
+             xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:SampleDataSource="clr-namespace:Expression.Blend.SampleData.SampleDataSource"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
@@ -14,9 +14,9 @@
             <StackPanel>
                 <TextBlock Text="{Binding Property1}"/>
                 <Image Source="{Binding Property2}" HorizontalAlignment="Left" Height="64" Width="64">
-                    <Interactivity:Interaction.Behaviors>
-                        <Interactions:FluidMoveSetTagBehavior Tag="DataContext"/>
-                    </Interactivity:Interaction.Behaviors>
+                    <Behaviors:Interaction.Behaviors>
+                        <Behaviors:FluidMoveSetTagBehavior Tag="DataContext"/>
+                    </Behaviors:Interaction.Behaviors>
                 </Image>
             </StackPanel>
         </DataTemplate>
@@ -41,9 +41,9 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>FluidMoveSetTagBehavior allows you to set a FluidMoveBehavior starting location based on some other item. In this example, a fluid move action will start from the item clicked in the list box.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Behaviors>
-    &lt;Interactions:FluidMoveSetTagBehavior Tag="DataContext"/>
-&lt;/Interactivity:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
+    &lt;Behaviors:FluidMoveSetTagBehavior Tag="DataContext"/>
+&lt;/Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>
@@ -51,9 +51,9 @@
             <Grid Grid.Column="0" Margin="0,0,10,0">
                 <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="428.302" ItemTemplate="{DynamicResource ItemTemplate}" ItemsSource="{Binding Collection}" Margin="10.378,9.905,0,0" VerticalAlignment="Top" Width="124.528"/>
                 <Grid DataContext="{Binding SelectedItem, ElementName=listBox}" Margin="141.509,163.679,39.774,161.321" d:DataContext="{Binding Collection/}">
-                    <Interactivity:Interaction.Behaviors>
-                        <Interactions:FluidMoveBehavior InitialTag="DataContext"/>
-                    </Interactivity:Interaction.Behaviors>
+                    <Behaviors:Interaction.Behaviors>
+                        <Behaviors:FluidMoveBehavior InitialTag="DataContext"/>
+                    </Behaviors:Interaction.Behaviors>
                     <TextBlock Text="{Binding Property1}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="150" />
                     <Image Source="{Binding Property2}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="100" Height="100" Margin="50, 0, 50, 50"/>
                 </Grid>

@@ -4,7 +4,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 {
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactions.Core;
+    using Microsoft.Xaml.Behaviors;
+    using Microsoft.Xaml.Behaviors.Core;
 
     [TestClass]
     public sealed class ComparisonLogicTest

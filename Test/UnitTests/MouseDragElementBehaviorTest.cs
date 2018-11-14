@@ -9,8 +9,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using System.Windows.Shapes;
     using System.Windows.Threading;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactions.Layout;
-    using Microsoft.Xaml.Interactivity;
+    using Microsoft.Xaml.Behaviors;
+    using Microsoft.Xaml.Behaviors.Layout;
 
     [TestClass]
     public class MouseDragElementBehaviorTest

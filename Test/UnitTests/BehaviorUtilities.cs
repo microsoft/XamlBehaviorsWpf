@@ -7,9 +7,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using System.Diagnostics;
     using System.Windows.Markup;
     using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Interactivity;
     using SysWindows = System.Windows;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.Xaml.Behaviors;
 
     sealed class UniqueClass : SysWindows.DependencyObject
     {

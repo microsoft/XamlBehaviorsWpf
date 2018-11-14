@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:XAMLBehaviorsSample"
              mc:Ignorable="d" 
-             xmlns:Interactivity="http://schemas.microsoft.com/expression/2010/interactivity" xmlns:Interactions="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
              d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -27,9 +27,9 @@
 
             <Grid Grid.Column="0" Margin="0,0,10,0">
                 <Rectangle Width="40" Height="40" Fill="DeepPink">
-                    <Interactivity:Interaction.Behaviors>
-                        <Interactions:TranslateZoomRotateBehavior/>
-                    </Interactivity:Interaction.Behaviors>
+                    <Behaviors:Interaction.Behaviors>
+                        <Behaviors:TranslateZoomRotateBehavior/>
+                    </Behaviors:Interaction.Behaviors>
                 </Rectangle>
             </Grid>
 
@@ -38,9 +38,9 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>TranslateZoomRotateBehavior enables traditional touch-based interaction. You can use a touch device to rotate or zoom in on the rectangle to the left. On a non-touch device, this behavior funtions similar to mouse drag.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Interactivity:Interaction.Behaviors>
-    &lt;Interactions:TranslateZoomRotateBehavior/>
-&lt;/Interactivity:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
+    &lt;Behaviors:TranslateZoomRotateBehavior/>
+&lt;/Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

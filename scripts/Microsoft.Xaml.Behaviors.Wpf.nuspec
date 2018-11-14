@@ -17,12 +17,8 @@
     </metadata>
 
     <files>
-        <file target="lib\net45\Microsoft.Xaml.Interactions.dll" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactions.dll" />
-        <file target="lib\net45\Microsoft.Xaml.Interactions.pdb" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactions.pdb" />
-        <file target="lib\net45\Microsoft.Xaml.Interactions.xml" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactions.xml" />
-
-        <file target="lib\net45\Microsoft.Xaml.Interactivity.dll" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactivity.dll" />
-        <file target="lib\net45\Microsoft.Xaml.Interactivity.pdb" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactivity.pdb" />
-        <file target="lib\net45\Microsoft.Xaml.Interactivity.xml" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Interactivity.xml" />
+        <file target="lib\net45\Microsoft.Xaml.Behaviors.dll" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Behaviors.dll" />
+        <file target="lib\net45\Microsoft.Xaml.Behaviors.pdb" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Behaviors.pdb" />
+        <file target="lib\net45\Microsoft.Xaml.Behaviors.xml" src="..\out\BehaviorsSDK\bin\AnyCPU\Release\Microsoft.Xaml.Behaviors.xml" />
     </files>
 </package>
