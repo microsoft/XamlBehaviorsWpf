@@ -135,18 +135,16 @@ csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 
 ###############################
-
 # Naming Conventions: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-naming-conventions
-
 ###############################
-
-
 
 # Style Definitions
 dotnet_naming_style.pascal_case_style.capitalization               = pascal_case
 dotnet_naming_style.camel_case_style.capitalization                = camel_case
 dotnet_naming_style.I_prefix_style.required_prefix                 = I
 dotnet_naming_style.I_prefix_style.capitalization                  = pascal_case
+dotnet_naming_style.underscore_prefix_style.required_prefix        = _
+dotnet_naming_style.underscore_prefix_style.capitalization         = camel_case
 
 # Use PascalCase for constant fields
 dotnet_naming_rule.constant_fields_should_be_pascal_case.severity  = warning
@@ -174,12 +172,12 @@ dotnet_naming_symbols.any_interface.applicable_kinds               = interface
 dotnet_naming_rule.general_naming.severity                         = warning
 dotnet_naming_rule.general_naming.symbols                          = general
 dotnet_naming_rule.general_naming.style                            = pascal_case_style
-dotnet_naming_symbols.general.applicable_kinds                     = class,struct,enum,property,method,event,delegate
+dotnet_naming_symbols.general.applicable_kinds                     = class,struct,enum,property,method,event,delegate,namespace,type_parameter
 dotnet_naming_symbols.general.applicable_accessibilities           = *
 
 # Everything else is camelCase
 dotnet_naming_rule.everything_else_naming.severity                 = warning
 dotnet_naming_rule.everything_else_naming.symbols                  = everything_else
 dotnet_naming_rule.everything_else_naming.style                    = camel_case_style
-dotnet_naming_symbols.everything_else.applicable_kinds             = parameter,field
+dotnet_naming_symbols.everything_else.applicable_kinds             = *
 dotnet_naming_symbols.everything_else.applicable_accessibilities   = *
