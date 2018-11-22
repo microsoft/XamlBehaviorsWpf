@@ -112,9 +112,9 @@ namespace Microsoft.Xaml.Behaviors.Layout
         internal static Dictionary<object, TagData> TagDictionary = new Dictionary<object, TagData>();
 
         // timer data to help purge objects we should no longer be tracking
-        private static DateTime NextToLastPurgeTick = DateTime.MinValue;
-        private static DateTime LastPurgeTick = DateTime.MinValue;
-        private static TimeSpan MinTickDelta = TimeSpan.FromSeconds(0.5);
+        private static DateTime nextToLastPurgeTick = DateTime.MinValue;
+        private static DateTime lastPurgeTick = DateTime.MinValue;
+        private static TimeSpan minTickDelta = TimeSpan.FromSeconds(0.5);
 
         protected override void OnAttached()
         {
@@ -141,13 +141,13 @@ namespace Microsoft.Xaml.Behaviors.Layout
             // If we got a notification when elements were deleted, we would maintain a far shorter list of tags whose FEs were deleted since the last purge.
             // 
             // We might also be able to use a WeakReference solution here, but this one is pretty cheap as it only runs when Layout is running anyway.
-            if (DateTime.Now - LastPurgeTick >= MinTickDelta)
+            if (DateTime.Now - lastPurgeTick >= minTickDelta)
             {
                 List<object> deadTags = null;
 
                 foreach (KeyValuePair<object, TagData> pair in TagDictionary)
                 {
-                    if (pair.Value.Timestamp < NextToLastPurgeTick)
+                    if (pair.Value.Timestamp < nextToLastPurgeTick)
                     {
                         if (deadTags == null)
                         {
@@ -165,8 +165,8 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     }
                 }
 
-                NextToLastPurgeTick = LastPurgeTick;
-                LastPurgeTick = DateTime.Now;
+                nextToLastPurgeTick = lastPurgeTick;
+                lastPurgeTick = DateTime.Now;
             }
 
             if (this.AppliesTo == FluidMoveScope.Self)
@@ -351,9 +351,9 @@ namespace Microsoft.Xaml.Behaviors.Layout
         /// Identity tag used to detect element motion between containers.
         /// </summary>
 
-        private static readonly DependencyProperty InitialIdentityTagProperty = DependencyProperty.RegisterAttached("InitialIdentityTag", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-        private static object GetInitialIdentityTag(DependencyObject obj) { return obj.GetValue(InitialIdentityTagProperty); }
-        private static void SetInitialIdentityTag(DependencyObject obj, object value) { obj.SetValue(InitialIdentityTagProperty, value); }
+        private static readonly DependencyProperty initialIdentityTagProperty = DependencyProperty.RegisterAttached("InitialIdentityTag", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
+        private static object GetInitialIdentityTag(DependencyObject obj) { return obj.GetValue(initialIdentityTagProperty); }
+        private static void SetInitialIdentityTag(DependencyObject obj, object value) { obj.SetValue(initialIdentityTagProperty, value); }
 
         /// <summary>
         /// Flag that says whether elements are allowed to float above their containers (in a Popup or Adorner) when changing containers.
@@ -397,25 +397,25 @@ namespace Microsoft.Xaml.Behaviors.Layout
         /// <summary>
         /// Remember the popup/adorner being used, in case of element motion between containers when FloatAbove is true.
         /// </summary>
-        private static readonly DependencyProperty OverlayProperty = DependencyProperty.RegisterAttached("Overlay", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-        private static object GetOverlay(DependencyObject obj) { return obj.GetValue(OverlayProperty); }
-        private static void SetOverlay(DependencyObject obj, object value) { obj.SetValue(OverlayProperty, value); }
+        private static readonly DependencyProperty overlayProperty = DependencyProperty.RegisterAttached("Overlay", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
+        private static object GetOverlay(DependencyObject obj) { return obj.GetValue(overlayProperty); }
+        private static void SetOverlay(DependencyObject obj, object value) { obj.SetValue(overlayProperty, value); }
 
         /// <summary>
         /// Opacity cache used when floating a Popup.
         /// </summary>
-        private static readonly DependencyProperty CacheDuringOverlayProperty = DependencyProperty.RegisterAttached("CacheDuringOverlay", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-        private static object GetCacheDuringOverlay(DependencyObject obj) { return obj.GetValue(CacheDuringOverlayProperty); }
-        private static void SetCacheDuringOverlay(DependencyObject obj, object value) { obj.SetValue(CacheDuringOverlayProperty, value); }
+        private static readonly DependencyProperty cacheDuringOverlayProperty = DependencyProperty.RegisterAttached("CacheDuringOverlay", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
+        private static object GetCacheDuringOverlay(DependencyObject obj) { return obj.GetValue(cacheDuringOverlayProperty); }
+        private static void SetCacheDuringOverlay(DependencyObject obj, object value) { obj.SetValue(cacheDuringOverlayProperty, value); }
 
         /// <summary>
         /// Marks the animation transform.
         /// </summary>
-        private static readonly DependencyProperty HasTransformWrapperProperty = DependencyProperty.RegisterAttached("HasTransformWrapper", typeof(bool), typeof(FluidMoveBehavior), new PropertyMetadata(false));
-        private static bool GetHasTransformWrapper(DependencyObject obj) { return (bool)obj.GetValue(HasTransformWrapperProperty); }
-        private static void SetHasTransformWrapper(DependencyObject obj, bool value) { obj.SetValue(HasTransformWrapperProperty, value); }
+        private static readonly DependencyProperty hasTransformWrapperProperty = DependencyProperty.RegisterAttached("HasTransformWrapper", typeof(bool), typeof(FluidMoveBehavior), new PropertyMetadata(false));
+        private static bool GetHasTransformWrapper(DependencyObject obj) { return (bool)obj.GetValue(hasTransformWrapperProperty); }
+        private static void SetHasTransformWrapper(DependencyObject obj, bool value) { obj.SetValue(hasTransformWrapperProperty, value); }
 
-        private static Dictionary<object, Storyboard> TransitionStoryboardDictionary = new Dictionary<object, Storyboard>();
+        private static Dictionary<object, Storyboard> transitionStoryboardDictionary = new Dictionary<object, Storyboard>();
 
         protected override bool ShouldSkipInitialLayout
         {
@@ -432,10 +432,10 @@ namespace Microsoft.Xaml.Behaviors.Layout
             // If we are going to use a binding for the tag, make sure we have one set up.
             if (this.InitialTag == TagType.DataContext)
             {
-                object tagValue = child.ReadLocalValue(InitialIdentityTagProperty);
+                object tagValue = child.ReadLocalValue(initialIdentityTagProperty);
                 if (!(tagValue is BindingExpression))
                 {
-                    child.SetBinding(InitialIdentityTagProperty, new Binding(this.InitialTagPath));
+                    child.SetBinding(initialIdentityTagProperty, new Binding(this.InitialTagPath));
                 }
             }
         }
@@ -490,7 +490,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
             FrameworkElement originalChild = child;
 
             if ((!FluidMoveBehavior.IsEmptyRect(previousRect) && !FluidMoveBehavior.IsEmptyRect(newTagData.ParentRect)) && (!IsClose(previousRect.Left, newTagData.ParentRect.Left) || !IsClose(previousRect.Top, newTagData.ParentRect.Top)) ||
-                (child != tagData.Child && TransitionStoryboardDictionary.ContainsKey(tag)))
+                (child != tagData.Child && transitionStoryboardDictionary.ContainsKey(tag)))
             {
                 Rect currentRect = previousRect;
                 bool forceFloatAbove = false;
@@ -498,7 +498,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                 // If this element was animating before, append its current transform to the start position and kill the old animation.
                 // Note that in an overlay scenario, the animation is on the image in the overlay.
                 Storyboard oldTransitionStoryboard = null;
-                if (TransitionStoryboardDictionary.TryGetValue(tag, out oldTransitionStoryboard))
+                if (transitionStoryboardDictionary.TryGetValue(tag, out oldTransitionStoryboard))
                 {
                     object tagOverlay = GetOverlay(tagData.Child);
                     AdornerContainer adornerContainer = (AdornerContainer)tagOverlay;
@@ -522,7 +522,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                         currentRect = transform.TransformBounds(currentRect);
                     }
 
-                    TransitionStoryboardDictionary.Remove(tag);
+                    transitionStoryboardDictionary.Remove(tag);
                     oldTransitionStoryboard.Stop();
                     oldTransitionStoryboard = null;
                     RemoveTransform(elementWithTransform);
@@ -530,7 +530,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     if (tagOverlay != null)
                     {
                         System.Windows.Documents.AdornerLayer.GetAdornerLayer(root).Remove(adornerContainer);
-                        TransferLocalValue(tagData.Child, FluidMoveBehavior.CacheDuringOverlayProperty, FrameworkElement.RenderTransformProperty);
+                        TransferLocalValue(tagData.Child, FluidMoveBehavior.cacheDuringOverlayProperty, FrameworkElement.RenderTransformProperty);
                         SetOverlay(tagData.Child, null);
                     }
                 }
@@ -566,7 +566,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     //image.Source = bitmap;
 
                     // can't animate this or it will flash, have to set the value outright
-                    TransferLocalValue(child, FrameworkElement.RenderTransformProperty, FluidMoveBehavior.CacheDuringOverlayProperty);
+                    TransferLocalValue(child, FrameworkElement.RenderTransformProperty, FluidMoveBehavior.cacheDuringOverlayProperty);
                     child.RenderTransform = new TranslateTransform(-10000, -10000);
                     canvas.RenderTransform = new TranslateTransform(10000, 10000);
 
@@ -579,14 +579,14 @@ namespace Microsoft.Xaml.Behaviors.Layout
                 Storyboard transitionStoryboard = CreateTransitionStoryboard(child, usingBeforeLoaded, ref parentRect, ref currentRect);
 
                 // Put this storyboard in the running dictionary so we can detect reentrancy
-                TransitionStoryboardDictionary.Add(tag, transitionStoryboard);
+                transitionStoryboardDictionary.Add(tag, transitionStoryboard);
 
                 transitionStoryboard.Completed += delegate (object sender, EventArgs e)
                 {
                     Storyboard currentlyRunningStoryboard;
-                    if (TransitionStoryboardDictionary.TryGetValue(tag, out currentlyRunningStoryboard) && currentlyRunningStoryboard == transitionStoryboard)
+                    if (transitionStoryboardDictionary.TryGetValue(tag, out currentlyRunningStoryboard) && currentlyRunningStoryboard == transitionStoryboard)
                     {
-                        TransitionStoryboardDictionary.Remove(tag);
+                        transitionStoryboardDictionary.Remove(tag);
                         transitionStoryboard.Stop();
                         RemoveTransform(child);
                         child.InvalidateMeasure();
@@ -594,7 +594,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                         if (overlay != null)
                         {
                             System.Windows.Documents.AdornerLayer.GetAdornerLayer(root).Remove((AdornerContainer)overlay);
-                            TransferLocalValue(originalChild, FluidMoveBehavior.CacheDuringOverlayProperty, FrameworkElement.RenderTransformProperty);
+                            TransferLocalValue(originalChild, FluidMoveBehavior.cacheDuringOverlayProperty, FrameworkElement.RenderTransformProperty);
                             SetOverlay(originalChild, null);
                         }
                     }
@@ -769,7 +769,10 @@ namespace Microsoft.Xaml.Behaviors.Layout
         protected override Size ArrangeOverride(Size finalSize)
         {
             if (this.child != null)
+            {
                 this.child.Arrange(new Rect(finalSize));
+            }
+
             return finalSize;
         }
 
@@ -790,9 +793,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
         protected override Visual GetVisualChild(int index)
         {
-            if (index == 0 && this.child != null)
-                return this.child;
-            return base.GetVisualChild(index);
+            return index == 0 && this.child != null ? this.child : base.GetVisualChild(index);
         }
     }
 }
