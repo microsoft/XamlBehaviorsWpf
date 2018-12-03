@@ -276,22 +276,22 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             return true;
         }
 
-        private EventHandler CanExecuteChangedHandler;
+        private EventHandler canExecuteChangedHandler;
 
         event EventHandler ICommand.CanExecuteChanged
         {
             add
             {
-                lock (this.CanExecuteChangedHandler)
+                lock (this.canExecuteChangedHandler)
                 {
-                    this.CanExecuteChangedHandler += value;
+                    this.canExecuteChangedHandler += value;
                 }
             }
             remove
             {
-                lock (this.CanExecuteChangedHandler)
+                lock (this.canExecuteChangedHandler)
                 {
-                    this.CanExecuteChangedHandler -= value;
+                    this.canExecuteChangedHandler -= value;
                 }
             }
         }

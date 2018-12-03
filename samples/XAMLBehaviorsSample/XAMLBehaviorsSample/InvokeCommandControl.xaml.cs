@@ -24,7 +24,9 @@ namespace XAMLBehaviorsSample
     {
         private InvokeCommandControl control;
 
+#pragma warning disable CS0067 // The event is never used
         public event EventHandler CanExecuteChanged;
+#pragma warning restore CS0067 // The event is never used
 
         public ChangeColorCommand(InvokeCommandControl control)
         {
