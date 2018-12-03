@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.1</PackageVersion>
     <Title>Microsoft.Xaml.Behaviors.Wpf</Title>
     <Authors>Microsoft</Authors>
     <Description>Easily add interactivity to your apps using XAML Behaviors for WPF. Behaviors encapsulate reusable functionalities for elements that can be easily added to your XAML without the need for more imperative code.</Description>

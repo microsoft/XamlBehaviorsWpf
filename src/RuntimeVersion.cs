@@ -4,6 +4,6 @@ namespace Microsoft.Xaml.Behaviors
 {
     internal static class RuntimeVersion
     {
-        public const string AssemblyVersion = "1.0.0.0";
+        public const string AssemblyVersion = "1.0.1.0";
     }
 }
