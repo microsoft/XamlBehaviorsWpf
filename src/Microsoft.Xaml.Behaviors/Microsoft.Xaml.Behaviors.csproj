@@ -1,6 +1,4 @@
 ﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" />
-  <Import Project="..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets" Condition="Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <AssemblyName>Microsoft.Xaml.Behaviors</AssemblyName>
@@ -171,7 +169,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FinalPublicKey.snk" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
@@ -179,15 +176,17 @@
       <StrongName>67</StrongName>
     </FilesToSign>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MicroBuild.Core">
+      <Version>0.3.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NuGet.Build.Tasks.Pack">
+      <Version>4.8.0</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.props'))" />
-    <Error Condition="!Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets'))" />
-    <Error Condition="!Exists('..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NuGet.Build.Tasks.Pack.4.8.0\build\NuGet.Build.Tasks.Pack.targets'))" />
-  </Target>
   <Target Name="TimestampNugetPackage">
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
@@ -195,5 +194,4 @@
       <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>
-  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
