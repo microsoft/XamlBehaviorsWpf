@@ -1,6 +1,6 @@
 # XamlBehaviors for WPF
 
-XAML Behaviors is an easy-to-use means of adding common and reusable interactivity to your WPF applications with minimal code. Use of XAML Behaviors is governed by the MIT License
+XAML Behaviors is an easy-to-use means of adding common and reusable interactivity to your WPF applications with minimal code. Use of XAML Behaviors is governed by the MIT License. We are working with a [committee of Microsoft MVP leaders](https://github.com/Microsoft/XamlBehaviorsWpf/wiki/About-the-Team) to guide the Behaviors project and evaluate incoming pull requests.
 
 Getting Started
 -------------------
