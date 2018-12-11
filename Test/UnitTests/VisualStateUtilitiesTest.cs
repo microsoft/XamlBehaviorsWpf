@@ -9,6 +9,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using System.Windows.Media;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.Xaml.Behaviors;
+#if NETCOREAPP3_0
+    using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.STAExtensions.STATestClassAttribute;
+#endif
 
     [TestClass]
     public sealed class VisualStateUtilitiesTest

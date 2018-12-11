@@ -11,6 +11,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.Xaml.Behaviors;
     using Microsoft.Xaml.Behaviors.Layout;
+#if NETCOREAPP3_0
+    using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.STAExtensions.STATestClassAttribute;
+#endif
 
     [TestClass]
     public class MouseDragElementBehaviorTest

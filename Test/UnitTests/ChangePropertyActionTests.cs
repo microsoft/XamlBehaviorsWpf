@@ -9,6 +9,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.Xaml.Behaviors;
     using Microsoft.Xaml.Behaviors.Core;
+#if NETCOREAPP3_0
+    using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.STAExtensions.STATestClassAttribute;
+#endif
 
     [TestClass]
     public class ChangePropertyActionTests
@@ -228,7 +231,11 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
 
         [TestMethod]
+#if NETCOREAPP3_0
+        [ExpectedException(typeof(ArgumentException))]
+#else
         [ExpectedException(typeof(Exception))]
+#endif
         public void Invoke_InvalidPropertyFormatString_ThrowsException()
         {
             Rectangle rectangle = CreateRectangle();
@@ -705,6 +712,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             Assert.AreEqual(target.StringProperty, "True", "StringProperty should have been assigned True as a string");
         }
-        #endregion
+#endregion
     }
 }
