@@ -16,7 +16,6 @@
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
     <PackageProjectUrl>https://github.com/Microsoft/XamlBehaviorsWpf</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/Microsoft/XamlBehaviorsWpf/master/LICENSE</PackageLicenseUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
