@@ -21,13 +21,9 @@
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputPath>..\..\BehaviorsSDK\bin\AnyCPU\$(Configuration)\</OutputPath>
-    <PackageOutputPath>..\..\BehaviorsSDK\bin\AnyCPU\$(Configuration)\</PackageOutputPath>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
-    <IntermediateOutputPath>..\..\out\$(SolutionName)\obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   
