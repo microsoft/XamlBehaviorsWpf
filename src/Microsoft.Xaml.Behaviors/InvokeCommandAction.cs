@@ -71,7 +71,6 @@ namespace Microsoft.Xaml.Behaviors
         /// <summary>
         /// Gets or sets the IValueConverter that is used to convert the EventArgs passed to the Command as a parameter.
         /// </summary>
-        /// <remarks>This property is only used if <see cref="PassEventArgsToCommand"/> is true.</remarks>
         public IValueConverter EventArgsConverter
         {
             get { return (IValueConverter)GetValue(EventArgsConverterProperty); }
@@ -81,7 +80,6 @@ namespace Microsoft.Xaml.Behaviors
         /// <summary>
         /// Gets or sets the parameter that is passed to the EventArgsConverter.
         /// </summary>
-        /// <remarks>This property is only used if <see cref="PassEventArgsToCommand"/> is true and <see cref="EventArgsConverter"/> has a value.</remarks>
         public object EventArgsConverterParameter
         {
             get { return (object)GetValue(EventArgsConverterParameterProperty); }
