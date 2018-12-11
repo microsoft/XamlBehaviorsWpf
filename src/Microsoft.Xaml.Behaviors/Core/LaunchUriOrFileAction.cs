@@ -37,7 +37,6 @@ namespace Microsoft.Xaml.Behaviors.Core
             {
                 var processStartInfo = new ProcessStartInfo(this.Path)
                 {
-                    CreateNoWindow = true,
                     UseShellExecute = true
                 };
                 Process.Start(processStartInfo);
