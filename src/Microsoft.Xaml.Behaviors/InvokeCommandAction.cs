@@ -115,14 +115,23 @@ namespace Microsoft.Xaml.Behaviors
                 if (command != null)
                 {
                     object commandParameter = this.CommandParameter;
+
+                    //if no CommandParameter has been provided, let's check the EventArgsParameterPath
                     if (commandParameter == null && !string.IsNullOrWhiteSpace(this.EventArgsParameterPath))
                     {
                         commandParameter = GetEventArgsPropertyPathValue(parameter);
                     }
 
+                    //next let's see if an event args converter has been supplied
+                    if (commandParameter == null && this.EventArgsConverter != null)
+                    {
+                        commandParameter = this.EventArgsConverter.Convert(parameter, typeof(object), EventArgsConverterParameter, CultureInfo.CurrentCulture);
+                    }
+
+                    //last resort, let see if they want to force the event args to be passed as a parameter
                     if (commandParameter == null && this.PassEventArgsToCommand)
                     {
-                        commandParameter = EventArgsConverter == null ? parameter : EventArgsConverter.Convert(parameter, typeof(object), EventArgsConverterParameter, CultureInfo.CurrentCulture);
+                        commandParameter = parameter;
                     }
 
                     if (command.CanExecute(commandParameter))

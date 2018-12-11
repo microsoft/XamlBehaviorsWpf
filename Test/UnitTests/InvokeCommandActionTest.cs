@@ -2,7 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
+    using System;
+    using System.Globalization;
     using System.Windows.Controls;
+    using System.Windows.Data;
     using System.Windows.Input;
     using System.Windows.Shapes;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -145,6 +148,43 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             }
         }
 
+        internal class EventArgsMock : EventArgs
+        {
+            public PocoMock Poco { get; set; }
+
+            public string Name { get; set; } = "default";
+
+            public EventArgsMock() { }
+
+            public EventArgsMock(string name)
+            {
+                Name = name;
+                Poco = new PocoMock { Name = name, Child = new PocoMock { Name = name } };
+            }
+        }
+
+        internal class PocoMock
+        {
+            public PocoMock Child { get; set; }
+            public string Name { get; set; }
+        }
+
+        internal class EventArgsMockConverter : IValueConverter
+        {
+            public object Parameter { get; private set; }
+
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                Parameter = parameter;
+                return "convertedValue";
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         #endregion
 
         #region Test methods
@@ -196,6 +236,119 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             trigger.FireStubTrigger();
             Assert.IsTrue(commandHelper.Successful, "Command should have been invoked, CommandName should not have been invoked.");
+        }
+
+        [TestMethod]
+        public void Invoke_ActionWithEventArgsParameterPath_PassesEventArgsValueToCommand()
+        {
+            StubBehavior stubBehavior = CreateStubBehavior();
+
+            InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
+            invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
+            invokeCommandAction.EventArgsParameterPath = "Name";
+
+            StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
+
+            var args = new EventArgsMock();
+            trigger.FireStubTrigger(args);
+
+            Assert.IsNotNull(stubBehavior.LastParameter);
+            Assert.AreEqual("default", stubBehavior.LastParameter);
+        }
+
+        [TestMethod]
+        public void Invoke_ActionWithEventArgsParameterPath_PassesNestedEventArgsValueToCommand()
+        {
+            StubBehavior stubBehavior = CreateStubBehavior();
+
+            InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
+            invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
+            invokeCommandAction.EventArgsParameterPath = "Poco.Child.Name";
+
+            StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
+
+            var args = new EventArgsMock("value");
+            trigger.FireStubTrigger(args);
+
+            Assert.IsNotNull(stubBehavior.LastParameter);
+            Assert.AreEqual("value", stubBehavior.LastParameter);
+        }
+
+        [TestMethod]
+        public void Invoke_ActionWithEventArgsConverter_PassesConvertedValueToCommand()
+        {
+            StubBehavior stubBehavior = CreateStubBehavior();
+
+            InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
+            invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
+            invokeCommandAction.EventArgsConverter = new EventArgsMockConverter();
+
+            StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
+
+            var args = new EventArgsMock();
+            trigger.FireStubTrigger(args);
+
+            Assert.IsNotNull(stubBehavior.LastParameter);
+            Assert.AreEqual("convertedValue", stubBehavior.LastParameter);
+        }
+
+        [TestMethod]
+        public void Invoke_ActionWithEventArgsConverterWithParameter_PassesConvertedValueToCommand()
+        {
+            StubBehavior stubBehavior = CreateStubBehavior();
+
+            InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
+            invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
+
+            var converterParameter = CreateButton();
+            var converter = new EventArgsMockConverter();
+            invokeCommandAction.EventArgsConverter = converter;
+            invokeCommandAction.EventArgsConverterParameter = converterParameter;
+
+            StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
+
+            var args = new EventArgsMock();
+            trigger.FireStubTrigger(args);
+
+            Assert.IsNotNull(stubBehavior.LastParameter);
+            Assert.AreEqual("convertedValue", stubBehavior.LastParameter);
+            Assert.AreEqual(converterParameter, converter.Parameter);
+        }
+
+        [TestMethod]
+        public void Invoke_ActionWithPassEventArgsToCommandFalse_DoesNotPassEventArgsToCommand()
+        {
+            StubBehavior stubBehavior = CreateStubBehavior();
+
+            InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
+            invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
+            invokeCommandAction.PassEventArgsToCommand = false;
+
+            StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
+
+            var args = new EventArgsMock();
+            trigger.FireStubTrigger(args);
+
+            Assert.IsNull(stubBehavior.LastParameter);
+        }
+
+        [TestMethod]
+        public void Invoke_ActionWithPassEventArgsToCommandTrue_PassesEventArgsToCommand()
+        {
+            StubBehavior stubBehavior = CreateStubBehavior();
+
+            InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
+            invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
+            invokeCommandAction.PassEventArgsToCommand = true;
+            
+            StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
+
+            var args = new EventArgsMock();
+
+            trigger.FireStubTrigger(args);
+
+            Assert.IsNotNull(stubBehavior.LastParameter);
+            Assert.IsInstanceOfType(stubBehavior.LastParameter, typeof(EventArgsMock));
         }
         #endregion
     }
