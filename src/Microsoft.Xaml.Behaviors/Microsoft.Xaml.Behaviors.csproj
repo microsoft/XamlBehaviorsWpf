@@ -24,6 +24,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(SignType)' == 'real'">
@@ -33,7 +34,7 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net452'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
