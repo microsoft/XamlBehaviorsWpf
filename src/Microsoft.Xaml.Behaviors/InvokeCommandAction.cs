@@ -8,6 +8,7 @@ namespace Microsoft.Xaml.Behaviors
     using System.Windows;
     using System.Windows.Input;
     using System.Globalization;
+    using System.Windows.Data;
 
     /// <summary>
     /// Executes a specified ICommand when invoked.
@@ -18,6 +19,8 @@ namespace Microsoft.Xaml.Behaviors
 
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(InvokeCommandAction), null);
         public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(InvokeCommandAction), null);
+        public static readonly DependencyProperty EventArgsConverterProperty = DependencyProperty.Register("EventArgsConverter", typeof(IValueConverter), typeof(InvokeCommandAction), new PropertyMetadata(null));
+        public static readonly DependencyProperty EventArgsConverterParameterProperty = DependencyProperty.Register("EventArgsConverterParameter", typeof(object), typeof(InvokeCommandAction), new PropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the name of the command this action should invoke.
@@ -65,6 +68,31 @@ namespace Microsoft.Xaml.Behaviors
         }
 
         /// <summary>
+        /// Gets or sets the IValueConverter that is used to convert the EventArgs passed to the Command as a parameter.
+        /// </summary>
+        /// <remarks>This property is only used if <see cref="PassEventArgsToCommand"/> is true.</remarks>
+        public IValueConverter EventArgsConverter
+        {
+            get { return (IValueConverter)GetValue(EventArgsConverterProperty); }
+            set { SetValue(EventArgsConverterProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the parameter that is passed to the EventArgsConverter.
+        /// </summary>
+        /// <remarks>This property is only used if <see cref="PassEventArgsToCommand"/> is true and <see cref="EventArgsConverter"/> has a value.</remarks>
+        public object EventArgsConverterParameter
+        {
+            get { return (object)GetValue(EventArgsConverterParameterProperty); }
+            set { SetValue(EventArgsConverterParameterProperty, value); }
+        }
+
+        /// <summary>
+        /// Specifies whether the EventArgs of the event that triggered this action should be passed to the Command as a parameter.
+        /// </summary>
+        public bool PassEventArgsToCommand { get; set; }
+
+        /// <summary>
         /// Invokes the action.
         /// </summary>
         /// <param name="parameter">The parameter to the action. If the action does not require a parameter, the parameter may be set to a null reference.</param>
@@ -76,12 +104,17 @@ namespace Microsoft.Xaml.Behaviors
 
                 if (command != null)
                 {
-                    if (command.CanExecute(this.CommandParameter))
+                    var commandParameter = this.CommandParameter;
+                    if (commandParameter == null && PassEventArgsToCommand)
                     {
-                        command.Execute(this.CommandParameter);
+                        commandParameter = EventArgsConverter == null ? parameter : EventArgsConverter.Convert(parameter, typeof(object), EventArgsConverterParameter, CultureInfo.CurrentCulture);
                     }
-                }
-                else
+
+                    if (command.CanExecute(commandParameter))
+                    {
+                        command.Execute(commandParameter);
+                    }
+                } else
                 {
                     Debug.WriteLine(ExceptionStringTable.CommandDoesNotExistOnBehaviorWarningMessage, this.CommandName, this.AssociatedObject.GetType().Name);
                 }
@@ -95,8 +128,7 @@ namespace Microsoft.Xaml.Behaviors
             if (this.Command != null)
             {
                 command = this.Command;
-            }
-            else if (this.AssociatedObject != null)
+            } else if (this.AssociatedObject != null)
             {
                 // todo jekelly 06/09/08: we could potentially cache some or all of this information if needed, updating when AssociatedObject changes
                 Type associatedObjectType = this.AssociatedObject.GetType();
