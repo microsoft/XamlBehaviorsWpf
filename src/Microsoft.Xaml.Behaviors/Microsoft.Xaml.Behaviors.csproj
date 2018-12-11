@@ -15,17 +15,17 @@
     <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=708511</PackageIconUrl>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
-    <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/Microsoft/XamlBehaviorsWpf</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/Microsoft/XamlBehaviorsWpf/master/LICENSE</PackageLicenseUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>..\..\BehaviorsSDK\bin\AnyCPU\$(Configuration)\</OutputPath>
     <PackageOutputPath>..\..\BehaviorsSDK\bin\AnyCPU\$(Configuration)\</PackageOutputPath>
-    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
     <IntermediateOutputPath>..\..\out\$(SolutionName)\obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
