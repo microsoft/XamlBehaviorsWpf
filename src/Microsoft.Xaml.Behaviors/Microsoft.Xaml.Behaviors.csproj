@@ -26,13 +26,6 @@
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(SignType)' == 'real'">
-    <DefineConstants>SIGN_REAL;$(DefineConstants)</DefineConstants>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>true</DelaySign>
-  </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
