@@ -122,9 +122,9 @@ namespace Microsoft.Xaml.Behaviors
 
         private class CacheNode
         {
-            public DependencyProperty[] Properties;
+            public DependencyProperty[] Properties { get; set; }
 
-            public CacheNode Base;
+            public CacheNode Base { get; set; }
         }
     }
 }
