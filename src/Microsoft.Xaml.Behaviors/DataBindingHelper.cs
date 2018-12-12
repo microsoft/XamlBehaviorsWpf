@@ -14,7 +14,7 @@ namespace Microsoft.Xaml.Behaviors
     /// </summary>
     internal static class DataBindingHelper
     {
-        private static Dictionary<Type, IList<DependencyProperty>> DependenciesPropertyCache = new Dictionary<Type, IList<DependencyProperty>>();
+        private static Dictionary<Type, CacheNode> dpCache = new Dictionary<Type, CacheNode>();
         /// <summary>
         /// Ensure that all DP on an action with binding expressions are
         /// up to date. DataTrigger fires during data binding phase. Since
@@ -25,46 +25,72 @@ namespace Microsoft.Xaml.Behaviors
         /// </summary>
         public static void EnsureDataBindingUpToDateOnMembers(DependencyObject dpObject)
         {
-            IList<DependencyProperty> dpList = null;
+            CacheNode node = GetDependencyPropertyCacheNode(dpObject.GetType());
 
-            if (!DependenciesPropertyCache.TryGetValue(dpObject.GetType(), out dpList))
+            do
             {
-                dpList = new List<DependencyProperty>();
-                Type type = dpObject.GetType();
-
-                while (type != null)
+                if (node.Properties != null)
                 {
-                    FieldInfo[] fieldInfos = type.GetFields();
-
-                    foreach (FieldInfo fieldInfo in fieldInfos)
+                    foreach (DependencyProperty property in node.Properties)
                     {
-                        if (fieldInfo.IsPublic &&
-                            fieldInfo.FieldType == typeof(DependencyProperty))
-                        {
-                            DependencyProperty property = fieldInfo.GetValue(null) as DependencyProperty;
-                            if (property != null)
-                            {
-                                dpList.Add(property);
-                            }
-                        }
+                        EnsureBindingUpToDate(dpObject, property);
+                    }
+                }
+
+                node = node.Base;
+
+            } while (node != null);
+        }
+        private static CacheNode GetDependencyPropertyCacheNode(Type type)
+        {
+            if (dpCache.TryGetValue(type, out CacheNode node))
+            {
+                return node;
+            }
+
+            dpCache[type] = node = new CacheNode();
+
+            CacheNode currentNode = node;
+            List<DependencyProperty> list = new List<DependencyProperty>();
+
+            while (type != typeof(DependencyObject))
+            {
+                list.Clear();
+
+                IEnumerable<FieldInfo> fields = type.GetTypeInfo().DeclaredFields;
+
+                foreach (FieldInfo field in fields)
+                {
+                    if (!field.IsPublic || !field.IsStatic || field.FieldType != typeof(DependencyProperty))
+                    {
+                        continue;
                     }
 
-                    type = type.BaseType;
+                    if (field.GetValue(null) is DependencyProperty dependencyProperty)
+                    {
+                        list.Add(dependencyProperty);
+                    }
                 }
-                // Cache the list of DP for performance gain
-                DependenciesPropertyCache[dpObject.GetType()] = dpList;
+
+                if (list.Count > 0)
+                {
+                    currentNode.Properties = list.ToArray();
+                }
+
+                type = type.BaseType;
+
+                if (!dpCache.TryGetValue(type, out CacheNode baseNode))
+                {
+                    currentNode.Base = new CacheNode();
+                    dpCache[type] = currentNode = currentNode.Base;
+                } else
+                {
+                    currentNode.Base = baseNode;
+                    break;
+                }
             }
 
-            if (dpList == null)
-            {
-                return;
-            }
-
-            foreach (DependencyProperty property in dpList)
-            {
-                EnsureBindingUpToDate(dpObject, property);
-            }
-
+            return node;
         }
 
         /// <summary>
@@ -94,5 +120,11 @@ namespace Microsoft.Xaml.Behaviors
             }
         }
 
+        private class CacheNode
+        {
+            public DependencyProperty[] Properties;
+
+            public CacheNode Base;
+        }
     }
 }
