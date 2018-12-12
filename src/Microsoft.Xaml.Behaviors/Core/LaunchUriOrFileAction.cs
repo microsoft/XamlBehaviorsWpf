@@ -35,7 +35,11 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             if (this.AssociatedObject != null && !string.IsNullOrEmpty(this.Path))
             {
-                Process.Start(this.Path);
+                var processStartInfo = new ProcessStartInfo(this.Path)
+                {
+                    UseShellExecute = true
+                };
+                Process.Start(processStartInfo);
             }
         }
     }
