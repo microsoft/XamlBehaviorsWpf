@@ -39,10 +39,5 @@ using Microsoft.Xaml.Behaviors;
 
 [assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Microsoft.Xaml.Behaviors")]
 
-#if SIGN_REAL
-[assembly: AssemblyKeyFile("FinalPublicKey.snk")]
-[assembly: AssemblyDelaySign(true)]
-[assembly: InternalsVisibleTo("UnitTests, PublicKey='002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293")]
-#else
-[assembly: InternalsVisibleTo("UnitTests")]
-#endif
+[assembly: AssemblyKeyFile("Behaviors.snk")]
+[assembly: InternalsVisibleTo("UnitTests, PublicKey='0024000004800000940000000602000000240000525341310004000001000100498b170c45b6574cbbef75e7c48850d2f243bb6efe64116ae4f88f67525f3465870e37aa01d974ad064d5347e3e126f87f5ecb365ddc3e4c21af19fcf0375b3212433057245a4a071ca16354ec8542b487d80eb202959f819ed657eab3874585364ffe0d29e0337245ce885c4d62f8d1906b0b40ab4311970c0a21f2cad7d7be")]
