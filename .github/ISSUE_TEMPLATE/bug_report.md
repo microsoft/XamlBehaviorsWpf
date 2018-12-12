@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Did you find a bug? Create a bug report so we can fix it.
 title: ''
 labels: ''
 assignees: ''
@@ -24,8 +24,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Version [e.g. 22]
+ - Version with bug:
+ - Last known working version:
 
 **Reproduction Link**
 <!-- REQUIRED - Please upload or provide a link to a reproduction case. If no reproduction sample is included, this issue may be closed or ignored until a sample has been provided -->
