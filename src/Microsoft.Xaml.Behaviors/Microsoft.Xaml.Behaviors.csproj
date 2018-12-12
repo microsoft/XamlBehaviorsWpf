@@ -26,13 +26,6 @@
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(SignType)' == 'real'">
-    <DefineConstants>SIGN_REAL;$(DefineConstants)</DefineConstants>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>true</DelaySign>
-  </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net452'">
     <Reference Include="System" />
