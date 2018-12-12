@@ -24,8 +24,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Behaviors.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   
   <ItemGroup>
