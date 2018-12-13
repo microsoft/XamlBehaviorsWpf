@@ -71,6 +71,7 @@ namespace Microsoft.Xaml.Behaviors
         /// <summary>
         /// Gets or sets the IValueConverter that is used to convert the EventArgs passed to the Command as a parameter.
         /// </summary>
+        /// <remarks>If the <see cref="Command"/> or <see cref="EventArgsParameterPath"/> properties are set, this property is ignored.</remarks>
         public IValueConverter EventArgsConverter
         {
             get { return (IValueConverter)GetValue(EventArgsConverterProperty); }
@@ -89,6 +90,7 @@ namespace Microsoft.Xaml.Behaviors
         /// <summary>
         /// Gets or sets the parameter path used to extract a value from an <see cref= "EventArgs" /> property to pass to the Command as a parameter.
         /// </summary>
+        /// <remarks>If the <see cref="Command"/> propert is set, this property is ignored.</remarks>
         public string EventArgsParameterPath
         {
             get { return (string)GetValue(EventArgsParameterPathProperty); }
@@ -98,6 +100,7 @@ namespace Microsoft.Xaml.Behaviors
         /// <summary>
         /// Specifies whether the EventArgs of the event that triggered this action should be passed to the Command as a parameter.
         /// </summary>
+        /// <remarks>If the <see cref="Command"/>, <see cref="EventArgsParameterPath"/>, or <see cref="EventArgsConverter"/> properties are set, this property is ignored.</remarks>
         public bool PassEventArgsToCommand { get; set; }
 
         /// <summary>
