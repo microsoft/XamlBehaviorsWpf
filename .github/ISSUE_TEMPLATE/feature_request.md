@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Do you have a great idea for a new featur? Suggest an idea and let's talk about
+about: Do you have a great idea for a new feature? Suggest an idea and let's talk about
   it.
 title: ''
 labels: ''
