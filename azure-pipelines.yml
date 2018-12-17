@@ -7,11 +7,10 @@ pr:
 - rel/*
 
 pool:
-  vmImage: 'VS2017-Win2016'
+  vmImage: VS2017-Win2016
 
 variables:
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  buildConfiguration: Release
 
 steps:
 - task: DotNetCoreCLI@2
@@ -33,7 +32,7 @@ steps:
     maximumCpuCount: true
 
 - task: MSBuild@1
-  displayName: Pack Solution
+  displayName: Pack Behaviors
   inputs:
     solution: src/**/*.csproj
     msbuildArguments: /t:Pack /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)
@@ -41,6 +40,7 @@ steps:
     maximumCpuCount: true
 
 - task: VSTest@2
+  displayName: Run Tests
   inputs:
     testAssemblyVer2: |
      Test\**\$(BuildConfiguration)\*test*.dll
