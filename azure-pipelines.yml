@@ -14,6 +14,16 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: custom
+    custom: tool
+    arguments: install --tool-path . nbgv
+  displayName: Install NBGV tool
+    
+- script: nbgv cloud
+  displayName: Set Version
+
 - task: MSBuild@1
   displayName: Build Solution
   inputs:
