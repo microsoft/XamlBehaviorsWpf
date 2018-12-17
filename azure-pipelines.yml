@@ -10,24 +10,36 @@ pool:
   vmImage: 'VS2017-Win2016'
 
 variables:
-  solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@0
-
-- task: NuGetCommand@2
+- task: MSBuild@1
+  displayName: Build Solution
   inputs:
-    restoreSolution: '$(solution)'
+    solution: src/*.sln
+    msbuildArguments: /restore
+    configuration: $(buildConfiguration)
+    maximumCpuCount: true
 
-- task: VSBuild@1
+- task: MSBuild@1
+  displayName: Pack Solution
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    solution: src/**/*.csproj
+    msbuildArguments: /t:Pack /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)
+    configuration: $(buildConfiguration)
+    maximumCpuCount: true
 
 - task: VSTest@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    testAssemblyVer2: |
+     Test\**\$(BuildConfiguration)\*test*.dll
+     !**\obj\**
+    configuration: $(buildConfiguration)
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifacts
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactType: container
+    artifactName: artifacts
