@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Xaml.Behaviors", "src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Test\UnitTests\UnitTests.csproj", "{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{885870A2-3918-4F67-84B3-2440B1CED6EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F2E8EEE0-DC5D-4407-84B0-E0B576E1EB01}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5914AFF1-6BC5-4748-96E1-74A434598778}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XAMLBehaviorsSample", "samples\XAMLBehaviorsSample\XAMLBehaviorsSample.csproj", "{80AD6652-D782-44F9-808E-56E73F4DC6C6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8620C598-B704-429E-BCA5-7E5DDE506923}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80AD6652-D782-44F9-808E-56E73F4DC6C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80AD6652-D782-44F9-808E-56E73F4DC6C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80AD6652-D782-44F9-808E-56E73F4DC6C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80AD6652-D782-44F9-808E-56E73F4DC6C6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8620C598-B704-429E-BCA5-7E5DDE506923} = {885870A2-3918-4F67-84B3-2440B1CED6EB}
+		{76E3CE29-A9BC-4417-8224-CE18C6FE51B4} = {F2E8EEE0-DC5D-4407-84B0-E0B576E1EB01}
+		{80AD6652-D782-44F9-808E-56E73F4DC6C6} = {5914AFF1-6BC5-4748-96E1-74A434598778}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CE568162-14E0-4A06-892B-DB8C8452253F}
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = BlendSdk.vsmdi
+	EndGlobalSection
+EndGlobal

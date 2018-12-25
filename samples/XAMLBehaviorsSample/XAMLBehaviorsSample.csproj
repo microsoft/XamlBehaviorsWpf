@@ -239,7 +239,7 @@
     <Resource Include="SampleData\SampleDataSource\SampleDataSource_Files\image01.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj">
+    <ProjectReference Include="..\..\src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj">
       <Project>{8620c598-b704-429e-bca5-7e5dde506923}</Project>
       <Name>Microsoft.Xaml.Behaviors</Name>
     </ProjectReference>
