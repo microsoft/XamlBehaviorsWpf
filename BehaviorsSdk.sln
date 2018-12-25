@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Xaml.Behaviors", "src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj", "{8620C598-B704-429E-BCA5-7E5DDE506923}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Test\UnitTests\UnitTests.csproj", "{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Xaml.Behaviors.UnitTests", "tests\Microsoft.Xaml.Behaviors.UnitTests\Microsoft.Xaml.Behaviors.UnitTests.csproj", "{76E3CE29-A9BC-4417-8224-CE18C6FE51B4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{885870A2-3918-4F67-84B3-2440B1CED6EB}"
 EndProject
