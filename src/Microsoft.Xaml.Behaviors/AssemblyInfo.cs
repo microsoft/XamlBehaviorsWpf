@@ -30,7 +30,7 @@ using Microsoft.Xaml.Behaviors;
 [assembly: SuppressMessage("Microsoft.Performance", "CA1824:MarkAssembliesWithNeutralResourcesLanguage")]
 [assembly: System.Resources.NeutralResourcesLanguage("en", System.Resources.UltimateResourceFallbackLocation.MainAssembly)]
 
-[assembly: XmlnsPrefix(@"http://schemas.microsoft.com/xaml/behaviors", "Interactions")]
+[assembly: XmlnsPrefix(@"http://schemas.microsoft.com/xaml/behaviors", "b")]
 [assembly: XmlnsDefinition(@"http://schemas.microsoft.com/xaml/behaviors", "Microsoft.Xaml.Behaviors")]
 [assembly: XmlnsDefinition(@"http://schemas.microsoft.com/xaml/behaviors", "Microsoft.Xaml.Behaviors.Core")]
 [assembly: XmlnsDefinition(@"http://schemas.microsoft.com/xaml/behaviors", "Microsoft.Xaml.Behaviors.Input")]
