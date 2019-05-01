@@ -71,9 +71,9 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>DataStateBehavior represents a state that changes the state of an object based on if some condition is true. Typing any value in the text box will cause the button to change color.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
-    &lt;Behaviors:DataStateBehavior Binding="{Binding Text, ElementName=MyText}" Value="" TrueState="Normal" FalseState="Blue" />
-&lt;/Behaviors:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Behaviors>
+    <Behaviors:DataStateBehavior Binding="{Binding Text, ElementName=MyText}" Value="" TrueState="Normal" FalseState="Blue" />
+</Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

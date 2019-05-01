@@ -46,11 +46,11 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>InvokeCommandAction causes an ICommand to be invoked whenever a particular event occurs. Clicking the button will cause the rectangle to change color.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
-    &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-        &lt;Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
-    &lt;/Behaviors:EventTrigger>
-&lt;/Behaviors:Interaction.Triggers>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Triggers>
+    <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
+        <Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
+    </Behaviors:EventTrigger>
+</Behaviors:Interaction.Triggers>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

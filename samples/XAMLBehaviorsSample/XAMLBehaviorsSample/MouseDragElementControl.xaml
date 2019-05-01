@@ -38,9 +38,9 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>MouseDragElementBehavior allows you to drag an element around the screen. Click on the pink box to drag it around the screen.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
-    &lt;Behaviors:MouseDragElementBehavior/>
-&lt;/Behaviors:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Behaviors>
+    <Behaviors:MouseDragElementBehavior/>
+</Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

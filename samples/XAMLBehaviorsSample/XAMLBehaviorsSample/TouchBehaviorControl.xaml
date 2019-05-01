@@ -38,9 +38,9 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>TranslateZoomRotateBehavior enables traditional touch-based interaction. You can use a touch device to rotate or zoom in on the rectangle to the left. On a non-touch device, this behavior funtions similar to mouse drag.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
-    &lt;Behaviors:TranslateZoomRotateBehavior/>
-&lt;/Behaviors:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Behaviors>
+    <Behaviors:TranslateZoomRotateBehavior/>
+</Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

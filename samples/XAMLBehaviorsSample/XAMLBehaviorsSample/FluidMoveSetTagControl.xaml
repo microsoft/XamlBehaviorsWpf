@@ -41,9 +41,9 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>FluidMoveSetTagBehavior allows you to set a FluidMoveBehavior starting location based on some other item. In this example, a fluid move action will start from the item clicked in the list box.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
-    &lt;Behaviors:FluidMoveSetTagBehavior Tag="DataContext"/>
-&lt;/Behaviors:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Behaviors>
+    <Behaviors:FluidMoveSetTagBehavior Tag="DataContext"/>
+</Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

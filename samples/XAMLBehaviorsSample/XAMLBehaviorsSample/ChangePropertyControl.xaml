@@ -31,13 +31,13 @@
                     In this example, clicking the button triggers the ChangePropertyAction that changes the color property of the rectangle.
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Button x:Name="YellowButton">
-    &lt;Behaviors:Interaction.Triggers>
-        &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=YellowButton}">
-             &lt;Behaviors:ChangePropertyAction TargetObject="{Binding ElementName=DataTriggerRectangle}" PropertyName="Fill" Value="{StaticResource PaleYellowBrush}"/>
-        &lt;/Behaviors:EventTrigger>
-    &lt;/Behaviors:Interaction.Triggers>
-&lt;/Button></TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Button x:Name="YellowButton">
+    <Behaviors:Interaction.Triggers>
+        <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=YellowButton}">
+             <Behaviors:ChangePropertyAction TargetObject="{Binding ElementName=DataTriggerRectangle}" PropertyName="Fill" Value="{StaticResource PaleYellowBrush}"/>
+        </Behaviors:EventTrigger>
+    </Behaviors:Interaction.Triggers>
+</Button></TextBlock>
                 </StackPanel>
             </ScrollViewer>
 

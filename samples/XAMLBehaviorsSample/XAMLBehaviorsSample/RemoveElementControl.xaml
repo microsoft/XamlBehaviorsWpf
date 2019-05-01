@@ -27,11 +27,11 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>The RemoveElementAction causes some element to be removed when an action is met. Click on the button to the left to remove the pink rectangle.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
-    &lt;Behaviors:EventTrigger EventName="Click">
-        &lt;Behaviors:RemoveElementAction TargetName="Rectangle" />
-    &lt;/Behaviors:EventTrigger>
-&lt;/Behaviors:Interaction.Triggers>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Triggers>
+    <Behaviors:EventTrigger EventName="Click">
+        <Behaviors:RemoveElementAction TargetName="Rectangle" />
+    </Behaviors:EventTrigger>
+</Behaviors:Interaction.Triggers>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

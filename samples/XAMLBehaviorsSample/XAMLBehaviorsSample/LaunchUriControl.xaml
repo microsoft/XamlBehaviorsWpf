@@ -38,11 +38,11 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>LaunchFileOrUriAction opens a file or website using the default program. Clicking the button will open the Visual Studio home page.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
-    &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-        &lt;Behaviors:LaunchUriOrFileAction Path="https://www.visualstudio.com" />
-    &lt;/Behaviors:EventTrigger>
-&lt;/Behaviors:Interaction.Triggers>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Triggers>
+    <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
+        <Behaviors:LaunchUriOrFileAction Path="https://www.visualstudio.com" />
+    </Behaviors:EventTrigger>
+</Behaviors:Interaction.Triggers>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

@@ -43,11 +43,11 @@
                     In this example, clicking the button triggers the ControlStoryboardAction to toggle playing and pausing a storyboard that changes the size of the rectangle.
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
-    &lt;Behaviors:EventTrigger EventName="Click">
-        &lt;Behaviors:ControlStoryboardAction Storyboard="{StaticResource StoryboardSample}" ControlStoryboardOption="TogglePlayPause"/>
-    &lt;/Behaviors:EventTrigger>
-&lt;/Behaviors:Interaction.Triggers></TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Triggers>
+    <Behaviors:EventTrigger EventName="Click">
+        <Behaviors:ControlStoryboardAction Storyboard="{StaticResource StoryboardSample}" ControlStoryboardOption="TogglePlayPause"/>
+    </Behaviors:EventTrigger>
+</Behaviors:Interaction.Triggers></TextBlock>
                 </StackPanel>
             </ScrollViewer>
 

@@ -38,11 +38,11 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,10,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>PlaySoundAction plays a sound. Clicking the button will let loose a cheer.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
-    &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-        &lt;Behaviors:PlaySoundAction Source="../../Assets/Cheer.mp3" />
-    &lt;/Behaviors:EventTrigger>
-&lt;/Behaviors:Interaction.Triggers>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Triggers>
+    <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
+        <Behaviors:PlaySoundAction Source="../../Assets/Cheer.mp3" />
+    </Behaviors:EventTrigger>
+</Behaviors:Interaction.Triggers>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

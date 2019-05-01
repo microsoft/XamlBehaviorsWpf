@@ -27,13 +27,13 @@
                     <TextBlock TextWrapping="Wrap" Margin="10,0,0,0" FontSize="20" Foreground="DarkGray">
                         <TextBlock.Text>FluidMoveBehavior represents a behavior that allows a component to move smoothly. In this example, pressing the Remove Rectangle button causes the pink square to move from the bottom of the window to the top.</TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Behaviors>
-    &lt;Behaviors:FluidMoveBehavior Duration="00:00:01" AppliesTo="Children">
-        &lt;Behaviors:FluidMoveBehavior.EaseY>
-            &lt;BounceEase EasingMode="EaseOut" Bounces="2" />
-        &lt;/Behaviors:FluidMoveBehavior.EaseY>
-    &lt;/Behaviors:FluidMoveBehavior>
-&lt;/Behaviors:Interaction.Behaviors>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Behaviors>
+    <Behaviors:FluidMoveBehavior Duration="00:00:01" AppliesTo="Children">
+        <Behaviors:FluidMoveBehavior.EaseY>
+            <BounceEase EasingMode="EaseOut" Bounces="2" />
+        </Behaviors:FluidMoveBehavior.EaseY>
+    </Behaviors:FluidMoveBehavior>
+</Behaviors:Interaction.Behaviors>
                     </TextBlock>
                 </StackPanel>
             </ScrollViewer>

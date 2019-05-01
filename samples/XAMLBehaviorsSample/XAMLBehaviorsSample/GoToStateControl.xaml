@@ -33,14 +33,14 @@
                         In this example, clicking the below checkbox will trigger the GoToStateAction to make the sample button transition into a disabled state.
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
-    &lt;Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
-        &lt;Behaviors:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
-    &lt;/Behaviors:DataTrigger>
-    &lt;Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
-        &lt;Behaviors:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
-    &lt;/Behaviors:DataTrigger>
-&lt;/Behaviors:Interaction.Triggers></TextBlock>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Behaviors:Interaction.Triggers>
+    <Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="False">
+        <Behaviors:GoToStateAction StateName="Normal" TargetObject="{Binding ElementName=sampleStateButton}"/>
+    </Behaviors:DataTrigger>
+    <Behaviors:DataTrigger Binding="{Binding IsChecked, ElementName=checkBox}" Value="True">
+        <Behaviors:GoToStateAction StateName="Disabled" TargetObject="{Binding ElementName=sampleStateButton}"/>
+    </Behaviors:DataTrigger>
+</Behaviors:Interaction.Triggers></TextBlock>
                 </StackPanel>
             </ScrollViewer>
 

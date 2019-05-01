@@ -31,13 +31,13 @@
                         In this example, Pressing the button triggers the CallMethodAction to invoke a method that increments the number displayed.
                         </TextBlock.Text>
                     </TextBlock>
-                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Button x:Name="button">
-    &lt;Behaviors:Interaction.Triggers>
-        &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-            &lt;Behaviors:CallMethodAction TargetObject="{Binding}" MethodName="IncrementCount"/>
-        &lt;/Behaviors:EventTrigger>
-    &lt;/Behaviors:Interaction.Triggers>
-&lt;/Button>
+                    <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve"><Button x:Name="button">
+    <Behaviors:Interaction.Triggers>
+        <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
+            <Behaviors:CallMethodAction TargetObject="{Binding}" MethodName="IncrementCount"/>
+        </Behaviors:EventTrigger>
+    </Behaviors:Interaction.Triggers>
+</Button>
                 </TextBlock>
                 </StackPanel>
             </ScrollViewer>
