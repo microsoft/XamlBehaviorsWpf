@@ -1,0 +1,55 @@
+trigger:
+- master
+- rel/*
+
+pr:
+- master
+- rel/*
+
+pool:
+  vmImage: VS2017-Win2016
+
+variables:
+  buildConfiguration: Release
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: custom
+    custom: tool
+    arguments: install --tool-path . nbgv
+  displayName: Install NBGV tool
+    
+- script: nbgv cloud
+  displayName: Set Version
+
+- task: MSBuild@1
+  displayName: Build Solution
+  inputs:
+    solution: src/*.sln
+    msbuildArguments: /restore
+    configuration: $(buildConfiguration)
+    maximumCpuCount: true
+
+- task: MSBuild@1
+  displayName: Pack Behaviors
+  inputs:
+    solution: src/**/*.csproj
+    msbuildArguments: /t:Pack /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)
+    configuration: $(buildConfiguration)
+    maximumCpuCount: true
+
+- task: VSTest@2
+  displayName: Run Tests
+  inputs:
+    testAssemblyVer2: |
+     Test\**\$(BuildConfiguration)\*test*.dll
+     !**\obj\**
+    configuration: $(buildConfiguration)
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifacts
+  inputs:
+    pathToPublish: $(Build.ArtifactStagingDirectory)
+    artifactType: container
+    artifactName: artifacts
