@@ -21,7 +21,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-
+    
     <Compile Update="ExceptionStringTable.Designer.cs">
       <SubType>Code</SubType>
       <AutoGen>True</AutoGen>
@@ -56,6 +56,18 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
     <PackageReference Include="Nerdbank.GitVersioning" Version=" 2.3.38" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Xaml.Behaviors.DesignTools\Microsoft.Xaml.Behaviors.DesignTools.csproj" >
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup Label="Package">
+    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45" Pack="true" />
+    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45" Pack="true" />
   </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ pr:
 - rel/*
 
 pool:
-  vmImage: VS2017-Win2016
+  vmImage: windows-2019
 
 variables:
   buildConfiguration: Release
@@ -29,15 +29,15 @@ steps:
     solution: src/*.sln
     msbuildArguments: /restore
     configuration: $(buildConfiguration)
-    maximumCpuCount: true
+    maximumCpuCount: false
 
 - task: MSBuild@1
   displayName: Pack Behaviors
   inputs:
-    solution: src/**/*.csproj
+    solution: src/**/Microsoft.Xaml.Behaviors.csproj
     msbuildArguments: /t:Pack /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)
     configuration: $(buildConfiguration)
-    maximumCpuCount: true
+    maximumCpuCount: false
 
 - task: VSTest@2
   displayName: Run Tests
