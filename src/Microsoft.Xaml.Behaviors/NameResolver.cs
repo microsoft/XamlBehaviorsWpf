@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved. 
+﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 namespace Microsoft.Xaml.Behaviors
 {
@@ -11,7 +11,7 @@ namespace Microsoft.Xaml.Behaviors
     /// <summary>
     /// Provides data about which objects were affected when resolving a name change.
     /// </summary>
-    internal sealed class NameResolvedEventArgs : EventArgs
+    public sealed class NameResolvedEventArgs : EventArgs
     {
         private object oldObject;
         private object newObject;
@@ -37,7 +37,7 @@ namespace Microsoft.Xaml.Behaviors
     /// Helper class to handle the logic of resolving a TargetName into a Target element
     /// based on the context provided by a host element.
     /// </summary>
-    internal sealed class NameResolver
+    public sealed class NameResolver
     {
         private string name;
         private FrameworkElement nameScopeReferenceElement;

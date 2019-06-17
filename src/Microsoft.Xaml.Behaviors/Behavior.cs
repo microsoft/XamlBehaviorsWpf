@@ -47,7 +47,7 @@ namespace Microsoft.Xaml.Behaviors
         private Type associatedType;
         private DependencyObject associatedObject;
 
-        internal event EventHandler AssociatedObjectChanged;
+        public event EventHandler AssociatedObjectChanged;
 
         /// <summary>
         /// The type to which this behavior can be attached.

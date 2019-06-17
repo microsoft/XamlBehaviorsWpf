@@ -82,7 +82,7 @@ namespace Microsoft.Xaml.Behaviors
 
         public static readonly DependencyProperty ActionsProperty = ActionsPropertyKey.DependencyProperty;
 
-        internal TriggerBase(Type associatedObjectTypeConstraint)
+        public TriggerBase(Type associatedObjectTypeConstraint)
         {
             this.associatedObjectTypeConstraint = associatedObjectTypeConstraint;
             TriggerActionCollection newCollection = new TriggerActionCollection();
