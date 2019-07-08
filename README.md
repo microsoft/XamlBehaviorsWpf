@@ -5,6 +5,7 @@ XAML Behaviors is an easy-to-use means of adding common and reusable interactivi
 Getting Started
 -------------------
 **Where to get it**
+ - [![NuGet version](https://badge.fury.io/nu/Microsoft.Xaml.Behaviors.Wpf.svg)](https://badge.fury.io/nu/Microsoft.Xaml.Behaviors.Wpf)
  - [Source Code](https://github.com/Microsoft/XamlBehaviorsWpf)
 
 **Resources**
