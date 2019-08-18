@@ -16,6 +16,7 @@ Getting Started
 
 Using Behaviors SDK
 -------------------
+To use behaviors in your project, add the [Microsoft.Xaml.Behaviors.Wpf](https://www.nuget.org/packages/Microsoft.Xaml.Behaviors.Wpf) NuGet package to your project.
 
 Buiding Behaviors from Source
 ------------------------------
