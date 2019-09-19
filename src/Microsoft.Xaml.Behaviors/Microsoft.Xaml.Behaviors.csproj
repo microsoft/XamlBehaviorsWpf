@@ -20,6 +20,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
+    <AssemblyOriginatorKeyFile>C:\Users\DAVAUGH\source\repos\XamlBehaviors\Wpf\src\Behaviors.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -59,7 +62,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Xaml.Behaviors.DesignTools\Microsoft.Xaml.Behaviors.DesignTools.csproj" >
+    <ProjectReference Include="..\Microsoft.Xaml.Behaviors.DesignTools\Microsoft.Xaml.Behaviors.DesignTools.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
     </ProjectReference>
