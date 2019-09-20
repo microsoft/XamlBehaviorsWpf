@@ -92,8 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
-      <Authenticode>Microsoft</Authenticode>
-      <StrongName>67</StrongName>
+      <Authenticode>.Net v4.5+</Authenticode>
     </FilesToSign>
   </ItemGroup>
   <Target Name="TimestampNugetPackage">
