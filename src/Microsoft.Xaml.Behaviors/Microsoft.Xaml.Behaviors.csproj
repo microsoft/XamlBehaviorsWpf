@@ -20,11 +20,19 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
-    <AssemblyOriginatorKeyFile>..\Behaviors.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(ProjectDir)Behaviors.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SignType)' == 'real'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,6 +65,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MicroBuild.Core" Version="0.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
     <PackageReference Include="Nerdbank.GitVersioning" Version=" 2.3.38" PrivateAssets="All" />
   </ItemGroup>
@@ -73,6 +85,12 @@
     <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45" Pack="true" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
+      <Authenticode>Microsoft</Authenticode>
+      <StrongName>67</StrongName>
+    </FilesToSign>
+  </ItemGroup>
   <Target Name="TimestampNugetPackage">
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
@@ -80,5 +98,5 @@
       <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>
-
+  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
