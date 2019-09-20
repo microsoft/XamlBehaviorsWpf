@@ -20,7 +20,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
-    <AssemblyOriginatorKeyFile>$(ProjectDir)Behaviors.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Behaviors.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
