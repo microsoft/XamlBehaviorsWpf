@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net45</TargetFrameworks>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
@@ -50,7 +49,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    
     <Compile Update="ExceptionStringTable.Designer.cs">
       <SubType>Code</SubType>
       <AutoGen>True</AutoGen>
@@ -70,6 +68,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Nerdbank.GitVersioning" Version=" 2.3.38" PrivateAssets="All" />
   </ItemGroup>
   
@@ -84,7 +86,10 @@
     <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45" Pack="true" />
     <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45" Pack="true" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="FinalPublicKey.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
       <Authenticode>Microsoft</Authenticode>
