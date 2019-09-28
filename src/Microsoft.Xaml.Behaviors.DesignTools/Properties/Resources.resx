@@ -1,0 +1,319 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Category_Animation_Properties" xml:space="preserve">
+    <value>Animation</value>
+  </data>
+  <data name="Category_Common_Properties" xml:space="preserve">
+    <value>Common</value>
+  </data>
+  <data name="Category_Tag_Properties" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="Description_CallMethodAction" xml:space="preserve">
+    <value>Calls a method on a specified object when invoked.</value>
+  </data>
+  <data name="Description_CallMethodAction_MethodName" xml:space="preserve">
+    <value>Get or sets the name of the method to invoke.</value>
+  </data>
+  <data name="Description_CallMethodAction_TargetObject" xml:space="preserve">
+    <value>Gets or sets the object that exposes the method.</value>
+  </data>
+  <data name="Description_ChangePropertyAction" xml:space="preserve">
+    <value>An action that will change a specified property to a specified value when invoked.</value>
+  </data>
+  <data name="Description_ChangePropertyAction_Duration" xml:space="preserve">
+    <value>Gets or sets the number of seconds the property change will take to complete.</value>
+  </data>
+  <data name="Description_ChangePropertyAction_Ease" xml:space="preserve">
+    <value>Gets or sets the EasingFunction to use with the animation when the ChangePropertyAction is invoked.</value>
+  </data>
+  <data name="Description_ChangePropertyAction_Increment" xml:space="preserve">
+    <value>Gets or sets a value indicating whether the value should be added to the current PropertyValue. If it cannot be added, it will replace it.</value>
+  </data>
+  <data name="Description_ChangePropertyAction_PropertyName" xml:space="preserve">
+    <value>Gets or sets the name of the property to change.</value>
+  </data>
+  <data name="Description_ChangePropertyAction_TargetObject" xml:space="preserve">
+    <value>Gets or sets the object whose property will be changed.</value>
+  </data>
+  <data name="Description_ChangePropertyAction_Value" xml:space="preserve">
+    <value>Gets or sets the value to set.</value>
+  </data>
+  <data name="Description_ControlStoryboardAction" xml:space="preserve">
+    <value>An action that will change the state of the specified Storyboard when executed.</value>
+  </data>
+  <data name="Description_ControlStoryboardAction_ControlStoryboardOption" xml:space="preserve">
+    <value>Gets or sets the action to execute on the Storyboard.</value>
+  </data>
+  <data name="Description_ControlStoryboardAction_Storyboard" xml:space="preserve">
+    <value>Gets or sets the targeted Storyboard.</value>
+  </data>
+  <data name="Description_DataStateBehavior" xml:space="preserve">
+    <value>Toggles between two states based on a conditional statement.</value>
+  </data>
+  <data name="Description_DataStateBehavior_Binding" xml:space="preserve">
+    <value>Gets or sets the binding that produces the property value of the data object.</value>
+  </data>
+  <data name="Description_DataStateBehavior_FalseState" xml:space="preserve">
+    <value>Gets or sets the name of the visual state to transition to when the condition is not met.</value>
+  </data>
+  <data name="Description_DataStateBehavior_TrueState" xml:space="preserve">
+    <value>Gets or sets the name of the visual state to transition to when the condition is met.</value>
+  </data>
+  <data name="Description_DataStateBehavior_Value" xml:space="preserve">
+    <value>Gets or sets the value to be compared with the property value of the data object.</value>
+  </data>
+  <data name="Description_EventTriggerBase_SourceName" xml:space="preserve">
+    <value>Gets or sets the name of the source object for this EventTriggerBase. If the name is not set or cannot be resolved, AssociatedObject will be used.</value>
+  </data>
+  <data name="Description_EventTriggerBase_SourceObject" xml:space="preserve">
+    <value>Gets or sets the source object for this EventTriggerBase. If the source object is not set, the SourceName property will be used instead. If SourceName is not set or cannot be resolved, AssociatedObject will be used.</value>
+  </data>
+  <data name="Description_EventTriggerBehavior" xml:space="preserve">
+    <value>A behavior that listens for a specified event on its source and executes its actions when that event is fired.</value>
+  </data>
+  <data name="Description_EventTriggerBehavior_EventName" xml:space="preserve">
+    <value>Gets or sets the name of the event to listen for.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior" xml:space="preserve">
+    <value>Animates changes to the layout properties of objects inside a panel.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_AppliesTo" xml:space="preserve">
+    <value>Gets or sets a value indicating whether this Behavior will affect only the specified object or its children.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_Duration" xml:space="preserve">
+    <value>Gets or sets the number of seconds the transition will take to complete.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_EaseX" xml:space="preserve">
+    <value>Gets or sets the EasingFunction to use for the horizontal component of the move.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_EaseY" xml:space="preserve">
+    <value>Gets or sets the EasingFunction to use for the vertical component of the move.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_FloatAbove" xml:space="preserve">
+    <value>Gets or sets the value that indicates whether elements are allowed to float above their current container when changing to another container.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_InitialTag" xml:space="preserve">
+    <value>Gets or sets the tag whose associated values will be read from the data stored by the FluidMoveSetTagBehavior.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_InitialTagPath" xml:space="preserve">
+    <value>Gets or sets the extra path needed to navigate and access the data that gets read from the stored values returned by the FluidMoveSetTagBehavior.</value>
+  </data>
+  <data name="Description_FluidMoveBehavior_IsActive" xml:space="preserve">
+    <value>Gets or sets a value indicating whether the Behavior is currently active.</value>
+  </data>
+  <data name="Description_FluidMoveSetTagBehavior_Tag" xml:space="preserve">
+    <value>Gets or sets the tag whose associated values will be stored and consumed by the FluidMoveBehavior.</value>
+  </data>
+  <data name="Description_FluidMoveSetTagBehavior_TagPath" xml:space="preserve">
+    <value>Gets or sets the extra path needed to navigate and access the data consumed by the FluidMoveBehavior.</value>
+  </data>
+  <data name="Description_GoToStateAction" xml:space="preserve">
+    <value>An action that will transition a FrameworkElement to a specified VisualState when executed.</value>
+  </data>
+  <data name="Description_GoToStateAction_StateName" xml:space="preserve">
+    <value>Gets or sets the name of the VisualState.</value>
+  </data>
+  <data name="Description_GoToStateAction_TargetObject" xml:space="preserve">
+    <value>Gets or sets the target object.</value>
+  </data>
+  <data name="Description_GoToStateAction_UseTransitions" xml:space="preserve">
+    <value>Gets or sets whether or not to use a VisualTransition to transition between states.</value>
+  </data>
+  <data name="Description_InvokeCommandAction" xml:space="preserve">
+    <value>Executes a specified ICommand when invoked.</value>
+  </data>
+  <data name="Description_InvokeCommandAction_Command" xml:space="preserve">
+    <value>Gets or sets the command the action should invoke.</value>
+  </data>
+  <data name="Description_InvokeCommandAction_CommandName" xml:space="preserve">
+    <value>Gets or sets the name of the ICommand to invoke.</value>
+  </data>
+  <data name="Description_InvokeCommandAction_CommandParameter" xml:space="preserve">
+    <value>Gets or sets the parameter that is passed to ICommand.Execute. If this is not set, the parameter from the InvokeCommandAction.Execute method will be used.</value>
+  </data>
+  <data name="Description_InvokeCommandAction_InputConverter" xml:space="preserve">
+    <value>Gets or sets the converter that is run on the parameter of the InvokeCommandAction.Execute method.</value>
+  </data>
+  <data name="Description_InvokeCommandAction_InputConverterLanguage" xml:space="preserve">
+    <value>Gets or sets the language that is passed to the IValueConverter.Convert method of InputConverter.</value>
+  </data>
+  <data name="Description_InvokeCommandAction_InputConverterParameter" xml:space="preserve">
+    <value>Gets or sets the parameter that is passed to the IValueConverter.Convert method of InputConverter.</value>
+  </data>
+  <data name="Description_LaunchURLOrFileAction" xml:space="preserve">
+    <value>Opens a file or URL destination.</value>
+  </data>
+  <data name="Description_LaunchURLOrFileAction_Path" xml:space="preserve">
+    <value>Gets or sets the path of the file or web page to open.</value>
+  </data>
+  <data name="Description_MouseDragElementBehavior" xml:space="preserve">
+    <value>Repositions an object when the user drags it.</value>
+  </data>
+  <data name="Description_MouseDragElementBehavior_ConstrainToParentBounds" xml:space="preserve">
+    <value>Gets or sets a value indicating whether the movement of the dragged object is limited by the bounds of the parent object.</value>
+  </data>
+  <data name="Description_MouseDragElementBehavior_X" xml:space="preserve">
+    <value>Gets or sets the X position of the dragged object, relative to the left edge of the root object.</value>
+  </data>
+  <data name="Description_MouseDragElementBehavior_Y" xml:space="preserve">
+    <value>Gets or sets the Y position of the dragged object, relative to the top edge of the root object.</value>
+  </data>
+  <data name="Description_PlaySoundAction" xml:space="preserve">
+    <value>An action that will play a sound to completion.</value>
+  </data>
+  <data name="Description_PlaySoundAction_Source" xml:space="preserve">
+    <value>Gets or sets the location of the sound file.</value>
+  </data>
+  <data name="Description_PlaySoundAction_Volume" xml:space="preserve">
+    <value>Gets or set the volume of the sound.</value>
+  </data>
+  <data name="Description_TargetedTriggerAction_TargetName" xml:space="preserve">
+    <value>Gets or sets the name of the object that this action will affect.</value>
+  </data>
+  <data name="Description_TargetedTriggerAction_TargetObject" xml:space="preserve">
+    <value>Gets or sets the object that this action will affect.</value>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior" xml:space="preserve">
+    <value>Allows the user to use common touch gestures to translate, zoom, and rotate the attached object.</value>
+    <comment>The description of the TranslateZoomRotate behavior for multitouch.</comment>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior_ConstrainToParentBounds" xml:space="preserve">
+    <value>Gets or sets the value indicating whether the zoom and translate position of the attached object is limited by the bounds of the parent object.</value>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior_MaximumScale" xml:space="preserve">
+    <value>Gets or sets a number indicating the maximum zoom value allowed.</value>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior_MinimumScale" xml:space="preserve">
+    <value>Gets or sets a number indicating the minimum zoom value allowed.</value>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior_RotationalFriction" xml:space="preserve">
+    <value>Gets or sets a number describing the rate at which the rotation will decrease.</value>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior_SupportedGestures" xml:space="preserve">
+    <value>Gets or sets a value specifying which zooming and translation variants to support.</value>
+  </data>
+  <data name="Description_TranslateZoomRotateBehavior_TranslateFriction" xml:space="preserve">
+    <value>Gets or sets a number describing the rate at which the translation will decrease.</value>
+  </data>
+  <data name="Description_TriggerAction_IsEnabled" xml:space="preserve">
+    <value>Gets or sets a value indicating whether this Action is active.</value>
+  </data>
+</root>

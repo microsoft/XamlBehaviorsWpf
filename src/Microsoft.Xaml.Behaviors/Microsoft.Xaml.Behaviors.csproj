@@ -1,10 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.43">
   <PropertyGroup>
     <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
-    <Version>1.0.1</Version>
     <Title>Microsoft.Xaml.Behaviors.Wpf</Title>
     <Authors>Microsoft</Authors>
     <Description>Easily add interactivity to your apps using XAML Behaviors for WPF. Behaviors encapsulate reusable functionalities for elements that can be easily added to your XAML without the need for more imperative code.</Description>
@@ -17,17 +15,27 @@
     <PackageTags>Behavior Action Behaviors Actions Blend Managed C# Interaction Interactivity Interactions</PackageTags>
     <PackageProjectUrl>https://github.com/Microsoft/XamlBehaviorsWpf</PackageProjectUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Expression_CodeCoverageSubdirectory>$(Blend_ExtensionRoot)\</Expression_CodeCoverageSubdirectory>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
     <UseWPF>true</UseWPF>
+    <AssemblyOriginatorKeyFile>$(ProjectDir)Behaviors.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)'=='net452'">
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>FinalPublicKey.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SignType)' == 'real'">
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -43,17 +51,7 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(SignType)' == 'real'">
-    <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
-      <Authenticode>Microsoft</Authenticode>
-      <StrongName>67</StrongName>
-    </FilesToSign>
-  </ItemGroup>
-
   <ItemGroup>
-    <Compile Include="..\RuntimeVersion.cs" Link="RuntimeVersion.cs" />
-    <Compile Include="..\Version\Version.cs" Link="Version.cs" />
-
     <Compile Update="ExceptionStringTable.Designer.cs">
       <SubType>Code</SubType>
       <AutoGen>True</AutoGen>
@@ -68,14 +66,39 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
-      <PackageReference Include="MicroBuild.Core">
-      <Version>0.3.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    <PackageReference Include="MicroBuild.Core" Version="0.3.0">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Nerdbank.GitVersioning" Version=" 2.3.38" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.Xaml.Behaviors.DesignTools\Microsoft.Xaml.Behaviors.DesignTools.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup Label="Package">
+    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45" Pack="true" />
+    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45" Pack="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FinalPublicKey.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FilesToSign Include="$(OutputPath)$(AssemblyName).dll">
+      <Authenticode>Microsoft400</Authenticode>
+      <StrongName>StrongName</StrongName>
+    </FilesToSign>
+  </ItemGroup>
   <Target Name="TimestampNugetPackage">
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
@@ -83,5 +106,5 @@
       <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>
-
+  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>
