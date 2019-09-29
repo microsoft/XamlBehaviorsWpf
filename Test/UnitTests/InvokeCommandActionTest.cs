@@ -13,9 +13,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     using Microsoft.Xaml.Behaviors.Core;
 
     using SysWindows = System.Windows;
-#if NETCOREAPP3_0
-    using TestClassAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.STAExtensions.STATestClassAttribute;
-#endif
 
     [TestClass]
     public sealed class InvokeCommandActionTest
