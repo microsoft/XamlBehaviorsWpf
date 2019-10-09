@@ -183,22 +183,26 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private DebugOutputListener()
         {
+#if !NETCOREAPP3_0
             this.storedListeners = new TraceListener[Debug.Listeners.Count];
             Debug.Listeners.CopyTo(this.storedListeners, 0);
             Debug.Listeners.Clear();
 
             this.debugTraceListener = new DebugTraceListener();
             Debug.Listeners.Add(this.debugTraceListener);
+#endif
         }
 
-        #region IDisposable Members
+#region IDisposable Members
 
         public void Dispose()
         {
+#if !NETCOREAPP3_0
             Debug.Listeners.Clear();
             Debug.Listeners.AddRange(this.storedListeners);
+#endif
         }
 
-        #endregion
+#endregion
     }
 }

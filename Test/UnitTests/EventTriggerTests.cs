@@ -16,9 +16,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         [TestInitialize]
         public void Setup()
-        {
-            Interaction.ShouldRunInDesignMode = true;
-        }
+            {
+                Interaction.ShouldRunInDesignMode = true;
+            }
 
         [TestCleanup]
         public void Teardown()

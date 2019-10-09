@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.43">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
+    <OutputType>Library</OutputType>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
     <Title>Microsoft.Xaml.Behaviors.Wpf</Title>
     <Authors>Microsoft</Authors>
@@ -19,6 +20,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
+    <UseWPF>true</UseWPF>
     <AssemblyOriginatorKeyFile>$(ProjectDir)Behaviors.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
@@ -32,7 +34,8 @@
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
   </PropertyGroup>
-  <ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'">
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -72,9 +75,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Nerdbank.GitVersioning" Version=" 2.3.38" PrivateAssets="All" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.3.38" PrivateAssets="All" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Xaml.Behaviors.DesignTools\Microsoft.Xaml.Behaviors.DesignTools.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -83,8 +86,10 @@
   </ItemGroup>
 
   <ItemGroup Label="Package">
-    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45" Pack="true" />
-    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45\Design" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45\Design" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\netcoreapp3.0\Design" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\netcoreapp3.0\Design" Pack="true" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FinalPublicKey.snk" />
@@ -103,5 +108,4 @@
       <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>
-  <Import Project="..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets" Condition="Exists('..\packages\MicroBuild.Core.0.3.0\build\MicroBuild.Core.targets')" />
 </Project>

@@ -228,7 +228,11 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
 
         [TestMethod]
+#if NETCOREAPP3_0
+        [ExpectedException(typeof(ArgumentException))]
+#else
         [ExpectedException(typeof(Exception))]
+#endif
         public void Invoke_InvalidPropertyFormatString_ThrowsException()
         {
             Rectangle rectangle = CreateRectangle();
@@ -705,6 +709,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             Assert.AreEqual(target.StringProperty, "True", "StringProperty should have been assigned True as a string");
         }
-        #endregion
+#endregion
     }
 }
