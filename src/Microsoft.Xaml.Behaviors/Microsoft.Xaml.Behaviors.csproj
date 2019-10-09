@@ -86,8 +86,10 @@
   </ItemGroup>
 
   <ItemGroup Label="Package">
-    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45" Pack="true" />
-    <None Include="bin\Release\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\net45\Design" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\net45\Design" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.dll" PackagePath="lib\netcoreapp3.0\Design" Pack="true" />
+    <None Include="bin\$(Configuration)\net45\Microsoft.Xaml.Behaviors.DesignTools.pdb" PackagePath="lib\netcoreapp3.0\Design" Pack="true" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FinalPublicKey.snk" />
