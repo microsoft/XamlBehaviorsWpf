@@ -3,6 +3,7 @@
 
 using Microsoft.VisualStudio.DesignTools.Extensibility.Metadata;
 using Microsoft.VisualStudio.DesignTools.Extensibility.PropertyEditing;
+using Editors = Microsoft.VisualStudio.DesignTools.Extensibility.PropertyEditing.Editors;
 using Microsoft.Xaml.Behaviors.DesignTools.Properties;
 using System;
 using System.ComponentModel;
@@ -12,16 +13,16 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 {
     internal class MetadataTableProvider : IProvideAttributeTable
     {
-        private AttributeTableBuilder _attributeTableBuilder;
+        private AttributeTableBuilder attributeTableBuilder;
 
         // Accessed by the designer to register any design-time metadata.
         public AttributeTable AttributeTable
         {
             get
             {
-                if (_attributeTableBuilder == null)
+                if (this.attributeTableBuilder == null)
                 {
-                    _attributeTableBuilder = new AttributeTableBuilder();
+                    this.attributeTableBuilder = new AttributeTableBuilder();
                 }
 
                 #region EventTrigger
@@ -30,7 +31,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 AddAttributes("Microsoft.Xaml.Behaviors.EventTrigger", "EventName",
                     new DescriptionAttribute(Resources.Description_EventTriggerBehavior_EventName),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.EventPickerPropertyValueEditor)));
                 #endregion EventTrigger
 
                 #region EventTriggerBase
@@ -39,11 +41,14 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 AddAttributes("Microsoft.Xaml.Behaviors.EventTriggerBase", "SourceObject",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
-                    new DescriptionAttribute(Resources.Description_EventTriggerBase_SourceObject));
+                    new DescriptionAttribute(Resources.Description_EventTriggerBase_SourceObject),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.ElementBindingPickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.EventTriggerBase", "SourceName",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
-                    new DescriptionAttribute(Resources.Description_EventTriggerBase_SourceName));
+                    new DescriptionAttribute(Resources.Description_EventTriggerBase_SourceName),
+                    // This is mapped to BehaviorElementPickerPropertyValueEditor in legacy.
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyPickerPropertyValueEditor)));
                 #endregion EventTriggerBase
 
                 #region TriggerBase
@@ -65,12 +70,15 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes("Microsoft.Xaml.Behaviors.TargetedTriggerAction", "TargetObject",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
                     new DescriptionAttribute(Resources.Description_TargetedTriggerAction_TargetObject),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.ElementBindingPickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.TargetedTriggerAction", "TargetName",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
                     new DescriptionAttribute(Resources.Description_TargetedTriggerAction_TargetName),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    // This is mapped to BehaviorElementPickerPropertyValueEditor in legacy.
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyPickerPropertyValueEditor)));
                 #endregion TargetedTriggerAction
 
                 #region ChangePropertyAction
@@ -79,7 +87,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", "PropertyName",
                     new CategoryAttribute(Resources.Category_Common_Properties),
-                    new DescriptionAttribute(Resources.Description_ChangePropertyAction_PropertyName));
+                    new DescriptionAttribute(Resources.Description_ChangePropertyAction_PropertyName),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyPickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", "Duration",
                     new CategoryAttribute(Resources.Category_Animation_Properties),
@@ -101,7 +110,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 AddAttributes("Microsoft.Xaml.Behaviors.InvokeCommandAction", "Command",
                     new DescriptionAttribute(Resources.Description_InvokeCommandAction_Command),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyBindingPickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.InvokeCommandAction", "CommandParameter",
                     new TypeConverterAttribute(typeof(StringConverter)),
@@ -154,7 +164,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior", "Binding",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_DataStateBehavior_Binding),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyBindingPickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior", "Value",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
@@ -226,7 +237,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes("Microsoft.Xaml.Behaviors.Media.StoryboardAction", "Storyboard",
                     new DescriptionAttribute(Resources.Description_ControlStoryboardAction_Storyboard),
                     new CategoryAttribute(Resources.Category_Common_Properties),
-                    new TypeConverterAttribute(typeof(TypeConverter)));
+                    new TypeConverterAttribute(typeof(TypeConverter)),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.StoryboardPickerPropertyValueEditor)));
                 #endregion StoryboardAction
 
                 #region ControlStoryboardAction
@@ -244,7 +256,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.GotoStateAction", "StateName",
                     new DescriptionAttribute(Resources.Description_GoToStateAction_StateName),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.StatePickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.GotoStateAction", "UseTransitions",
                     new DescriptionAttribute(Resources.Description_GoToStateAction_UseTransitions),
@@ -300,7 +313,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Media.PlaySoundAction", "Source",
                     new DescriptionAttribute(Resources.Description_PlaySoundAction_Source),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.UriPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Media.PlaySoundAction", "Volume",
                     new NumberRangesAttribute(0, 0, 1, 1, false),
@@ -317,7 +331,8 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.CallMethodAction", "TargetObject",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_CallMethodAction_TargetObject),
-                    new CategoryAttribute(Resources.Category_Common_Properties));
+                    new CategoryAttribute(Resources.Category_Common_Properties),
+                    PropertyValueEditor.CreateEditorAttribute(typeof(Editors.ElementBindingPickerPropertyValueEditor)));
 
                 AddAttributes("Microsoft.Xaml.Behaviors.Core.CallMethodAction", "MethodName",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
@@ -325,18 +340,18 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion CallMethodAction
 
-                return _attributeTableBuilder.CreateTable();
+                return this.attributeTableBuilder.CreateTable();
             }
         }
-
+        
         private void AddAttributes(string typeIdentifier, params Attribute[] attributes)
         {
-            _attributeTableBuilder.AddCustomAttributes(typeIdentifier, attributes);
+            this.attributeTableBuilder.AddCustomAttributes(typeIdentifier, attributes);
         }
 
         private void AddAttributes(string typeIdentifier, string propertyName, params Attribute[] attributes)
         {
-            _attributeTableBuilder.AddCustomAttributes(typeIdentifier, propertyName, attributes);
+            this.attributeTableBuilder.AddCustomAttributes(typeIdentifier, propertyName, attributes);
         }
     }
 }
