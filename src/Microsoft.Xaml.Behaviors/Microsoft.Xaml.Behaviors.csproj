@@ -1,6 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.43">
   <PropertyGroup>
     <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeProjectToProjectAssets</TargetsForTfmSpecificBuildOutput>
     <OutputType>Library</OutputType>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
     <Title>Microsoft.Xaml.Behaviors.Wpf</Title>
@@ -88,6 +89,16 @@
       <StrongName>StrongName</StrongName>
     </FilesToSign>
   </ItemGroup>
+
+  <Target Name="IncludeProjectToProjectAssets">
+    <ItemGroup>
+      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.DesignTools.dll"
+                            Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+        <TargetPath>Design</TargetPath>
+      </BuildOutputInPackage>
+    </ItemGroup>
+  </Target>
+
   <Target Name="TimestampNugetPackage">
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
