@@ -96,13 +96,18 @@
                             Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
         <TargetPath>Design</TargetPath>
       </BuildOutputInPackage>
+      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.Design.dll"
+                            Condition="'$(TargetFramework)' == 'net45'">
+        <TargetPath>Design</TargetPath>
+      </BuildOutputInPackage>
     </ItemGroup>
   </Target>
 
   <Target Name="TimestampNugetPackage">
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
-      <PackageVersion Condition="'$(TimestampPackage)' == 'true'">$(PackageVersion)-CI-$(CurrentDate)</PackageVersion>
+      <!-- Condition="'$(TimestampPackage)' == 'true'"-->
+      <PackageVersion >$(PackageVersion)-CI-$(CurrentDate)</PackageVersion>
       <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>

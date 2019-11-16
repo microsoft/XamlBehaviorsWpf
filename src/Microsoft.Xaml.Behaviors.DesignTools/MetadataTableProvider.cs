@@ -1,17 +1,23 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 
+using System;
+using System.ComponentModel;
+
+#if DesignerIsolation
+using Microsoft.Windows.Design.Metadata;
+using Microsoft.Windows.Design.PropertyEditing;
+using Editors = Microsoft.Windows.Design.PropertyEditing.Editors;
+#else
 using Microsoft.VisualStudio.DesignTools.Extensibility.Metadata;
 using Microsoft.VisualStudio.DesignTools.Extensibility.PropertyEditing;
 using Editors = Microsoft.VisualStudio.DesignTools.Extensibility.PropertyEditing.Editors;
-using Microsoft.Xaml.Behaviors.DesignTools.Properties;
-using System;
-using System.ComponentModel;
+#endif
 
 [assembly: ProvideMetadata(typeof(Microsoft.Xaml.Behaviors.DesignTools.MetadataTableProvider))]
 namespace Microsoft.Xaml.Behaviors.DesignTools
 {
-    internal class MetadataTableProvider : IProvideAttributeTable
+    internal partial class MetadataTableProvider : IProvideAttributeTable
     {
         private AttributeTableBuilder _attributeTableBuilder;
 
@@ -26,25 +32,24 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 }
 
                 #region EventTrigger
-                AddAttributes("Microsoft.Xaml.Behaviors.EventTrigger",
+                AddAttributes(Targets.EventTrigger,// "Microsoft.Xaml.Behaviors.EventTrigger",
                     new DescriptionAttribute(Resources.Description_EventTriggerBehavior));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.EventTrigger", "EventName",
+                AddAttributes(Targets.EventTrigger, "EventName",
                     new DescriptionAttribute(Resources.Description_EventTriggerBehavior_EventName),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.EventPickerPropertyValueEditor)));
                 #endregion EventTrigger
 
                 #region EventTriggerBase
-                AddAttributes("Microsoft.Xaml.Behaviors.EventTriggerBase",
-                    new DefaultBindingPropertyAttribute("SourceObject"));
+                AddAttributes(Targets.EventTriggerBase, new DefaultBindingPropertyAttribute("SourceObject"));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.EventTriggerBase", "SourceObject",
+                AddAttributes(Targets.EventTriggerBase, "SourceObject",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
                     new DescriptionAttribute(Resources.Description_EventTriggerBase_SourceObject),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.ElementBindingPickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.EventTriggerBase", "SourceName",
+                AddAttributes(Targets.EventTriggerBase, "SourceName",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
                     new DescriptionAttribute(Resources.Description_EventTriggerBase_SourceName),
                     // This is mapped to BehaviorElementPickerPropertyValueEditor in legacy.
@@ -52,28 +57,26 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 #endregion EventTriggerBase
 
                 #region TriggerBase
-                AddAttributes("Microsoft.Xaml.Behaviors.TriggerBase", "Actions",
-                    new BrowsableAttribute(false));
+                AddAttributes(Targets.TriggerBase, "Actions", new BrowsableAttribute(false));
                 #endregion TriggerBase
 
                 #region TriggerAction
-                AddAttributes("Microsoft.Xaml.Behaviors.TriggerAction", "IsEnabled",
+                AddAttributes(Targets.TriggerAction, "IsEnabled",
                     new DescriptionAttribute(Resources.Description_TriggerAction_IsEnabled),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced));
                 #endregion TriggerAction
 
                 #region TargetedTriggerAction
-                AddAttributes("Microsoft.Xaml.Behaviors.TargetedTriggerAction",
-                    new DefaultBindingPropertyAttribute("TargetObject"));
+                AddAttributes(Targets.TargetedTriggerAction, new DefaultBindingPropertyAttribute("TargetObject"));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.TargetedTriggerAction", "TargetObject",
+                AddAttributes(Targets.TargetedTriggerAction, "TargetObject",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
                     new DescriptionAttribute(Resources.Description_TargetedTriggerAction_TargetObject),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.ElementBindingPickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.TargetedTriggerAction", "TargetName",
+                AddAttributes(Targets.TargetedTriggerAction, "TargetName",
                     new PropertyOrderAttribute(PropertyOrder.CreateBefore(PropertyOrder.Early)),
                     new DescriptionAttribute(Resources.Description_TargetedTriggerAction_TargetName),
                     new CategoryAttribute(Resources.Category_Common_Properties),
@@ -82,159 +85,158 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 #endregion TargetedTriggerAction
 
                 #region ChangePropertyAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", 
-                    new DescriptionAttribute(Resources.Description_ChangePropertyAction));
+                AddAttributes(Targets.ChangePropertyAction, new DescriptionAttribute(Resources.Description_ChangePropertyAction));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", "PropertyName",
+                AddAttributes(Targets.ChangePropertyAction, "PropertyName",
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new DescriptionAttribute(Resources.Description_ChangePropertyAction_PropertyName),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyPickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", "Duration",
+                AddAttributes(Targets.ChangePropertyAction, "Duration",
                     new CategoryAttribute(Resources.Category_Animation_Properties),
                     new DescriptionAttribute(Resources.Description_ChangePropertyAction_Duration));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", "Increment",
+                AddAttributes(Targets.ChangePropertyAction, "Increment",
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new DescriptionAttribute(Resources.Description_ChangePropertyAction_Increment));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.ChangePropertyAction", "Value", 
+                AddAttributes(Targets.ChangePropertyAction, "Value", 
                     new DescriptionAttribute(Resources.Description_ChangePropertyAction_Value), 
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion ChangePropertyAction
 
                 #region InvokeCommandAction
-                AddAttributes("Microsoft.Xaml.Behaviors.InvokeCommandAction",
+                AddAttributes(Targets.InvokeCommandAction,
                     new DescriptionAttribute(Resources.Description_InvokeCommandAction),
                     new DefaultBindingPropertyAttribute("Command"));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.InvokeCommandAction", "Command",
+                AddAttributes(Targets.InvokeCommandAction, "Command",
                     new DescriptionAttribute(Resources.Description_InvokeCommandAction_Command),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyBindingPickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.InvokeCommandAction", "CommandParameter",
+                AddAttributes(Targets.InvokeCommandAction, "CommandParameter",
                     new TypeConverterAttribute(typeof(StringConverter)),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new DescriptionAttribute(Resources.Description_InvokeCommandAction_Command),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.InvokeCommandAction", "CommandName",
+                AddAttributes(Targets.InvokeCommandAction, "CommandName",
                     new DescriptionAttribute(Resources.Description_InvokeCommandAction_CommandName),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced));
                 #endregion InvokeCommandAction
 
                 #region InvokeCommandAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.LaunchUriOrFileAction",
+                AddAttributes(Targets.LaunchUriOrFileAction,
                     new DescriptionAttribute(Resources.Description_LaunchURLOrFileAction));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.LaunchUriOrFileAction", "Path",
+                AddAttributes(Targets.LaunchUriOrFileAction, "Path",
                     new DescriptionAttribute(Resources.Description_LaunchURLOrFileAction_Path),
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion InvokeCommandAction
 
                 #region MouseDragElementBehavior
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.MouseDragElementBehavior",
+                AddAttributes(Targets.MouseDragElementBehavior,
                     new DescriptionAttribute(Resources.Description_MouseDragElementBehavior));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.MouseDragElementBehavior", "X",
+                AddAttributes(Targets.MouseDragElementBehavior, "X",
                     new CanBeEmptyAttribute(true),
                     new DescriptionAttribute(Resources.Description_MouseDragElementBehavior_X),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.MouseDragElementBehavior", "Y",
+                AddAttributes(Targets.MouseDragElementBehavior, "Y",
                     new CanBeEmptyAttribute(true),
                     new DescriptionAttribute(Resources.Description_MouseDragElementBehavior_Y),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.MouseDragElementBehavior", "ConstrainToParentBounds",
+                AddAttributes(Targets.MouseDragElementBehavior, "ConstrainToParentBounds",
                     new DescriptionAttribute(Resources.Description_MouseDragElementBehavior_ConstrainToParentBounds),
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion MouseDragElementBehavior
 
                 #region DataStateBehavior
                 PropertyOrder order = PropertyOrder.Default;
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior",
+                AddAttributes(Targets.DataStateBehavior,
                     new DescriptionAttribute(Resources.Description_DataStateBehavior),
                     new DefaultBindingPropertyAttribute("Binding"));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior", "Binding",
+                AddAttributes(Targets.DataStateBehavior, "Binding",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_DataStateBehavior_Binding),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyBindingPickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior", "Value",
+                AddAttributes(Targets.DataStateBehavior, "Value",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_DataStateBehavior_Value),
                     new TypeConverterAttribute(typeof(StringConverter)),
                     new CategoryAttribute(Resources.Category_Common_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior", "TrueState",
+                AddAttributes(Targets.DataStateBehavior, "TrueState",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_DataStateBehavior_TrueState),
                     new CategoryAttribute(Resources.Category_Common_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.DataStateBehavior", "FalseState",
+                AddAttributes(Targets.DataStateBehavior, "FalseState",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_DataStateBehavior_FalseState),
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion DataStateBehavior
 
                 #region FluidMoveBehavior
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior",
+                AddAttributes(Targets.FluidMoveBehavior,
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior", "Duration",
+                AddAttributes(Targets.FluidMoveBehavior, "Duration",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_Duration),
                     new CategoryAttribute(Resources.Category_Animation_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior", "InitialTag",
+                AddAttributes(Targets.FluidMoveBehavior, "InitialTag",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_InitialTag),
                     new CategoryAttribute(Resources.Category_Tag_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior", "InitialTagPath",
+                AddAttributes(Targets.FluidMoveBehavior, "InitialTagPath",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_InitialTagPath),
                     new CategoryAttribute(Resources.Category_Tag_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior", "FloatAbove",
+                AddAttributes(Targets.FluidMoveBehavior, "FloatAbove",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_FloatAbove),
                     new CategoryAttribute(Resources.Category_Animation_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior", "EaseX",
+                AddAttributes(Targets.FluidMoveBehavior, "EaseX",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_EaseX),
                     new CategoryAttribute(Resources.Category_Animation_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehavior", "EaseY",
+                AddAttributes(Targets.FluidMoveBehavior, "EaseY",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_EaseY),
                     new CategoryAttribute(Resources.Category_Animation_Properties));
                 #endregion FluidMoveBehavior
 
                 #region FluidMoveBehaviorBase
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehaviorBase", "AppliesTo",
+                AddAttributes(Targets.FluidMoveBehaviorBase, "AppliesTo",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_AppliesTo),
                     new CategoryAttribute(Resources.Category_Common_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehaviorBase", "IsActive",
+                AddAttributes(Targets.FluidMoveBehaviorBase, "IsActive",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_IsActive),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced),
                     new CategoryAttribute(Resources.Category_Common_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehaviorBase", "Tag",
+                AddAttributes(Targets.FluidMoveBehaviorBase, "Tag",
                     new DescriptionAttribute(Resources.Description_FluidMoveSetTagBehavior_Tag),
                     new CategoryAttribute(Resources.Category_Tag_Properties));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Layout.FluidMoveBehaviorBase", "TagPath",
+                AddAttributes(Targets.FluidMoveBehaviorBase, "TagPath",
                     new DescriptionAttribute(Resources.Description_FluidMoveSetTagBehavior_TagPath),
                     new EditorBrowsableAttribute(EditorBrowsableState.Advanced),
                     new CategoryAttribute(Resources.Category_Tag_Properties));
                 #endregion FluidMoveBehaviorBase
 
                 #region StoryboardAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Media.StoryboardAction", "Storyboard",
+                AddAttributes(Targets.StoryboardAction, "Storyboard",
                     new DescriptionAttribute(Resources.Description_ControlStoryboardAction_Storyboard),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new TypeConverterAttribute(typeof(TypeConverter)),
@@ -242,81 +244,81 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 #endregion StoryboardAction
 
                 #region ControlStoryboardAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Media.ControlStoryboardAction", 
+                AddAttributes(Targets.ControlStoryboardAction, 
                     new DescriptionAttribute(Resources.Description_ControlStoryboardAction));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Media.ControlStoryboardAction", "ControlStoryboardOption",
+                AddAttributes(Targets.ControlStoryboardAction, "ControlStoryboardOption",
                     new DescriptionAttribute(Resources.Description_ControlStoryboardAction_ControlStoryboardOption),
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion ControlStoryboardAction
 
                 #region GotoStateAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.GotoStateAction",
+                AddAttributes(Targets.GoToStateAction,
                     new DescriptionAttribute(Resources.Description_GoToStateAction));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.GotoStateAction", "StateName",
+                AddAttributes(Targets.GoToStateAction, "StateName",
                     new DescriptionAttribute(Resources.Description_GoToStateAction_StateName),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.StatePickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.GotoStateAction", "UseTransitions",
+                AddAttributes(Targets.GoToStateAction, "UseTransitions",
                     new DescriptionAttribute(Resources.Description_GoToStateAction_UseTransitions),
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion GotoStateAction
 
                 #region TranslateZoomRotateBehavior
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior",
+                AddAttributes(Targets.TranslateZoomRotateBehavior,
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior", "RotationalFriction",
+                AddAttributes(Targets.TranslateZoomRotateBehavior, "RotationalFriction",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_RotationalFriction),
                     new NumberIncrementsAttribute(0.001, 0.01, 0.1),
                     new NumberRangesAttribute(0, 0, 1, 1, false),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior", "TranslateFriction",
+                AddAttributes(Targets.TranslateZoomRotateBehavior, "TranslateFriction",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_TranslateFriction),
                     new NumberIncrementsAttribute(0.001, 0.01, 0.1),
                     new NumberRangesAttribute(0, 0, 1, 1, false),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior", "MinimumScale",
+                AddAttributes(Targets.TranslateZoomRotateBehavior, "MinimumScale",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_MinimumScale),
                     new NumberIncrementsAttribute(0.01, 0.1, 1.0),
                     new NumberRangesAttribute(0, 0, null, null, false),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior", "MaximumScale",
+                AddAttributes(Targets.TranslateZoomRotateBehavior, "MaximumScale",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_MaximumScale),
                     new NumberIncrementsAttribute(0.01, 0.1, 1.0),
                     new NumberRangesAttribute(0, 0, null, null, false),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior", "SupportedGestures",
+                AddAttributes(Targets.TranslateZoomRotateBehavior, "SupportedGestures",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_SupportedGestures),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Input.TranslateZoomRotateBehavior", "ConstrainToParentBounds",
+                AddAttributes(Targets.TranslateZoomRotateBehavior, "ConstrainToParentBounds",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_ConstrainToParentBounds),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
                 #endregion TranslateZoomRotateBehavior
 
                 #region PlaySoundAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Media.PlaySoundAction",
+                AddAttributes(Targets.PlaySoundAction,
                     new DescriptionAttribute(Resources.Description_PlaySoundAction));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Media.PlaySoundAction", "Source",
+                AddAttributes(Targets.PlaySoundAction, "Source",
                     new DescriptionAttribute(Resources.Description_PlaySoundAction_Source),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.UriPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Media.PlaySoundAction", "Volume",
+                AddAttributes(Targets.PlaySoundAction, "Volume",
                     new NumberRangesAttribute(0, 0, 1, 1, false),
                     new NumberIncrementsAttribute(0.001, 0.01, 0.1),
                     new DescriptionAttribute(Resources.Description_PlaySoundAction_Volume),
@@ -324,17 +326,17 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 #endregion PlaySoundAction
 
                 #region CallMethodAction
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.CallMethodAction",
+                AddAttributes(Targets.CallMethodAction,
                     new DescriptionAttribute(Resources.Description_CallMethodAction),
                     new DefaultBindingPropertyAttribute("TargetObject"));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.CallMethodAction", "TargetObject",
+                AddAttributes(Targets.CallMethodAction, "TargetObject",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_CallMethodAction_TargetObject),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.ElementBindingPickerPropertyValueEditor)));
 
-                AddAttributes("Microsoft.Xaml.Behaviors.Core.CallMethodAction", "MethodName",
+                AddAttributes(Targets.CallMethodAction, "MethodName",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_CallMethodAction_MethodName),
                     new CategoryAttribute(Resources.Category_Common_Properties));
@@ -342,16 +344,6 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
 
                 return _attributeTableBuilder.CreateTable();
             }
-        }
-        
-        private void AddAttributes(string typeIdentifier, params Attribute[] attributes)
-        {
-            _attributeTableBuilder.AddCustomAttributes(typeIdentifier, attributes);
-        }
-
-        private void AddAttributes(string typeIdentifier, string propertyName, params Attribute[] attributes)
-        {
-            _attributeTableBuilder.AddCustomAttributes(typeIdentifier, propertyName, attributes);
         }
     }
 }
