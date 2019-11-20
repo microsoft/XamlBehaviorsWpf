@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 
-using System;
 using System.ComponentModel;
 
 #if DesignerIsolation
@@ -30,9 +29,9 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 {
                     _attributeTableBuilder = new AttributeTableBuilder();
                 }
-
+                
                 #region EventTrigger
-                AddAttributes(Targets.EventTrigger,// "Microsoft.Xaml.Behaviors.EventTrigger",
+                AddAttributes(Targets.EventTrigger,
                     new DescriptionAttribute(Resources.Description_EventTriggerBehavior));
 
                 AddAttributes(Targets.EventTrigger, "EventName",
@@ -55,7 +54,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                     // This is mapped to BehaviorElementPickerPropertyValueEditor in legacy.
                     PropertyValueEditor.CreateEditorAttribute(typeof(Editors.PropertyPickerPropertyValueEditor)));
                 #endregion EventTriggerBase
-
+                
                 #region TriggerBase
                 AddAttributes(Targets.TriggerBase, "Actions", new BrowsableAttribute(false));
                 #endregion TriggerBase
@@ -95,7 +94,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes(Targets.ChangePropertyAction, "Duration",
                     new CategoryAttribute(Resources.Category_Animation_Properties),
                     new DescriptionAttribute(Resources.Description_ChangePropertyAction_Duration));
-
+                
                 AddAttributes(Targets.ChangePropertyAction, "Increment",
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new DescriptionAttribute(Resources.Description_ChangePropertyAction_Increment));
@@ -130,7 +129,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 #region InvokeCommandAction
                 AddAttributes(Targets.LaunchUriOrFileAction,
                     new DescriptionAttribute(Resources.Description_LaunchURLOrFileAction));
-
+                
                 AddAttributes(Targets.LaunchUriOrFileAction, "Path",
                     new DescriptionAttribute(Resources.Description_LaunchURLOrFileAction_Path),
                     new CategoryAttribute(Resources.Category_Common_Properties));
@@ -162,7 +161,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes(Targets.DataStateBehavior,
                     new DescriptionAttribute(Resources.Description_DataStateBehavior),
                     new DefaultBindingPropertyAttribute("Binding"));
-
+                
                 AddAttributes(Targets.DataStateBehavior, "Binding",
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)),
                     new DescriptionAttribute(Resources.Description_DataStateBehavior_Binding),
@@ -205,7 +204,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                 AddAttributes(Targets.FluidMoveBehavior, "FloatAbove",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_FloatAbove),
                     new CategoryAttribute(Resources.Category_Animation_Properties));
-
+                
                 AddAttributes(Targets.FluidMoveBehavior, "EaseX",
                     new DescriptionAttribute(Resources.Description_FluidMoveBehavior_EaseX),
                     new CategoryAttribute(Resources.Category_Animation_Properties));
@@ -251,7 +250,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                     new DescriptionAttribute(Resources.Description_ControlStoryboardAction_ControlStoryboardOption),
                     new CategoryAttribute(Resources.Category_Common_Properties));
                 #endregion ControlStoryboardAction
-
+                
                 #region GotoStateAction
                 AddAttributes(Targets.GoToStateAction,
                     new DescriptionAttribute(Resources.Description_GoToStateAction));
@@ -290,7 +289,7 @@ namespace Microsoft.Xaml.Behaviors.DesignTools
                     new NumberRangesAttribute(0, 0, null, null, false),
                     new CategoryAttribute(Resources.Category_Common_Properties),
                     new PropertyOrderAttribute(order = PropertyOrder.CreateAfter(order)));
-
+                
                 AddAttributes(Targets.TranslateZoomRotateBehavior, "MaximumScale",
                     new DescriptionAttribute(Resources.Description_TranslateZoomRotateBehavior_MaximumScale),
                     new NumberIncrementsAttribute(0.01, 0.1, 1.0),

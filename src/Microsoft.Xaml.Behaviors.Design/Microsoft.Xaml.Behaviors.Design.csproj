@@ -46,8 +46,7 @@
     <Compile Include="..\Microsoft.Xaml.Behaviors.DesignTools\MetadataTableProvider.cs">
       <Link>MetadataTableProvider.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.Xaml.Behaviors.DesignTools\Properties\Resources.Designer.cs">
-      <Link>Resources.Designer.cs</Link>
+    <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -57,10 +56,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Microsoft.Xaml.Behaviors.DesignTools\Properties\Resources.resx">
-      <Link>Resources.resx</Link>
+      <Link>Properties\Resources.resx</Link>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Microsoft.Xaml.Behaviors.DesignTools</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
