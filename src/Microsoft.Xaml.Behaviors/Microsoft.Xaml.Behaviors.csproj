@@ -116,8 +116,7 @@
   <Target Name="TimestampNugetPackage">
     <PropertyGroup>
       <CurrentDate>$([System.DateTime]::Now.ToString(yyyyMMdd-HHmm))</CurrentDate>
-      <!-- Condition="'$(TimestampPackage)' == 'true'"-->
-      <PackageVersion >$(PackageVersion)-CI-$(CurrentDate)</PackageVersion>
+      <PackageVersion Condition="'$(TimestampPackage)' == 'true'">$(PackageVersion)-CI-$(CurrentDate)</PackageVersion>
       <NuspecProperties>version=$(PackageVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>
