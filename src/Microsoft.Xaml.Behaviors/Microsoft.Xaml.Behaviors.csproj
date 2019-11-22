@@ -90,10 +90,24 @@
     </FilesToSign>
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Install.ps1 is for .NET Framework projects (not .NET Core).
+    The script removes the reference to the .Design.dll in the referencing project.
+    It is placed in the root of the project so that it is correctly picked up
+    and placed in the tools/ directory of the NuGet package. -->
+    <Content Include="Install.ps1">
+      <PackagePath>tools\</PackagePath>
+    </Content>
+  </ItemGroup>
+
   <Target Name="IncludeProjectToProjectAssets">
     <ItemGroup>
       <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.DesignTools.dll"
                             Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+        <TargetPath>Design</TargetPath>
+      </BuildOutputInPackage>
+      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.Design.dll"
+                              Condition="'$(TargetFramework)' == 'net45'">
         <TargetPath>Design</TargetPath>
       </BuildOutputInPackage>
     </ItemGroup>
