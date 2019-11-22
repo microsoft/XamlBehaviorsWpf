@@ -3,14 +3,14 @@
 
 using System.ComponentModel;
 
-#if DesignerIsolation
-using Microsoft.Windows.Design.Metadata;
-using Microsoft.Windows.Design.PropertyEditing;
-using Editors = Microsoft.Windows.Design.PropertyEditing.Editors;
-#else
+#if SurfaceIsolation
 using Microsoft.VisualStudio.DesignTools.Extensibility.Metadata;
 using Microsoft.VisualStudio.DesignTools.Extensibility.PropertyEditing;
 using Editors = Microsoft.VisualStudio.DesignTools.Extensibility.PropertyEditing.Editors;
+#else
+using Microsoft.Windows.Design.Metadata;
+using Microsoft.Windows.Design.PropertyEditing;
+using Editors = Microsoft.Windows.Design.PropertyEditing.Editors;
 #endif
 
 [assembly: ProvideMetadata(typeof(Microsoft.Xaml.Behaviors.DesignTools.MetadataTableProvider))]
