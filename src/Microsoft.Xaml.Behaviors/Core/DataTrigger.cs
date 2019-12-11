@@ -47,17 +47,19 @@ namespace Microsoft.Xaml.Behaviors.Core
             //fixes issue #11. We want to evaluate the binding's initial value when the element is first loaded
             if (AssociatedObject is FrameworkElement element)
             {
+                void OnElementLoaded(object sender, RoutedEventArgs e)
+                {
+                    try
+                    {
+                        this.EvaluateBindingChange(e);
+                    }
+                    finally
+                    {
+                        element.Loaded -= OnElementLoaded;
+                    }                    
+                }
+
                 element.Loaded += OnElementLoaded;
-            }
-        }
-
-        private void OnElementLoaded(object sender, RoutedEventArgs e)
-        {
-            EvaluateBindingChange(e);
-
-            if (AssociatedObject is FrameworkElement element)
-            {
-                element.Loaded -= OnElementLoaded;
             }
         }
 
