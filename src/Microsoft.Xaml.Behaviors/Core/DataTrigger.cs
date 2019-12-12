@@ -40,6 +40,42 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
         }
 
+        protected override void OnAttached()
+        {
+            base.OnAttached();
+
+            //fixes issue #11. We want to evaluate the binding's initial value when the element is first loaded
+            if (AssociatedObject is FrameworkElement element)
+            {
+                element.Loaded += OnElementLoaded;
+            }
+        }
+
+        protected override void OnDetaching()
+        {
+            base.OnDetaching();
+            UnsubscribeElementLoadedEvent();
+        }
+
+        private void OnElementLoaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                EvaluateBindingChange(e);
+            } finally
+            {
+                UnsubscribeElementLoadedEvent();
+            }
+        }
+
+        private void UnsubscribeElementLoadedEvent()
+        {
+            if (AssociatedObject is FrameworkElement element)
+            {
+                element.Loaded -= OnElementLoaded;
+            }
+        }
+
         /// <summary>
         /// Called when the binding property has changed. 
         /// UA_REVIEW:chabiss
