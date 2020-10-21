@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved. 
+﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
@@ -228,7 +228,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
 
         [TestMethod]
-#if NETCOREAPP3_0
+#if NETCOREAPP
         [ExpectedException(typeof(ArgumentException))]
 #else
         [ExpectedException(typeof(Exception))]

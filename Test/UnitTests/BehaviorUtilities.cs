@@ -183,7 +183,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private DebugOutputListener()
         {
-#if !NETCOREAPP3_0
+#if !NETCOREAPP
             this.storedListeners = new TraceListener[Debug.Listeners.Count];
             Debug.Listeners.CopyTo(this.storedListeners, 0);
             Debug.Listeners.Clear();
@@ -197,7 +197,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         public void Dispose()
         {
-#if !NETCOREAPP3_0
+#if !NETCOREAPP
             Debug.Listeners.Clear();
             Debug.Listeners.AddRange(this.storedListeners);
 #endif
