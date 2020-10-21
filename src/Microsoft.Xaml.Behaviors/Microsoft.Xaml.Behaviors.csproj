@@ -103,7 +103,7 @@
   <Target Name="IncludeProjectToProjectAssets">
     <ItemGroup>
       <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.DesignTools.dll"
-                            Condition="'$(TargetFramework.StartsWith('netcoreapp'))">
+                            Condition="'$(TargetFramework.StartsWith('netcoreapp3.'))">
         <TargetPath>Design</TargetPath>
       </BuildOutputInPackage>
       <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.Design.dll"
