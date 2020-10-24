@@ -21,11 +21,9 @@ To use behaviors in your project, add the [Microsoft.Xaml.Behaviors.Wpf](https:/
 Buiding Behaviors from Source
 ------------------------------
 **What You Need**
-
  - [Visual Studio 2017](https://www.visualstudio.com/features/windows-apps-games-vs)
 
 **Clone the Repository**
-
  - Go to 'View' -> 'Team Explorer' -> 'Local Git Repositories' -> 'Clone'
  - Add the XAML Behaviors for WPF repository URL (https://github.com/Microsoft/XamlBehaviorsWpf) and hit 'Clone'
 
