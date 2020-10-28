@@ -1,6 +1,6 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.43">
+<Project Sdk="MSBuild.Sdk.Extras/2.0.43">
   <PropertyGroup>
-    <TargetFrameworks>net45;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeProjectToProjectAssets</TargetsForTfmSpecificBuildOutput>
     <OutputType>Library</OutputType>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>
@@ -103,7 +103,7 @@
   <Target Name="IncludeProjectToProjectAssets">
     <ItemGroup>
       <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.DesignTools.dll"
-                            Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+                            Condition="'$(TargetFramework.StartsWith('netcoreapp3.'))">
         <TargetPath>Design</TargetPath>
       </BuildOutputInPackage>
       <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net45\Design\Microsoft.Xaml.Behaviors.Design.dll"
