@@ -5,6 +5,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -105,16 +106,10 @@ namespace Microsoft.Xaml.Behaviors.Layout
             public FrameworkElement Parent { get; set; }// the parent
             public Rect ParentRect { get; set; }        // the parent-relative rect
             public Rect AppRect { get; set; }           // the app-relative rect
-            public DateTime Timestamp { get; set; }     // the last time we saw the element
             public object InitialTag { get; set; }      // the tag to spawn from
         }
 
-        internal static Dictionary<object, TagData> TagDictionary = new Dictionary<object, TagData>();
-
-        // timer data to help purge objects we should no longer be tracking
-        private static DateTime nextToLastPurgeTick = DateTime.MinValue;
-        private static DateTime lastPurgeTick = DateTime.MinValue;
-        private static TimeSpan minTickDelta = TimeSpan.FromSeconds(0.5);
+        internal static ConditionalWeakTable<object, TagData> TagDictionary = new ConditionalWeakTable<object, TagData>();
 
         protected override void OnAttached()
         {
@@ -133,40 +128,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             if (!this.IsActive)
             {
                 return;
-            }
-
-            // if it's been long enough since our last purge, then let's kick one off. Since we can't control how often layout runs, and some
-            // objects could reappear on the very next layout pass, we'll purge any tag who hasn't been seen since the purge tick before that.
-            //
-            // If we got a notification when elements were deleted, we would maintain a far shorter list of tags whose FEs were deleted since the last purge.
-            // 
-            // We might also be able to use a WeakReference solution here, but this one is pretty cheap as it only runs when Layout is running anyway.
-            if (DateTime.Now - lastPurgeTick >= minTickDelta)
-            {
-                List<object> deadTags = null;
-
-                foreach (KeyValuePair<object, TagData> pair in TagDictionary)
-                {
-                    if (pair.Value.Timestamp < nextToLastPurgeTick)
-                    {
-                        if (deadTags == null)
-                        {
-                            deadTags = new List<object>();
-                        }
-                        deadTags.Add(pair.Key);
-                    }
-                }
-
-                if (deadTags != null)
-                {
-                    foreach (object tag in deadTags)
-                    {
-                        TagDictionary.Remove(tag);
-                    }
-                }
-
-                nextToLastPurgeTick = lastPurgeTick;
-                lastPurgeTick = DateTime.Now;
             }
 
             if (this.AppliesTo == FluidMoveScope.Self)
@@ -202,7 +163,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             newTagData.Parent = VisualTreeHelper.GetParent(child) as FrameworkElement;
             newTagData.ParentRect = ExtendedVisualStateManager.GetLayoutRect(child);
             newTagData.Child = child;
-            newTagData.Timestamp = DateTime.Now;
 
             try
             {
@@ -298,7 +258,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             tagData.AppRect = newTagData.AppRect;
             tagData.Parent = newTagData.Parent;
             tagData.Child = newTagData.Child;
-            tagData.Timestamp = newTagData.Timestamp;
         }
     }
 
@@ -474,7 +433,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     previousRect = Rect.Empty;
                 }
 
-                tagData = new TagData() { ParentRect = Rect.Empty, AppRect = Rect.Empty, Parent = newTagData.Parent, Child = child, Timestamp = DateTime.Now, InitialTag = initialTag };
+                tagData = new TagData() { ParentRect = Rect.Empty, AppRect = Rect.Empty, Parent = newTagData.Parent, Child = child, InitialTag = initialTag };
                 TagDictionary.Add(tag, tagData);
             }
             else if (tagData.Parent != VisualTreeHelper.GetParent(child))
@@ -608,7 +567,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             tagData.AppRect = newTagData.AppRect;
             tagData.Parent = newTagData.Parent;
             tagData.Child = newTagData.Child;
-            tagData.Timestamp = newTagData.Timestamp;
         }
 
         private Storyboard CreateTransitionStoryboard(FrameworkElement child, bool usingBeforeLoaded, ref Rect layoutRect, ref Rect currentRect)
