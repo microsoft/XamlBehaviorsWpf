@@ -1,6 +1,6 @@
-<Project Sdk="MSBuild.Sdk.Extras/2.0.43">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.1.2">
   <PropertyGroup>
-    <TargetFrameworks>net45;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp3.1;net5.0-windows</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <UseWPF>true</UseWPF>
     <OutputType>Library</OutputType>
@@ -20,5 +20,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj" />
   </ItemGroup>
-  
+
 </Project>

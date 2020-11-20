@@ -7,7 +7,7 @@ pr:
 - rel/*
 
 pool:
-  vmImage: windows-2019
+  vmImage: windows-latest
 
 variables:
   buildConfiguration: Release
@@ -19,25 +19,29 @@ steps:
     custom: tool
     arguments: install --tool-path . nbgv
   displayName: Install NBGV tool
-    
+
 - script: nbgv cloud
   displayName: Set Version
 
-- task: MSBuild@1
+- task: UseDotNet@2
+    displayName: 'Use .NET Core sdk 5.0'
+    inputs:
+      packageType: sdk
+      version: 5.0.100
+
+- task: DotNetCoreCLI@2
   displayName: Build Solution
   inputs:
-    solution: src/*.sln
-    msbuildArguments: /restore
-    configuration: $(buildConfiguration)
-    maximumCpuCount: false
+    command: build
+    projects: src/*.sln
+    arguments: '--configuration $(buildConfiguration)'
 
-- task: MSBuild@1
+- task: DotNetCoreCLI@2
   displayName: Pack Behaviors
   inputs:
-    solution: src/**/Microsoft.Xaml.Behaviors.csproj
-    msbuildArguments: /t:Pack /p:PackageOutputPath=$(Build.ArtifactStagingDirectory)
-    configuration: $(buildConfiguration)
-    maximumCpuCount: false
+    command: pack
+    packagesToPack: src/**/Microsoft.Xaml.Behaviors.csproj
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: VSTest@2
   displayName: Run Tests
