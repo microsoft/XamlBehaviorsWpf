@@ -34,6 +34,9 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);DesignerIsolation</DefineConstants>
   </PropertyGroup>
+  
+  <Import Project="..\Microsoft.Xaml.Behaviors.Signing.targets" />
+  
   <ItemGroup>
     <Reference Include="Microsoft.Windows.Design.Extensibility, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
