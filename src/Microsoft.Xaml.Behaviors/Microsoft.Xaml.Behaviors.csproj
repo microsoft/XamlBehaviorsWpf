@@ -26,6 +26,9 @@
     <SignAssembly>true</SignAssembly>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+    <NoWarn>1701;1702;</NoWarn>
+  </PropertyGroup>
   
   <Import Project="..\Microsoft.Xaml.Behaviors.Signing.targets" />
 
