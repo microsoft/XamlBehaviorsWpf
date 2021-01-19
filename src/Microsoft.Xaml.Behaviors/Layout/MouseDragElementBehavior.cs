@@ -158,7 +158,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
         {
             get
             {
-                return this.AssociatedObject.Parent as FrameworkElement;
+                return (base.AssociatedObject.Parent ?? base.AssociatedObject.TemplatedParent) as FrameworkElement;
             }
         }
 
