@@ -15,7 +15,7 @@
       <Authenticode>Microsoft400</Authenticode>
       <StrongName>StrongName</StrongName>
     </FilesToSign>
-    <FilesToSign Include="$(OutputPath)Design\$(AssemblyName).dll">
+    <FilesToSign Include="$(OutputPath)Design\*.dll">
       <Authenticode>Microsoft400</Authenticode>
       <StrongName>StrongName</StrongName>
     </FilesToSign>
