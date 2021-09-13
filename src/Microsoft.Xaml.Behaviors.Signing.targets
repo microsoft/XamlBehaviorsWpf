@@ -15,6 +15,10 @@
       <Authenticode>Microsoft400</Authenticode>
       <StrongName>StrongName</StrongName>
     </FilesToSign>
+    <FilesToSign Include="$(OutputPath)Design\$(AssemblyName).dll">
+      <Authenticode>Microsoft400</Authenticode>
+      <StrongName>StrongName</StrongName>
+    </FilesToSign>
   </ItemGroup>
 
   <Target Name="TimestampNugetPackage">
