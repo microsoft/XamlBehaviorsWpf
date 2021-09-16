@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Diagnostics;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System.Windows;
-    using System;
-    using System.Diagnostics;
-    using System.ComponentModel;
-
     /// <summary>
     /// Represents a collection of actions with a shared AssociatedObject and provides change notifications to its contents when that AssociatedObject changes.
     /// </summary>
@@ -52,12 +52,15 @@ namespace Microsoft.Xaml.Behaviors
         {
             if (item.IsHosted)
             {
-                throw new InvalidOperationException(ExceptionStringTable.CannotHostTriggerActionMultipleTimesExceptionMessage);
+                throw new InvalidOperationException(ExceptionStringTable
+                    .CannotHostTriggerActionMultipleTimesExceptionMessage);
             }
+
             if (this.AssociatedObject != null)
             {
                 item.Attach(this.AssociatedObject);
             }
+
             item.IsHosted = true;
         }
 
@@ -72,6 +75,7 @@ namespace Microsoft.Xaml.Behaviors
             {
                 item.Detach();
             }
+
             item.IsHosted = false;
         }
 

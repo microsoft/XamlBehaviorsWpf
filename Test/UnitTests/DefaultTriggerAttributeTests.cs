@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Windows.Controls;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Collections;
-    using System.Diagnostics;
-    using System.Windows.Controls;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-
     [TestClass]
     public class DefaultTriggerAttributeTests
     {
@@ -34,7 +35,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         private void TestConstructor()
         {
             object[] objects = { "test", 0.5 };
-            DefaultTriggerAttribute attribute = new DefaultTriggerAttribute(typeof(Button), typeof(StubTrigger), objects);
+            DefaultTriggerAttribute attribute =
+                new DefaultTriggerAttribute(typeof(Button), typeof(StubTrigger), objects);
 
             Assert.AreEqual(attribute.TargetType, typeof(Button), "attribute.TargetType == typeof(Button)");
             Assert.AreEqual(attribute.TriggerType, typeof(StubTrigger), "attribute.TriggerType == typeof(StubTrigger)");
@@ -47,29 +49,29 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             try
             {
-                DefaultTriggerAttribute illegalAttribute = new DefaultTriggerAttribute(typeof(Button), typeof(Button), new object[0]);
+                DefaultTriggerAttribute illegalAttribute = new DefaultTriggerAttribute(typeof(Button), typeof(Button));
                 Debug.Fail("ArgumentException should be thrown.");
-            }
-            catch (ArgumentException)
+            } catch (ArgumentException)
             {
             }
         }
 
         private void TestInstantiate()
         {
-            DefaultTriggerAttribute eventTriggerAttribute = new DefaultTriggerAttribute(typeof(Button), typeof(EventTrigger), new object[] { "Click" });
+            DefaultTriggerAttribute eventTriggerAttribute =
+                new DefaultTriggerAttribute(typeof(Button), typeof(EventTrigger), new object[] { "Click" });
             EventTrigger trigger = eventTriggerAttribute.Instantiate() as EventTrigger;
 
             Assert.IsNotNull(trigger, "Instantiated trigger is an EventTrigger");
             Assert.AreEqual(trigger.EventName, "Click", "EventTrigger.EventName == Click");
 
-            DefaultTriggerAttribute illegalAttribute = new DefaultTriggerAttribute(typeof(Button), typeof(SingleConstructorArgumentTrigger), new object[0]);
+            DefaultTriggerAttribute illegalAttribute =
+                new DefaultTriggerAttribute(typeof(Button), typeof(SingleConstructorArgumentTrigger));
             try
             {
                 TriggerBase triggerBase = illegalAttribute.Instantiate();
                 Assert.IsNull(triggerBase, "Illegal call to instantiate results in null result, no exception thrown.");
-            }
-            catch
+            } catch
             {
                 Debug.Fail("Unexpected exception thrown.");
             }

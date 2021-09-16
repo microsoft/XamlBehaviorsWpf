@@ -1,27 +1,40 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Input;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Diagnostics;
-    using System.Reflection;
-    using System.Windows;
-    using System.Windows.Input;
-    using System.Globalization;
-    using System.Windows.Data;
-
     /// <summary>
     /// Executes a specified ICommand when invoked.
     /// </summary>
     public sealed class InvokeCommandAction : TriggerAction<DependencyObject>
     {
-        private string commandName;
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register(nameof(Command), typeof(ICommand), typeof(InvokeCommandAction), null);
 
-        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(InvokeCommandAction), null);
-        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(InvokeCommandAction), null);
-        public static readonly DependencyProperty EventArgsConverterProperty = DependencyProperty.Register("EventArgsConverter", typeof(IValueConverter), typeof(InvokeCommandAction), new PropertyMetadata(null));
-        public static readonly DependencyProperty EventArgsConverterParameterProperty = DependencyProperty.Register("EventArgsConverterParameter", typeof(object), typeof(InvokeCommandAction), new PropertyMetadata(null));
-        public static readonly DependencyProperty EventArgsParameterPathProperty = DependencyProperty.Register("EventArgsParameterPath", typeof(string), typeof(InvokeCommandAction), new PropertyMetadata(null));
+        public static readonly DependencyProperty CommandParameterProperty =
+            DependencyProperty.Register(nameof(CommandParameter), typeof(object), typeof(InvokeCommandAction), null);
+
+        public static readonly DependencyProperty EventArgsConverterProperty =
+            DependencyProperty.Register(nameof(EventArgsConverter), typeof(IValueConverter),
+                typeof(InvokeCommandAction), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty EventArgsConverterParameterProperty =
+            DependencyProperty.Register(nameof(EventArgsConverterParameter), typeof(object),
+                typeof(InvokeCommandAction), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty EventArgsParameterPathProperty =
+            DependencyProperty.Register(nameof(EventArgsParameterPath), typeof(string), typeof(InvokeCommandAction),
+                new PropertyMetadata(null));
+
+        private string commandName;
 
         /// <summary>
         /// Gets or sets the name of the command this action should invoke.
@@ -37,12 +50,14 @@ namespace Microsoft.Xaml.Behaviors
             }
             set
             {
-                if (this.CommandName != value)
+                if (this.CommandName == value)
                 {
-                    this.WritePreamble();
-                    this.commandName = value;
-                    this.WritePostscript();
+                    return;
                 }
+
+                this.WritePreamble();
+                this.commandName = value;
+                this.WritePostscript();
             }
         }
 
@@ -64,8 +79,8 @@ namespace Microsoft.Xaml.Behaviors
         /// <remarks>This is the value passed to ICommand.CanExecute and ICommand.Execute.</remarks>
         public object CommandParameter
         {
-            get { return this.GetValue(InvokeCommandAction.CommandParameterProperty); }
-            set { this.SetValue(InvokeCommandAction.CommandParameterProperty, value); }
+            get { return this.GetValue(CommandParameterProperty); }
+            set { this.SetValue(CommandParameterProperty, value); }
         }
 
         /// <summary>
@@ -83,7 +98,7 @@ namespace Microsoft.Xaml.Behaviors
         /// </summary>
         public object EventArgsConverterParameter
         {
-            get { return (object)GetValue(EventArgsConverterParameterProperty); }
+            get { return this.GetValue(EventArgsConverterParameterProperty); }
             set { SetValue(EventArgsConverterParameterProperty, value); }
         }
 
@@ -126,7 +141,8 @@ namespace Microsoft.Xaml.Behaviors
                     //next let's see if an event args converter has been supplied
                     if (commandParameter == null && this.EventArgsConverter != null)
                     {
-                        commandParameter = this.EventArgsConverter.Convert(parameter, typeof(object), EventArgsConverterParameter, CultureInfo.CurrentCulture);
+                        commandParameter = this.EventArgsConverter.Convert(parameter, typeof(object),
+                            EventArgsConverterParameter, CultureInfo.CurrentCulture);
                     }
 
                     //last resort, let see if they want to force the event args to be passed as a parameter
@@ -141,23 +157,23 @@ namespace Microsoft.Xaml.Behaviors
                     }
                 } else
                 {
-                    Debug.WriteLine(ExceptionStringTable.CommandDoesNotExistOnBehaviorWarningMessage, this.CommandName, this.AssociatedObject.GetType().Name);
+                    Debug.WriteLine(ExceptionStringTable.CommandDoesNotExistOnBehaviorWarningMessage, this.CommandName,
+                        this.AssociatedObject.GetType().Name);
                 }
             }
         }
 
         private object GetEventArgsPropertyPathValue(object parameter)
         {
-            object commandParameter;
             object propertyValue = parameter;
             string[] propertyPathParts = EventArgsParameterPath.Split('.');
             foreach (string propertyPathPart in propertyPathParts)
             {
-                PropertyInfo propInfo = propertyValue.GetType().GetProperty(propertyPathPart);
-                propertyValue = propInfo.GetValue(propertyValue, null);
+                PropertyInfo propInfo = propertyValue?.GetType().GetProperty(propertyPathPart);
+                propertyValue = propInfo?.GetValue(propertyValue, null);
             }
 
-            commandParameter = propertyValue;
+            object commandParameter = propertyValue;
             return commandParameter;
         }
 
@@ -172,7 +188,8 @@ namespace Microsoft.Xaml.Behaviors
             {
                 // todo jekelly 06/09/08: we could potentially cache some or all of this information if needed, updating when AssociatedObject changes
                 Type associatedObjectType = this.AssociatedObject.GetType();
-                PropertyInfo[] typeProperties = associatedObjectType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                PropertyInfo[] typeProperties =
+                    associatedObjectType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
                 foreach (PropertyInfo propertyInfo in typeProperties)
                 {

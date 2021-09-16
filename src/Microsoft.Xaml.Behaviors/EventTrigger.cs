@@ -1,21 +1,25 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System.Windows;
-    using System.Diagnostics.CodeAnalysis;
-
     /// <summary>
     /// A trigger that listens for a specified event on its source and fires when that event is fired.
     /// </summary>
     public class EventTrigger : EventTriggerBase<object>
     {
-        public static readonly DependencyProperty EventNameProperty = DependencyProperty.Register("EventName",
-                                                                                                    typeof(string),
-                                                                                                    typeof(EventTrigger),
-                                                                                                    new FrameworkPropertyMetadata(
-                                                                                                        "Loaded",
-                                                                                                        new PropertyChangedCallback(OnEventNameChanged)));
+        /// <summary>
+        ///     DependencyProperty for <see cref="EventName" />
+        /// </summary>
+        public static readonly DependencyProperty EventNameProperty = DependencyProperty.Register(nameof(EventName),
+            typeof(string),
+            typeof(EventTrigger),
+            new FrameworkPropertyMetadata(
+                "Loaded",
+                OnEventNameChanged));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EventTrigger"/> class.
@@ -44,6 +48,10 @@ namespace Microsoft.Xaml.Behaviors
             set { this.SetValue(EventNameProperty, value); }
         }
 
+        /// <summary>
+        ///     Accessor method for <see cref="EventName" />
+        /// </summary>
+        /// <returns>The value of <see cref="EventName" /></returns>
         protected override string GetEventName()
         {
             return this.EventName;

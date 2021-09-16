@@ -1,24 +1,28 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Globalization;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System;
-    using System.Globalization;
-    using System.Windows;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
     /// An action that will transition a FrameworkElement to a specified VisualState when invoked.
     /// </summary>
     /// <remarks>
     /// If the TargetName property is set, this action will attempt to change the state of the targeted element. If not, it walks
-    /// the element tree in an attempt to locate an alternative target that defines states. ControlTemplate and UserControl are 
+    /// the element tree in an attempt to locate an alternative target that defines states. ControlTemplate and UserControl are
     /// two common possibilities.
     /// </remarks>
     public class GoToStateAction : TargetedTriggerAction<FrameworkElement>
     {
-        public static readonly DependencyProperty UseTransitionsProperty = DependencyProperty.Register("UseTransitions", typeof(bool), typeof(GoToStateAction), new PropertyMetadata(true));
-        public static readonly DependencyProperty StateNameProperty = DependencyProperty.Register("StateName", typeof(string), typeof(GoToStateAction), new PropertyMetadata(string.Empty));
+        public static readonly DependencyProperty UseTransitionsProperty =
+            DependencyProperty.Register(nameof(UseTransitions), typeof(bool), typeof(GoToStateAction),
+                new PropertyMetadata(true));
+
+        public static readonly DependencyProperty StateNameProperty = DependencyProperty.Register(nameof(StateName),
+            typeof(string), typeof(GoToStateAction), new PropertyMetadata(string.Empty));
 
         /// <summary>
         /// Determines whether or not to use a VisualTransition to transition between states.
@@ -30,7 +34,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         }
 
         /// <summary>
-        /// The name of the VisualState.  
+        /// The name of the VisualState.
         /// </summary>
         public string StateName
         {
@@ -48,7 +52,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             get
             {
-                bool isLocallySet = this.ReadLocalValue(TargetedTriggerAction.TargetObjectProperty) != DependencyProperty.UnsetValue;
+                bool isLocallySet = this.ReadLocalValue(TargetObjectProperty) != DependencyProperty.UnsetValue;
                 // if the value can be set indirectly (via trigger, style, etc), should also check ValueSource, but not a concern for behaviors right now.
                 return isLocallySet;
             }
@@ -64,19 +68,20 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             base.OnTargetChanged(oldTarget, newTarget);
 
-            FrameworkElement frameworkElement = null;
+            FrameworkElement frameworkElement;
 
             if (string.IsNullOrEmpty(this.TargetName) && !this.IsTargetObjectSet)
             {
-                bool successful = VisualStateUtilities.TryFindNearestStatefulControl(this.AssociatedObject as FrameworkElement, out frameworkElement);
+                bool successful =
+                    VisualStateUtilities.TryFindNearestStatefulControl(this.AssociatedObject as FrameworkElement,
+                        out frameworkElement);
                 if (!successful && frameworkElement != null)
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                                            ExceptionStringTable.GoToStateActionTargetHasNoStateGroups,
-                                            frameworkElement.Name));
+                        ExceptionStringTable.GoToStateActionTargetHasNoStateGroups,
+                        frameworkElement.Name));
                 }
-            }
-            else
+            } else
             {
                 frameworkElement = this.Target;
             }

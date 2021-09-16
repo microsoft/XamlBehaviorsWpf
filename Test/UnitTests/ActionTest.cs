@@ -1,12 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Diagnostics;
+using System.Windows.Controls;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Diagnostics;
-    using System.Windows.Controls;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
     using SysWindows = System.Windows;
 
     [TestClass]
@@ -28,10 +31,10 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void AttachDetachTest()
         {
             StubAction stubAction = new StubAction();
-            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)stubAction);
+            BehaviorTestUtilities.TestIAttachedObject<Button>(stubAction);
 
             StubTargetedTriggerAction stubTargetedTriggerAction = new StubTargetedTriggerAction();
-            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)stubTargetedTriggerAction);
+            BehaviorTestUtilities.TestIAttachedObject<Button>(stubTargetedTriggerAction);
         }
 
         [TestMethod]
@@ -73,18 +76,20 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             StubAction action = new StubAction();
 
             trigger.Actions.Add(action);
-            Assert.AreEqual(((IAttachedObject)action).AssociatedObject, trigger.HostObject, "After adding action to trigger, action.AssociatedObject should equal trigger.Host");
+            Assert.AreEqual(((IAttachedObject)action).AssociatedObject, trigger.HostObject,
+                "After adding action to trigger, action.AssociatedObject should equal trigger.Host");
             Assert.AreEqual(trigger.Actions.Count, 1, "trigger.Actions.Count == 1");
 
             trigger.Actions.Remove(action);
-            Assert.IsNull(((IAttachedObject)action).AssociatedObject, "After removing action from trigger, action.AssociatedObject should be null");
+            Assert.IsNull(((IAttachedObject)action).AssociatedObject,
+                "After removing action from trigger, action.AssociatedObject should be null");
             Assert.AreEqual(trigger.Actions.Count, 0, "trigger.Actions.Count == 0");
         }
 
         [TestMethod]
         public void ReparentActionTest()
         {
-            SysWindows.Shapes.Rectangle hostRectangle = new SysWindows.Shapes.Rectangle();
+            Rectangle hostRectangle = new Rectangle();
             // try parenting an action more than once; should throw
             StubAction action = new StubAction();
             StubTrigger trigger1 = new StubTrigger();
@@ -96,9 +101,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             try
             {
                 trigger2.Actions.Add(action);
-                Debug.Fail("Expected InvalidOperationException to be thrown after adding an action to a second trigger.");
-            }
-            catch (InvalidOperationException)
+                Debug.Fail(
+                    "Expected InvalidOperationException to be thrown after adding an action to a second trigger.");
+            } catch (InvalidOperationException)
             {
             }
 
@@ -109,7 +114,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             trigger1.Actions.Add(action);
             trigger1.Actions.Remove(action);
             trigger2.Actions.Add(action);
-            Assert.AreEqual(((IAttachedObject)action).AssociatedObject, trigger2.HostObject, "action.AssociatedObject == trigger2.Host");
+            Assert.AreEqual(((IAttachedObject)action).AssociatedObject, trigger2.HostObject,
+                "action.AssociatedObject == trigger2.Host");
             Assert.AreEqual(trigger2.Actions.Count, 1, "trigger2.Actions.Count == 1");
         }
     }

@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Diagnostics;
+using System.Windows.Controls;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Diagnostics;
-    using System.Windows.Controls;
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
     using WindowsBase = System.Windows;
 
     [TestClass]
@@ -29,10 +31,10 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void AttachDetachTest()
         {
             StubTrigger stubTrigger = new StubTrigger();
-            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)stubTrigger);
+            BehaviorTestUtilities.TestIAttachedObject<Button>(stubTrigger);
 
             StubEventTriggerBase stubEventTrigger = new StubEventTriggerBase();
-            BehaviorTestUtilities.TestIAttachedObject<StubBehavior>((IAttachedObject)stubEventTrigger);
+            BehaviorTestUtilities.TestIAttachedObject<StubBehavior>(stubEventTrigger);
         }
 
         [TestMethod]
@@ -55,7 +57,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void CreateInstanceCoreTest()
         {
             StubButtonTrigger stubButtonTrigger = new StubButtonTrigger();
-            Assert.IsTrue(stubButtonTrigger.CreateInstaceCoreStub().GetType().Equals(typeof(StubButtonTrigger)), "TriggerBase.CreateInstanceCore works.");
+            Assert.IsTrue(stubButtonTrigger.CreateInstaceCoreStub().GetType().Equals(typeof(StubButtonTrigger)),
+                "TriggerBase.CreateInstanceCore works.");
         }
 
         [TestMethod]
@@ -133,8 +136,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             {
                 collection2.Add(trigger);
                 Debug.Fail("Attaching the same trigger twice should throw a InvalidOperationException");
-            }
-            catch (InvalidOperationException)
+            } catch (InvalidOperationException)
             {
             }
         }

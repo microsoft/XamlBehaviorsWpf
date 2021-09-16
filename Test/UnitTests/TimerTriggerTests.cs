@@ -1,14 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows;
+using System.Windows.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Threading;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     [TestClass]
     public class TimerTriggerTests
     {
@@ -30,11 +31,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private TimerTrigger CreateTimerTrigger(int millisecondsPerTick, int totalTicks)
         {
-            return new TimerTrigger()
-            {
-                MillisecondsPerTick = millisecondsPerTick,
-                TotalTicks = totalTicks
-            };
+            return new TimerTrigger { MillisecondsPerTick = millisecondsPerTick, TotalTicks = totalTicks };
         }
 
         private CountAction MeasureTotalTicks(TimerTrigger trigger, int msToRun)
@@ -50,6 +47,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             {
                 DispatcherHelper.ClearFrames(Dispatcher.CurrentDispatcher);
             }
+
             return action;
         }
 

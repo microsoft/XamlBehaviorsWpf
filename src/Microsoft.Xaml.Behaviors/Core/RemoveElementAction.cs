@@ -1,12 +1,12 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
     /// An action that will remove the targeted element from the tree when invoked.
     /// </summary>
@@ -18,58 +18,53 @@ namespace Microsoft.Xaml.Behaviors.Core
     {
         protected override void Invoke(object parameter)
         {
-            if (this.AssociatedObject != null && this.Target != null)
+            if (this.AssociatedObject == null || this.Target == null)
             {
-                DependencyObject parent = this.Target.Parent;
+                return;
+            }
 
-                Panel panel = parent as Panel;
-                if (panel != null)
-                {
+            DependencyObject parent = this.Target.Parent;
+
+            switch (parent)
+            {
+                case Panel panel:
                     panel.Children.Remove(this.Target);
                     return;
-                }
-
-                ContentControl contentControl = parent as ContentControl;
-                if (contentControl != null)
+                case ContentControl contentControl:
                 {
-                    if (contentControl.Content == this.Target)
+                    if (ReferenceEquals(contentControl.Content, this.Target))
                     {
                         contentControl.Content = null;
                     }
+
                     return;
                 }
-
-                ItemsControl itemsControl = parent as ItemsControl;
-                if (itemsControl != null)
-                {
+                case ItemsControl itemsControl:
                     itemsControl.Items.Remove(this.Target);
                     return;
-                }
-
-                Page page = parent as Page;
-                if (page != null)
+                case Page page:
                 {
-                    if (page.Content == this.Target)
+                    if (ReferenceEquals(page.Content, this.Target))
                     {
                         page.Content = null;
                     }
+
                     return;
                 }
-
-                Decorator decorator = parent as Decorator;
-                if (decorator != null)
+                case Decorator decorator:
                 {
                     if (decorator.Child == this.Target)
                     {
                         decorator.Child = null;
                     }
+
                     return;
                 }
+            }
 
-                if (parent != null)
-                {
-                    throw new InvalidOperationException(ExceptionStringTable.UnsupportedRemoveTargetExceptionMessage);
-                }
+            if (parent != null)
+            {
+                throw new InvalidOperationException(ExceptionStringTable.UnsupportedRemoveTargetExceptionMessage);
             }
         }
     }

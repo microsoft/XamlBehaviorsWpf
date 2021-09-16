@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     [TestClass]
     public sealed class CallMethodActionTest
     {
@@ -29,6 +30,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         #endregion
 
         #region Test methods
+
         [TestMethod]
         public void Invoke_UniqueMethodWithNoParameters_IsCalled()
         {
@@ -38,7 +40,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(methodObject.LastMethodCalled, "UniqueMethodWithNoParameters", "UniqueMethodWithNoParameters was not called.");
+            Assert.AreEqual(methodObject.LastMethodCalled, "UniqueMethodWithNoParameters",
+                "UniqueMethodWithNoParameters was not called.");
         }
 
         [TestMethod]
@@ -50,7 +53,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             trigger.FireStubTrigger(EventArgs.Empty);
 
-            Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithEventHandlerSignature", "DuplicatedMethodWithEventHandlerSignature was not called.");
+            Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithEventHandlerSignature",
+                "DuplicatedMethodWithEventHandlerSignature was not called.");
         }
 
         [TestMethod]
@@ -62,7 +66,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             trigger.FireStubTrigger(new StubEventArgs());
 
-            Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithStubEventArgsSignature", "DuplicatedMethodWithStubEventArgsSignature was not called.");
+            Assert.AreEqual(methodObject.LastMethodCalled, "DuplicatedMethodWithStubEventArgsSignature",
+                "DuplicatedMethodWithStubEventArgsSignature was not called.");
         }
 
         [TestMethod]
@@ -136,6 +141,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             trigger.FireStubTrigger();
             Assert.AreEqual(host.LastMethodCalled, "None", "No method should be called");
         }
+
         #endregion
 
         #region Helper methods and classes
@@ -150,15 +156,15 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private class MethodObjectStub : DependencyObject
         {
+            public MethodObjectStub()
+            {
+                this.LastMethodCalled = "None";
+            }
+
             public string LastMethodCalled
             {
                 get;
                 private set;
-            }
-
-            public MethodObjectStub()
-            {
-                this.LastMethodCalled = "None";
             }
 
             public void UniqueMethodWithNoParameters()
@@ -195,7 +201,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private class StubEventArgs : EventArgs
         {
-
         }
 
         #endregion
@@ -225,6 +230,5 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
 
         #endregion
-
     }
 }

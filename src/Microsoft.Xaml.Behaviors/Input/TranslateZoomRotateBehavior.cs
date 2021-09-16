@@ -1,65 +1,116 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using Microsoft.Xaml.Behaviors.Layout;
+
 namespace Microsoft.Xaml.Behaviors.Input
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using Microsoft.Xaml.Behaviors.Layout;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
     /// Allows the user to use common touch gestures to translate, zoom, and rotate the attached object.
     /// </summary>
     public class TranslateZoomRotateBehavior : Behavior<FrameworkElement>
     {
+        /// <summary>
+        /// Called after the behavior is attached to an AssociatedObject.
+        /// </summary>
+        /// <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
+        protected override void OnAttached()
+        {
+            this.AssociatedObject.AddHandler(UIElement.ManipulationStartingEvent,
+                new EventHandler<ManipulationStartingEventArgs>(this.ManipulationStarting),
+                false /* handledEventsToo */);
+            this.AssociatedObject.AddHandler(UIElement.ManipulationInertiaStartingEvent,
+                new EventHandler<ManipulationInertiaStartingEventArgs>(this.ManipulationInertiaStarting),
+                false /* handledEventsToo */);
+            this.AssociatedObject.AddHandler(UIElement.ManipulationDeltaEvent,
+                new EventHandler<ManipulationDeltaEventArgs>(this.ManipulationDelta), false /* handledEventsToo */);
+            this.AssociatedObject.IsManipulationEnabled = true;
+
+            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonDownEvent,
+                new MouseButtonEventHandler(this.MouseLeftButtonDown), false /* handledEventsToo */);
+            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonUpEvent,
+                new MouseButtonEventHandler(this.MouseLeftButtonUp), false /* handledEventsToo */);
+        }
+
+        /// <summary>
+        /// Called when the behavior is getting detached from its AssociatedObject, but before it has actually occurred.
+        /// </summary>
+        /// <remarks>Override this to unhook functionality from the AssociatedObject.</remarks>
+        protected override void OnDetaching()
+        {
+            this.AssociatedObject.RemoveHandler(UIElement.ManipulationStartingEvent,
+                new EventHandler<ManipulationStartingEventArgs>(this.ManipulationStarting));
+            this.AssociatedObject.RemoveHandler(UIElement.ManipulationInertiaStartingEvent,
+                new EventHandler<ManipulationInertiaStartingEventArgs>(this.ManipulationInertiaStarting));
+            this.AssociatedObject.RemoveHandler(UIElement.ManipulationDeltaEvent,
+                new EventHandler<ManipulationDeltaEventArgs>(this.ManipulationDelta));
+            this.AssociatedObject.IsManipulationEnabled = false;
+
+            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonDownEvent,
+                new MouseButtonEventHandler(this.MouseLeftButtonDown), false /* handledEventsToo */);
+            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonUpEvent,
+                new MouseButtonEventHandler(this.MouseLeftButtonUp), false /* handledEventsToo */);
+        }
+
         #region Fields
 
         private Transform cachedRenderTransform;
 
         // used for handling the mouse fallback behavior.
-        private bool isDragging = false;
+        private bool isDragging;
+
         // prevent us from trying to update the position when handling a mouse move
-        private bool isAdjustingTransform = false;
+        private bool isAdjustingTransform;
         private Point lastMousePoint;
 
         // used to enforce min and max scale.
         private double lastScaleX = 1.0;
         private double lastScaleY = 1.0;
         private const double HardMinimumScale = 1e-6;
+
         #endregion
 
         #region Dependency properties
 
         public static readonly DependencyProperty SupportedGesturesProperty =
-            DependencyProperty.Register("SupportedGestures", typeof(ManipulationModes), typeof(TranslateZoomRotateBehavior), new PropertyMetadata(ManipulationModes.All));
+            DependencyProperty.Register(nameof(SupportedGestures), typeof(ManipulationModes),
+                typeof(TranslateZoomRotateBehavior), new PropertyMetadata(ManipulationModes.All));
 
         public static readonly DependencyProperty TranslateFrictionProperty =
-            DependencyProperty.Register("TranslateFriction", typeof(double), typeof(TranslateZoomRotateBehavior), new PropertyMetadata(0.0, frictionChanged, coerceFriction));
+            DependencyProperty.Register(nameof(TranslateFriction), typeof(double), typeof(TranslateZoomRotateBehavior),
+                new PropertyMetadata(0.0, FrictionChanged, CoerceFriction));
 
         public static readonly DependencyProperty RotationalFrictionProperty =
-            DependencyProperty.Register("RotationalFriction", typeof(double), typeof(TranslateZoomRotateBehavior), new PropertyMetadata(0.0, frictionChanged, coerceFriction));
+            DependencyProperty.Register(nameof(RotationalFriction), typeof(double), typeof(TranslateZoomRotateBehavior),
+                new PropertyMetadata(0.0, FrictionChanged, CoerceFriction));
 
         public static readonly DependencyProperty ConstrainToParentBoundsProperty =
-            DependencyProperty.Register("ConstrainToParentBounds", typeof(bool), typeof(TranslateZoomRotateBehavior), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(ConstrainToParentBounds), typeof(bool),
+                typeof(TranslateZoomRotateBehavior), new PropertyMetadata(false));
 
         public static readonly DependencyProperty MinimumScaleProperty =
-            DependencyProperty.Register("MinimumScale", typeof(double), typeof(TranslateZoomRotateBehavior), new PropertyMetadata(0.1));
+            DependencyProperty.Register(nameof(MinimumScale), typeof(double), typeof(TranslateZoomRotateBehavior),
+                new PropertyMetadata(0.1));
 
         public static readonly DependencyProperty MaximumScaleProperty =
-            DependencyProperty.Register("MaximumScale", typeof(double), typeof(TranslateZoomRotateBehavior), new PropertyMetadata(10.0));
+            DependencyProperty.Register(nameof(MaximumScale), typeof(double), typeof(TranslateZoomRotateBehavior),
+                new PropertyMetadata(10.0));
 
         #endregion
 
         #region Public properties
+
         /// <summary>
         /// Gets or sets a value specifying which zooming and translation variants to support.
         /// </summary>
         public ManipulationModes SupportedGestures
         {
-            get { return (ManipulationModes)this.GetValue(TranslateZoomRotateBehavior.SupportedGesturesProperty); }
-            set { this.SetValue(TranslateZoomRotateBehavior.SupportedGesturesProperty, value); }
+            get { return (ManipulationModes)this.GetValue(SupportedGesturesProperty); }
+            set { this.SetValue(SupportedGesturesProperty, value); }
         }
 
         /// <summary>
@@ -67,8 +118,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public double TranslateFriction
         {
-            get { return (double)this.GetValue(TranslateZoomRotateBehavior.TranslateFrictionProperty); }
-            set { this.SetValue(TranslateZoomRotateBehavior.TranslateFrictionProperty, value); }
+            get { return (double)this.GetValue(TranslateFrictionProperty); }
+            set { this.SetValue(TranslateFrictionProperty, value); }
         }
 
         /// <summary>
@@ -76,8 +127,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public double RotationalFriction
         {
-            get { return (double)this.GetValue(TranslateZoomRotateBehavior.RotationalFrictionProperty); }
-            set { this.SetValue(TranslateZoomRotateBehavior.RotationalFrictionProperty, value); }
+            get { return (double)this.GetValue(RotationalFrictionProperty); }
+            set { this.SetValue(RotationalFrictionProperty, value); }
         }
 
         /// <summary>
@@ -85,8 +136,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public bool ConstrainToParentBounds
         {
-            get { return (bool)this.GetValue(TranslateZoomRotateBehavior.ConstrainToParentBoundsProperty); }
-            set { this.SetValue(TranslateZoomRotateBehavior.ConstrainToParentBoundsProperty, value); }
+            get { return (bool)this.GetValue(ConstrainToParentBoundsProperty); }
+            set { this.SetValue(ConstrainToParentBoundsProperty, value); }
         }
 
         /// <summary>
@@ -94,8 +145,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public double MinimumScale
         {
-            get { return (double)this.GetValue(TranslateZoomRotateBehavior.MinimumScaleProperty); }
-            set { this.SetValue(TranslateZoomRotateBehavior.MinimumScaleProperty, value); }
+            get { return (double)this.GetValue(MinimumScaleProperty); }
+            set { this.SetValue(MinimumScaleProperty, value); }
         }
 
         /// <summary>
@@ -103,25 +154,24 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public double MaximumScale
         {
-            get { return (double)this.GetValue(TranslateZoomRotateBehavior.MaximumScaleProperty); }
-            set { this.SetValue(TranslateZoomRotateBehavior.MaximumScaleProperty, value); }
+            get { return (double)this.GetValue(MaximumScaleProperty); }
+            set { this.SetValue(MaximumScaleProperty, value); }
         }
 
         #endregion
 
         #region PropertyChangedHandlers
 
-        private static void frictionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void FrictionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             // this doesn't have to do anything, but is required to supply a CoerceValueCallback.
         }
 
-        private static object coerceFriction(DependencyObject sender, object value)
+        private static object CoerceFriction(DependencyObject sender, object value)
         {
             double friction = (double)value;
             return Math.Max(0, Math.Min(1, friction));
         }
-
 
         #endregion
 
@@ -131,20 +181,26 @@ namespace Microsoft.Xaml.Behaviors.Input
         {
             get
             {
-                if (this.cachedRenderTransform == null || !object.ReferenceEquals(cachedRenderTransform, this.AssociatedObject.RenderTransform))
+                if (this.cachedRenderTransform != null &&
+                    ReferenceEquals(this.cachedRenderTransform, this.AssociatedObject.RenderTransform))
                 {
-                    Transform clonedTransform = MouseDragElementBehavior.CloneTransform(this.AssociatedObject.RenderTransform);
-                    this.RenderTransform = clonedTransform;
+                    return this.cachedRenderTransform;
                 }
+
+                Transform clonedTransform =
+                    MouseDragElementBehavior.CloneTransform(this.AssociatedObject.RenderTransform);
+                this.RenderTransform = clonedTransform;
                 return cachedRenderTransform;
             }
             set
             {
-                if (this.cachedRenderTransform != value)
+                if (this.cachedRenderTransform == value)
                 {
-                    this.cachedRenderTransform = value;
-                    this.AssociatedObject.RenderTransform = value;
+                    return;
                 }
+
+                this.cachedRenderTransform = value;
+                this.AssociatedObject.RenderTransform = value;
             }
         }
 
@@ -153,8 +209,7 @@ namespace Microsoft.Xaml.Behaviors.Input
             get
             {
                 return new Point(this.AssociatedObject.RenderTransformOrigin.X * this.AssociatedObject.ActualWidth,
-                                this.AssociatedObject.RenderTransformOrigin.Y * this.AssociatedObject.ActualHeight);
-
+                    this.AssociatedObject.RenderTransformOrigin.Y * this.AssociatedObject.ActualHeight);
             }
         }
 
@@ -195,21 +250,15 @@ namespace Microsoft.Xaml.Behaviors.Input
         // This behavior always enforces a matrix transform.
         internal void EnsureTransform()
         {
-            MatrixTransform transform = this.RenderTransform as MatrixTransform;
-            if (transform == null || transform.IsFrozen)
+            if (!(this.RenderTransform is MatrixTransform transform) || transform.IsFrozen)
             {
-                if (this.RenderTransform != null)
-                {
-                    transform = new MatrixTransform(this.FullTransformValue);
-                }
-                else
-                {
-                    // can't use MatrixTransform.Identity because it is frozen.
-                    transform = new MatrixTransform(Matrix.Identity);
-                }
+                transform = this.RenderTransform != null
+                    ? new MatrixTransform(this.FullTransformValue)
+                    : new MatrixTransform(Matrix.Identity);
                 this.RenderTransform = transform;
             }
-            // The touch manipulation deltas need to be applied relative to the element's actual center.  
+
+            // The touch manipulation deltas need to be applied relative to the element's actual center.
             // Keeping a render transform origin in place will cause the transform to be applied incorrectly, so we clear it.
             this.AssociatedObject.RenderTransformOrigin = new Point(0, 0);
         }
@@ -217,7 +266,7 @@ namespace Microsoft.Xaml.Behaviors.Input
         internal void ApplyRotationTransform(double angle, Point rotationPoint)
         {
             // Need to use a temporary and set MatrixTransform.Matrix.
-            // Modifying the matrix property directly will only affect a local copy, since Matrix is a value type.  
+            // Modifying the matrix property directly will only affect a local copy, since Matrix is a value type.
             Matrix matrix = this.MatrixTransform.Matrix;
             matrix.RotateAt(angle, rotationPoint.X, rotationPoint.Y);
             this.MatrixTransform.Matrix = matrix;
@@ -229,17 +278,17 @@ namespace Microsoft.Xaml.Behaviors.Input
             // scale is the incremental scale, while lastScale is the current accumulated scale in the transform.  We want to constrain the incremental scale
             // so that the accumulated scale doesn't exceed min or max scale.  To prevent collapsing to a zero scale, we'll enforce a positive hard minimum scale.
             double newScaleX = scaleX * this.lastScaleX;
-            newScaleX = Math.Min(Math.Max(Math.Max(TranslateZoomRotateBehavior.HardMinimumScale, this.MinimumScale), newScaleX), this.MaximumScale);
+            newScaleX = Math.Min(Math.Max(Math.Max(HardMinimumScale, this.MinimumScale), newScaleX), this.MaximumScale);
             scaleX = newScaleX / this.lastScaleX;
             this.lastScaleX = scaleX * this.lastScaleX;
 
             double newScaleY = scaleY * this.lastScaleY;
-            newScaleY = Math.Min(Math.Max(Math.Max(TranslateZoomRotateBehavior.HardMinimumScale, this.MinimumScale), newScaleY), this.MaximumScale);
+            newScaleY = Math.Min(Math.Max(Math.Max(HardMinimumScale, this.MinimumScale), newScaleY), this.MaximumScale);
             scaleY = newScaleY / this.lastScaleY;
             this.lastScaleY = scaleY * this.lastScaleY;
 
             // Need to use a temporary and set MatrixTransform.Matrix.
-            // Modifying the matrix property directly will only affect a local copy, since Matrix is a value type.  
+            // Modifying the matrix property directly will only affect a local copy, since Matrix is a value type.
             Matrix matrix = this.MatrixTransform.Matrix;
             matrix.ScaleAt(scaleX, scaleY, scalePoint.X, scalePoint.Y);
             this.MatrixTransform.Matrix = matrix;
@@ -262,6 +311,7 @@ namespace Microsoft.Xaml.Behaviors.Input
             {
                 manipulationContainer = this.AssociatedObject;
             }
+
             e.ManipulationContainer = manipulationContainer;
             e.Mode = this.SupportedGestures;
             e.Handled = true;
@@ -275,7 +325,7 @@ namespace Microsoft.Xaml.Behaviors.Input
             double translateFactor = this.TranslateFriction == 1 ? 1.0 : -.00666 * Math.Log(1 - this.TranslateFriction);
             double translateDeceleration = e.InitialVelocities.LinearVelocity.Length * translateFactor;
 
-            e.TranslationBehavior = new InertiaTranslationBehavior()
+            e.TranslationBehavior = new InertiaTranslationBehavior
             {
                 InitialVelocity = e.InitialVelocities.LinearVelocity,
                 DesiredDeceleration = Math.Max(translateDeceleration, 0)
@@ -284,7 +334,7 @@ namespace Microsoft.Xaml.Behaviors.Input
             double rotateFactor = this.RotationalFriction == 1 ? 1.0 : -.00666 * Math.Log(1 - this.RotationalFriction);
             double rotateDeceleration = Math.Abs(e.InitialVelocities.AngularVelocity) * rotateFactor;
 
-            e.RotationBehavior = new InertiaRotationBehavior()
+            e.RotationBehavior = new InertiaRotationBehavior
             {
                 InitialVelocity = e.InitialVelocities.AngularVelocity,
                 DesiredDeceleration = Math.Max(rotateDeceleration, 0)
@@ -313,7 +363,8 @@ namespace Microsoft.Xaml.Behaviors.Input
             // If constraining to bounds, and the element leaves its parent bounds, then stop the inertia.
             Rect parentBounds = new Rect(container.RenderSize);
 
-            Rect childBounds = this.AssociatedObject.TransformToVisual(container).TransformBounds(new Rect(this.AssociatedObject.RenderSize));
+            Rect childBounds = this.AssociatedObject.TransformToVisual(container)
+                .TransformBounds(new Rect(this.AssociatedObject.RenderSize));
 
             if (e.IsInertial && this.ConstrainToParentBounds && !parentBounds.Contains(childBounds))
             {
@@ -352,59 +403,32 @@ namespace Microsoft.Xaml.Behaviors.Input
         // handle a mouse move by updating the object transform.
         private void AssociatedObject_MouseMove(object sender, MouseEventArgs e)
         {
-            if (this.isDragging && !this.isAdjustingTransform)
+            if (!this.isDragging || this.isAdjustingTransform)
             {
-                this.isAdjustingTransform = true;
-                Point newPoint = e.GetPosition(this.AssociatedObject);
-                Vector delta = newPoint - this.lastMousePoint;
-                if ((this.SupportedGestures & ManipulationModes.TranslateX) == 0)
-                {
-                    delta.X = 0;
-                }
-                if ((this.SupportedGestures & ManipulationModes.TranslateY) == 0)
-                {
-                    delta.Y = 0;
-                }
-
-                // Transform mouse movement into element space, taking the element's transform into account.
-                Vector transformedDelta = this.FullTransformValue.Transform(delta);
-                this.ApplyTranslateTransform(transformedDelta.X, transformedDelta.Y);
-                // Need to get the position again, as it probably changed when updating the transform.
-                this.lastMousePoint = e.GetPosition(this.AssociatedObject);
-                this.isAdjustingTransform = false;
+                return;
             }
+
+            this.isAdjustingTransform = true;
+            Point newPoint = e.GetPosition(this.AssociatedObject);
+            Vector delta = newPoint - this.lastMousePoint;
+            if ((this.SupportedGestures & ManipulationModes.TranslateX) == 0)
+            {
+                delta.X = 0;
+            }
+
+            if ((this.SupportedGestures & ManipulationModes.TranslateY) == 0)
+            {
+                delta.Y = 0;
+            }
+
+            // Transform mouse movement into element space, taking the element's transform into account.
+            Vector transformedDelta = this.FullTransformValue.Transform(delta);
+            this.ApplyTranslateTransform(transformedDelta.X, transformedDelta.Y);
+            // Need to get the position again, as it probably changed when updating the transform.
+            this.lastMousePoint = e.GetPosition(this.AssociatedObject);
+            this.isAdjustingTransform = false;
         }
 
         #endregion
-
-        /// <summary>
-        /// Called after the behavior is attached to an AssociatedObject.
-        /// </summary>
-        /// <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
-        protected override void OnAttached()
-        {
-            this.AssociatedObject.AddHandler(UIElement.ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(this.ManipulationStarting), false /* handledEventsToo */);
-            this.AssociatedObject.AddHandler(UIElement.ManipulationInertiaStartingEvent, new EventHandler<ManipulationInertiaStartingEventArgs>(this.ManipulationInertiaStarting), false /* handledEventsToo */);
-            this.AssociatedObject.AddHandler(UIElement.ManipulationDeltaEvent, new EventHandler<ManipulationDeltaEventArgs>(this.ManipulationDelta), false /* handledEventsToo */);
-            this.AssociatedObject.IsManipulationEnabled = true;
-
-            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(this.MouseLeftButtonDown), false /* handledEventsToo */);
-            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(this.MouseLeftButtonUp), false /* handledEventsToo */);
-        }
-
-        /// <summary>
-        /// Called when the behavior is getting detached from its AssociatedObject, but before it has actually occurred.
-        /// </summary>
-        /// <remarks>Override this to unhook functionality from the AssociatedObject.</remarks>
-        protected override void OnDetaching()
-        {
-            this.AssociatedObject.RemoveHandler(UIElement.ManipulationStartingEvent, new EventHandler<ManipulationStartingEventArgs>(this.ManipulationStarting));
-            this.AssociatedObject.RemoveHandler(UIElement.ManipulationInertiaStartingEvent, new EventHandler<ManipulationInertiaStartingEventArgs>(this.ManipulationInertiaStarting));
-            this.AssociatedObject.RemoveHandler(UIElement.ManipulationDeltaEvent, new EventHandler<ManipulationDeltaEventArgs>(this.ManipulationDelta));
-            this.AssociatedObject.IsManipulationEnabled = false;
-
-            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(this.MouseLeftButtonDown), false /* handledEventsToo */);
-            this.AssociatedObject.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(this.MouseLeftButtonUp), false /* handledEventsToo */);
-        }
     }
 }

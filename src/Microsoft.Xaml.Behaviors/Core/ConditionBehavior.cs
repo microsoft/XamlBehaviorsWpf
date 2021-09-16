@@ -1,19 +1,21 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Windows;
+using System.Windows.Markup;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using Microsoft.Xaml.Behaviors;
-    using System.Windows.Markup;
-
     /// <summary>
     /// A behavior that attaches to a trigger and controls the conditions
-    /// to fire the actions. 
+    /// to fire the actions.
     /// </summary>
-    /// 
+    ///
     [ContentProperty("Condition")]
     public class ConditionBehavior : Behavior<TriggerBase>
     {
-        public static readonly System.Windows.DependencyProperty ConditionProperty = System.Windows.DependencyProperty.Register("Condition", typeof(ICondition), typeof(ConditionBehavior), new System.Windows.PropertyMetadata(null));
+        public static readonly DependencyProperty ConditionProperty = DependencyProperty.Register(nameof(Condition),
+            typeof(ICondition), typeof(ConditionBehavior), new PropertyMetadata(null));
 
         /// <summary>
         /// Gets or sets the IConditon object on behavior.
@@ -23,13 +25,6 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             get { return (ICondition)this.GetValue(ConditionProperty); }
             set { this.SetValue(ConditionProperty, value); }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConditionBehavior"/> class.
-        /// </summary>
-        public ConditionBehavior()
-        {
         }
 
         protected override void OnAttached()
@@ -45,7 +40,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         }
 
         /// <summary>
-        /// The event handler that is listening to the preview invoke event that is fired by 
+        /// The event handler that is listening to the preview invoke event that is fired by
         /// the trigger. Setting PreviewInvokeEventArgs.Cancelling to True will
         /// cancel the invocation.
         /// </summary>

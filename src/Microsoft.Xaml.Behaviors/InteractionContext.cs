@@ -1,23 +1,41 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Remoting;
+using System.Windows;
+using System.Windows.Navigation;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows;
-    using System.Windows.Navigation;
-
     internal static class InteractionContext
     {
+        static InteractionContext()
+        {
+            runtimeAssembly = FindPlatformRuntimeAssembly();
+
+            if (runtimeAssembly != null)
+            {
+                InitializeRuntimeNavigation();
+                LibraryName = (string)libraryNamePropertyInfo.GetValue(playerContextInstance, null);
+
+                LoadNavigationData(LibraryName);
+            } else
+            {
+                InitalizePlatformNavigation();
+            }
+        }
+
         #region private fields
 
         // Our Navigation actions can no longer take a hard dependency on PlayerContext. Fortunately we use very little of the PlayerContext from the runtime
-        // so we accumulate reflection info here to use to call the runtime dynamically. 
-        private static Assembly runtimeAssembly;
+        // so we accumulate reflection info here to use to call the runtime dynamically.
+        private static readonly Assembly runtimeAssembly;
         private static object playerContextInstance;
         private static object activeNavigationViewModelObject;
         private static PropertyInfo libraryNamePropertyInfo;
@@ -33,28 +51,11 @@ namespace Microsoft.Xaml.Behaviors
 
         private static NavigationService navigationService;
         private static readonly string LibraryName;
+
         private static readonly Dictionary<string, Serializer.Data> NavigationData =
             new Dictionary<string, Serializer.Data>(StringComparer.OrdinalIgnoreCase);
 
-
         #endregion private fields
-
-        static InteractionContext()
-        {
-            InteractionContext.runtimeAssembly = InteractionContext.FindPlatformRuntimeAssembly();
-
-            if (InteractionContext.runtimeAssembly != null)
-            {
-                InitializeRuntimeNavigation();
-                InteractionContext.LibraryName = (string)InteractionContext.libraryNamePropertyInfo.GetValue(InteractionContext.playerContextInstance, null);
-
-                InteractionContext.LoadNavigationData(InteractionContext.LibraryName);
-            }
-            else
-            {
-                InteractionContext.InitalizePlatformNavigation();
-            }
-        }
 
         #region properties
 
@@ -64,8 +65,8 @@ namespace Microsoft.Xaml.Behaviors
             {
                 return
                     activeNavigationViewModelObject ??
-                    InteractionContext.activeNavigationViewModelPropertyInfo.GetValue(
-                        InteractionContext.playerContextInstance,
+                    activeNavigationViewModelPropertyInfo.GetValue(
+                        playerContextInstance,
                         null);
             }
 
@@ -77,17 +78,17 @@ namespace Microsoft.Xaml.Behaviors
 
         private static bool IsPrototypingRuntimeLoaded
         {
-            get { return InteractionContext.runtimeAssembly != null; }
+            get { return runtimeAssembly != null; }
         }
 
         private static bool CanGoBack
         {
-            get { return (bool)InteractionContext.canGoBackPropertyInfo.GetValue(ActiveNavigationViewModelObject, null); }
+            get { return (bool)canGoBackPropertyInfo.GetValue(ActiveNavigationViewModelObject, null); }
         }
 
         private static bool CanGoForward
         {
-            get { return (bool)InteractionContext.canGoForwardPropertyInfo.GetValue(ActiveNavigationViewModelObject, null); }
+            get { return (bool)canGoForwardPropertyInfo.GetValue(ActiveNavigationViewModelObject, null); }
         }
 
         #endregion properties
@@ -96,49 +97,47 @@ namespace Microsoft.Xaml.Behaviors
 
         public static void GoBack()
         {
-            if (InteractionContext.IsPrototypingRuntimeLoaded)
+            if (IsPrototypingRuntimeLoaded)
             {
-                if (InteractionContext.CanGoBack)
+                if (CanGoBack)
                 {
-                    InteractionContext.goBackMethodInfo.Invoke(ActiveNavigationViewModelObject, null);
+                    goBackMethodInfo.Invoke(ActiveNavigationViewModelObject, null);
                 }
-            }
-            else
+            } else
             {
-                InteractionContext.PlatformGoBack();
+                PlatformGoBack();
             }
         }
 
         public static void GoForward()
         {
-            if (InteractionContext.IsPrototypingRuntimeLoaded)
+            if (IsPrototypingRuntimeLoaded)
             {
-                if (InteractionContext.CanGoForward)
+                if (CanGoForward)
                 {
-                    InteractionContext.goForwardMethodInfo.Invoke(ActiveNavigationViewModelObject, null);
+                    goForwardMethodInfo.Invoke(ActiveNavigationViewModelObject, null);
                 }
-            }
-            else
+            } else
             {
-                InteractionContext.PlatformGoForward();
+                PlatformGoForward();
             }
         }
 
         public static bool IsScreen(string screenName)
         {
-            if (!InteractionContext.IsPrototypingRuntimeLoaded)
+            if (!IsPrototypingRuntimeLoaded)
             {
                 return false;
             }
 
-            return InteractionContext.GetScreenClassName(screenName) != null;
+            return GetScreenClassName(screenName) != null;
         }
 
         public static void GoToScreen(string screenName, Assembly assembly)
         {
-            if (InteractionContext.IsPrototypingRuntimeLoaded)
+            if (IsPrototypingRuntimeLoaded)
             {
-                string screenClassName = InteractionContext.GetScreenClassName(screenName);
+                string screenClassName = GetScreenClassName(screenName);
 
                 if (string.IsNullOrEmpty(screenClassName))
                 {
@@ -146,11 +145,10 @@ namespace Microsoft.Xaml.Behaviors
                 }
 
                 //	an array that ends up being parameters to NavigationViewModel.NavigateToScreen(string name, bool record)
-                object[] paramArrary = new object[] { screenClassName, true };
+                object[] paramArrary = { screenClassName, true };
 
-                InteractionContext.navigateToScreenMethodInfo.Invoke(ActiveNavigationViewModelObject, paramArrary);
-            }
-            else
+                navigateToScreenMethodInfo.Invoke(ActiveNavigationViewModelObject, paramArrary);
+            } else
             {
                 // Verify we could tell where we were
                 if (assembly == null)
@@ -163,14 +161,14 @@ namespace Microsoft.Xaml.Behaviors
                 if (assemblyName != null)
                 {
                     string hostAssembly = assemblyName.Name;
-                    InteractionContext.PlatformGoToScreen(hostAssembly, screenName);
+                    PlatformGoToScreen(hostAssembly, screenName);
                 }
             }
         }
 
         public static void GoToState(string screen, string state)
         {
-            // If you have XAML like the following - 
+            // If you have XAML like the following -
 
             //	<i:Interaction.Triggers>
             //		<i:EventTrigger>
@@ -186,22 +184,18 @@ namespace Microsoft.Xaml.Behaviors
                 return;
             }
 
-            if (InteractionContext.IsPrototypingRuntimeLoaded)
+            if (IsPrototypingRuntimeLoaded)
             {
                 //	an array that ends up being parameters to NavigationViewModel.InvokeStateChange(string screen, string state, bool record)
-                object[] paramArrary = new object[] { screen, state, false };
+                object[] paramArrary = { screen, state, false };
 
-                InteractionContext.invokeStateChangeMethodInfo.Invoke(ActiveNavigationViewModelObject, paramArrary);
-            }
-            else
-            {
-                // Neither platform (WPF or Silverlight) currently supports this as an option
+                invokeStateChangeMethodInfo.Invoke(ActiveNavigationViewModelObject, paramArrary);
             }
         }
 
         public static void PlaySketchFlowAnimation(string sketchFlowAnimation, string owningScreen)
         {
-            // If you have XAML like the following - 
+            // If you have XAML like the following -
 
             //	<i:Interaction.Triggers>
             //		<i:EventTrigger>
@@ -218,21 +212,14 @@ namespace Microsoft.Xaml.Behaviors
                 return;
             }
 
-            if (InteractionContext.IsPrototypingRuntimeLoaded)
+            if (IsPrototypingRuntimeLoaded)
             {
-                object activeNavigationViewModel = InteractionContext.activeNavigationViewModelPropertyInfo.GetValue(InteractionContext.playerContextInstance, null);
+                object activeNavigationViewModel =
+                    activeNavigationViewModelPropertyInfo.GetValue(playerContextInstance, null);
 
-                object[] paramArrary = new object[]
-                {
-                    sketchFlowAnimation,
-                    owningScreen
-                };
+                object[] paramArrary = { sketchFlowAnimation, owningScreen };
 
-                InteractionContext.playSketchFlowAnimationMethodInfo.Invoke(activeNavigationViewModel, paramArrary);
-            }
-            else
-            {
-                // Neither platform (WPF or Silverlight) currently supports this as an option
+                playSketchFlowAnimationMethodInfo.Invoke(activeNavigationViewModel, paramArrary);
             }
         }
 
@@ -242,28 +229,29 @@ namespace Microsoft.Xaml.Behaviors
 
         private static void InitializeRuntimeNavigation()
         {
-            Type playerContextType = InteractionContext.runtimeAssembly.GetType("Microsoft.Expression.Prototyping.Services.PlayerContext");
+            Type playerContextType = runtimeAssembly.GetType("Microsoft.Expression.Prototyping.Services.PlayerContext");
             PropertyInfo instancePropertyInfo = playerContextType.GetProperty("Instance");
 
-            InteractionContext.activeNavigationViewModelPropertyInfo = playerContextType.GetProperty("ActiveNavigationViewModel");
-            InteractionContext.libraryNamePropertyInfo = playerContextType.GetProperty("LibraryName");
-            InteractionContext.playerContextInstance = instancePropertyInfo.GetValue(null, null);
+            activeNavigationViewModelPropertyInfo = playerContextType.GetProperty("ActiveNavigationViewModel");
+            libraryNamePropertyInfo = playerContextType.GetProperty("LibraryName");
+            playerContextInstance = instancePropertyInfo?.GetValue(null, null);
 
-            Type navigationViewModelType = InteractionContext.runtimeAssembly.GetType("Microsoft.Expression.Prototyping.Navigation.NavigationViewModel");
-            InteractionContext.canGoBackPropertyInfo = navigationViewModelType.GetProperty("CanGoBack");
-            InteractionContext.canGoForwardPropertyInfo = navigationViewModelType.GetProperty("CanGoForward");
-            InteractionContext.goBackMethodInfo = navigationViewModelType.GetMethod("GoBack");
-            InteractionContext.goForwardMethodInfo = navigationViewModelType.GetMethod("GoForward");
-            InteractionContext.navigateToScreenMethodInfo = navigationViewModelType.GetMethod("NavigateToScreen");
-            InteractionContext.invokeStateChangeMethodInfo = navigationViewModelType.GetMethod("InvokeStateChange");
-            InteractionContext.playSketchFlowAnimationMethodInfo = navigationViewModelType.GetMethod("PlaySketchFlowAnimation");
-            InteractionContext.sketchFlowAnimationPlayerPropertyInfo = navigationViewModelType.GetProperty("SketchFlowAnimationPlayer");
+            Type navigationViewModelType =
+                runtimeAssembly.GetType("Microsoft.Expression.Prototyping.Navigation.NavigationViewModel");
+            canGoBackPropertyInfo = navigationViewModelType.GetProperty("CanGoBack");
+            canGoForwardPropertyInfo = navigationViewModelType.GetProperty("CanGoForward");
+            goBackMethodInfo = navigationViewModelType.GetMethod("GoBack");
+            goForwardMethodInfo = navigationViewModelType.GetMethod("GoForward");
+            navigateToScreenMethodInfo = navigationViewModelType.GetMethod("NavigateToScreen");
+            invokeStateChangeMethodInfo = navigationViewModelType.GetMethod("InvokeStateChange");
+            playSketchFlowAnimationMethodInfo = navigationViewModelType.GetMethod("PlaySketchFlowAnimation");
+            sketchFlowAnimationPlayerPropertyInfo = navigationViewModelType.GetProperty("SketchFlowAnimationPlayer");
         }
 
         private static Serializer.Data LoadNavigationData(string assemblyName)
         {
             Serializer.Data data = null;
-            if (InteractionContext.NavigationData.TryGetValue(assemblyName, out data))
+            if (NavigationData.TryGetValue(assemblyName, out data))
             {
                 return data;
             }
@@ -276,11 +264,9 @@ namespace Microsoft.Xaml.Behaviors
                 if (info != null)
                 {
                     data = Serializer.Deserialize(info.Stream);
-                    InteractionContext.NavigationData[assemblyName] = data;
+                    NavigationData[assemblyName] = data;
                 }
-            }
-            catch (IOException) { }
-            catch (InvalidOperationException) { }
+            } catch (IOException) { } catch (InvalidOperationException) { }
 
             return data ?? new Serializer.Data();
         }
@@ -288,8 +274,8 @@ namespace Microsoft.Xaml.Behaviors
         private static string GetScreenClassName(string screenName)
         {
             Serializer.Data data = null;
-            InteractionContext.NavigationData.TryGetValue(InteractionContext.LibraryName, out data);
-            if (data == null || data.Screens == null)
+            NavigationData.TryGetValue(LibraryName, out data);
+            if (data?.Screens == null)
             {
                 return null;
             }
@@ -310,7 +296,7 @@ namespace Microsoft.Xaml.Behaviors
             NavigationWindow navigationWindow = Application.Current.MainWindow as NavigationWindow;
             if (navigationWindow != null)
             {
-                InteractionContext.navigationService = navigationWindow.NavigationService;
+                navigationService = navigationWindow.NavigationService;
             }
         }
 
@@ -323,39 +309,41 @@ namespace Microsoft.Xaml.Behaviors
                     return assembly;
                 }
             }
+
             return null;
         }
 
         public static void PlatformGoBack()
         {
-            if (InteractionContext.navigationService != null && InteractionContext.PlatformCanGoBack)
+            if (navigationService != null && PlatformCanGoBack)
             {
-                InteractionContext.navigationService.GoBack();
+                navigationService.GoBack();
             }
         }
 
         public static void PlatformGoForward()
         {
-            if (InteractionContext.navigationService != null && InteractionContext.PlatformCanGoForward)
+            if (navigationService != null && PlatformCanGoForward)
             {
-                InteractionContext.navigationService.GoForward();
+                navigationService.GoForward();
             }
         }
 
         public static void PlatformGoToScreen(string assemblyName, string screen)
         {
-            System.Runtime.Remoting.ObjectHandle handle = Activator.CreateInstance(assemblyName, screen);
-            InteractionContext.navigationService.Navigate(handle.Unwrap());
+            ObjectHandle handle = Activator.CreateInstance(assemblyName, screen);
+            navigationService.Navigate(handle.Unwrap());
         }
 
         private static bool PlatformCanGoBack
         {
             get
             {
-                if (InteractionContext.navigationService != null)
+                if (navigationService != null)
                 {
-                    return InteractionContext.navigationService.CanGoBack;
+                    return navigationService.CanGoBack;
                 }
+
                 return false;
             }
         }
@@ -364,10 +352,11 @@ namespace Microsoft.Xaml.Behaviors
         {
             get
             {
-                if (InteractionContext.navigationService != null)
+                if (navigationService != null)
                 {
-                    return InteractionContext.navigationService.CanGoForward;
+                    return navigationService.CanGoForward;
                 }
+
                 return false;
             }
         }

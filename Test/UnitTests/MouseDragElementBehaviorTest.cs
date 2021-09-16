@@ -1,20 +1,33 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Layout;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
-    using System.Windows.Threading;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Layout;
-
     [TestClass]
     public class MouseDragElementBehaviorTest
     {
+        #region Helper classes
+
+        class TestMouseDragElementBehavior : MouseDragElementBehavior
+        {
+            public void SimulateDragByDelta(double x, double y)
+            {
+                this.ApplyTranslationTransform(x, y);
+            }
+        }
+
+        #endregion
+
         #region Factory methods
 
         private static Rectangle CreateRectangleInGrid(
@@ -25,7 +38,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             double top = 0.0d,
             double left = 0.0d)
         {
-            Rectangle rectangle = new Rectangle()
+            Rectangle rectangle = new Rectangle
             {
                 Width = rectWidth,
                 Height = rectHeight,
@@ -33,11 +46,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 VerticalAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Left,
             };
-            Grid parentGrid = new Grid()
-            {
-                Width = gridWidth,
-                Height = gridHeight,
-            };
+            Grid parentGrid = new Grid { Width = gridWidth, Height = gridHeight, };
 
             parentGrid.Children.Add(rectangle);
             return rectangle;
@@ -70,6 +79,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             {
                 transformGroup.Children.Add(transform);
             }
+
             return transformGroup;
         }
 
@@ -82,12 +92,14 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 CreateTranslateTransform(10, -10));
         }
 
-        private static MatrixTransform CreateMatrixTransform(double m11, double m12, double m21, double m22, double x, double y)
+        private static MatrixTransform CreateMatrixTransform(double m11, double m12, double m21, double m22, double x,
+            double y)
         {
             return new MatrixTransform(m11, m12, m21, m22, x, y);
         }
 
-        private static TestMouseDragElementBehavior CreateAndAttachMouseDragElementBehavior(DependencyObject dependencyObject)
+        private static TestMouseDragElementBehavior CreateAndAttachMouseDragElementBehavior(
+            DependencyObject dependencyObject)
         {
             TestMouseDragElementBehavior mouseDragElementBehavior = new TestMouseDragElementBehavior();
             mouseDragElementBehavior.Attach(dependencyObject);
@@ -99,12 +111,14 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         #region Test methods
 
         #region TransformIsCloned
+
         [TestMethod]
         public void OnPositionUpdated_DefaultTransform_TransformIsCloned()
         {
             Transform draggedTransform = VerifyTransformIsClonedOnDrag(Transform.Identity);
 
-            Assert.AreNotSame(draggedTransform, Transform.Identity, "Identity transform should not be identical after a drag.");
+            Assert.AreNotSame(draggedTransform, Transform.Identity,
+                "Identity transform should not be identical after a drag.");
         }
 
         [TestMethod]
@@ -113,7 +127,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             TranslateTransform translateTransform = CreateTranslateTransform(1, 0);
             Transform draggedTransform = VerifyTransformIsClonedOnDrag(translateTransform);
 
-            Assert.AreNotSame(draggedTransform, translateTransform, "Translate transform should not be identical after a drag.");
+            Assert.AreNotSame(draggedTransform, translateTransform,
+                "Translate transform should not be identical after a drag.");
         }
 
         [TestMethod]
@@ -122,7 +137,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             RotateTransform rotateTransform = CreateRotateTransform(1);
             Transform draggedTransform = VerifyTransformIsClonedOnDrag(rotateTransform);
 
-            Assert.AreNotSame(draggedTransform, rotateTransform, "Rotate transform should not be identical after a drag.");
+            Assert.AreNotSame(draggedTransform, rotateTransform,
+                "Rotate transform should not be identical after a drag.");
         }
 
         [TestMethod]
@@ -140,7 +156,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             ScaleTransform scaleTransform = CreateScaleTransform(1, 0);
             Transform draggedTransform = VerifyTransformIsClonedOnDrag(scaleTransform);
 
-            Assert.AreNotSame(draggedTransform, scaleTransform, "Scale transform should not be identical after a drag.");
+            Assert.AreNotSame(draggedTransform, scaleTransform,
+                "Scale transform should not be identical after a drag.");
         }
 
         [TestMethod]
@@ -149,7 +166,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             MatrixTransform matrixTransform = CreateMatrixTransform(1, 0, 0, 1, 1, 0);
             Transform draggedTransform = VerifyTransformIsClonedOnDrag(matrixTransform);
 
-            Assert.AreNotSame(draggedTransform, matrixTransform, "Matrix transform should not be identical after a drag.");
+            Assert.AreNotSame(draggedTransform, matrixTransform,
+                "Matrix transform should not be identical after a drag.");
         }
 
         [TestMethod]
@@ -158,7 +176,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             TransformGroup transformGroup = CreateTransformGroup();
             Transform draggedTransform = VerifyTransformIsClonedOnDrag(transformGroup);
 
-            Assert.AreNotSame(draggedTransform, transformGroup, "Transform group should not be identical after a drag.");
+            Assert.AreNotSame(draggedTransform, transformGroup,
+                "Transform group should not be identical after a drag.");
         }
 
         [TestMethod]
@@ -178,6 +197,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             return rectangle.RenderTransform;
         }
+
         #endregion
 
         #region TransformIsCorrect
@@ -343,33 +363,34 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private class TestDragToken : IDisposable
         {
-            private StubWindow stubWindow;
-            private FrameworkElement draggedElement;
-            private MouseDragElementBehavior behavior;
+            private readonly MouseDragElementBehavior behavior;
+            private readonly FrameworkElement draggedElement;
+            private readonly StubWindow stubWindow;
 
             public TestDragToken(MouseDragElementBehavior behavior, Point startPoint)
             {
                 this.behavior = behavior;
-                this.draggedElement = (FrameworkElement)((IAttachedObject)behavior).AssociatedObject; ;
+                this.draggedElement = (FrameworkElement)((IAttachedObject)behavior).AssociatedObject;
+                ;
                 this.stubWindow = new StubWindow(draggedElement.Parent);
                 GeneralTransform rootToElement = this.stubWindow.TransformToVisual(draggedElement);
                 behavior.StartDrag(rootToElement.Transform(startPoint));
-            }
-
-            public void PerformDrag(Point toPoint)
-            {
-                Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Render, new DispatcherOperationCallback((o) =>
-                {
-                    GeneralTransform rootToElement = this.stubWindow.TransformToVisual(draggedElement);
-                    behavior.HandleDrag(rootToElement.Transform(toPoint));
-                    return null;
-                }), null);
             }
 
             public void Dispose()
             {
                 this.behavior.EndDrag();
                 this.stubWindow.Dispose();
+            }
+
+            public void PerformDrag(Point toPoint)
+            {
+                Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Render, new DispatcherOperationCallback(o =>
+                {
+                    GeneralTransform rootToElement = this.stubWindow.TransformToVisual(draggedElement);
+                    behavior.HandleDrag(rootToElement.Transform(toPoint));
+                    return null;
+                }), null);
             }
         }
 
@@ -392,18 +413,22 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 RotateTransform rotateTransform = transformGroup.Children[2] as RotateTransform;
                 TranslateTransform translateTransform = transformGroup.Children[3] as TranslateTransform;
 
-                if (scaleTransform != null && skewTransform != null && rotateTransform != null && translateTransform != null)
+                if (scaleTransform != null && skewTransform != null && rotateTransform != null &&
+                    translateTransform != null)
                 {
                     isCanonical = true;
                 }
             }
+
             return isCanonical;
         }
 
         private void VerifyOffset(Transform draggedTransform, double x, double y)
         {
-            Assert.AreEqual((double)draggedTransform.Value.OffsetX, x, 0.000000000005, string.Format("Expected OffsetX of {0}, got {1}", x, draggedTransform.Value.OffsetX));
-            Assert.AreEqual((double)draggedTransform.Value.OffsetY, y, 0.000000000005, string.Format("Expected OffsetY of {0}, got {1}", y, draggedTransform.Value.OffsetY));
+            Assert.AreEqual(draggedTransform.Value.OffsetX, x, 0.000000000005,
+                string.Format("Expected OffsetX of {0}, got {1}", x, draggedTransform.Value.OffsetX));
+            Assert.AreEqual(draggedTransform.Value.OffsetY, y, 0.000000000005,
+                string.Format("Expected OffsetY of {0}, got {1}", y, draggedTransform.Value.OffsetY));
         }
 
         private Transform GetTransformAfterDrag(Transform transform, double x, double y)
@@ -420,18 +445,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         private static void SetRenderTransform(FrameworkElement frameworkElement, Transform transform)
         {
             frameworkElement.RenderTransform = transform;
-        }
-
-        #endregion
-
-        #region Helper classes
-
-        class TestMouseDragElementBehavior : MouseDragElementBehavior
-        {
-            public void SimulateDragByDelta(double x, double y)
-            {
-                this.ApplyTranslationTransform(x, y);
-            }
         }
 
         #endregion

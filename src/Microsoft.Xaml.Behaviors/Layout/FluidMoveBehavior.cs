@@ -1,19 +1,20 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Shapes;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Behaviors.Layout
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Media;
-    using System.Windows.Media.Animation;
-    using System.Windows.Shapes;
-    using Microsoft.Xaml.Behaviors.Core;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
     /// This enumerated type indicates whether a FluidMoveBehavior applies to the element to which it is attached, or to the children of that element.
     /// "Self" is useful when there is a single element that should behave in a special manner; "Children" is useful when the same behavior should apply to all
@@ -38,6 +39,44 @@ namespace Microsoft.Xaml.Behaviors.Layout
     public abstract class FluidMoveBehaviorBase : Behavior<FrameworkElement>
     {
         /// <summary>
+        /// Dependency property for the scope of the behavior. See FluidMoveScope for more details.
+        /// </summary>
+        public static readonly DependencyProperty AppliesToProperty = DependencyProperty.Register("AppliesTo",
+            typeof(FluidMoveScope), typeof(FluidMoveBehaviorBase), new PropertyMetadata(FluidMoveScope.Self));
+
+        /// <summary>
+        /// Dependency property for the active state of the behavior.
+        /// </summary>
+        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive",
+            typeof(bool), typeof(FluidMoveBehaviorBase), new PropertyMetadata(true));
+
+        /// <summary>
+        /// Dependency property that provides the ability to use the element as its own tag, or the binding on the element.
+        /// </summary>
+        public static readonly DependencyProperty TagProperty = DependencyProperty.Register("Tag", typeof(TagType),
+            typeof(FluidMoveBehaviorBase), new PropertyMetadata(TagType.Element));
+
+        /// <summary>
+        /// Dependency property for the extra path to add to the binding when UsaBindingAsTag is true.
+        /// </summary>
+        public static readonly DependencyProperty TagPathProperty = DependencyProperty.Register("TagPath",
+            typeof(string), typeof(FluidMoveBehaviorBase), new PropertyMetadata(String.Empty));
+
+        /// <summary>
+        /// Identity tag used to detect element motion between containers.
+        /// </summary>
+        protected static readonly DependencyProperty IdentityTagProperty =
+            DependencyProperty.RegisterAttached("IdentityTag", typeof(object), typeof(FluidMoveBehaviorBase),
+                new PropertyMetadata(null));
+
+        internal static Dictionary<object, TagData> TagDictionary = new Dictionary<object, TagData>();
+
+        // timer data to help purge objects we should no longer be tracking
+        private static DateTime nextToLastPurgeTick = DateTime.MinValue;
+        private static DateTime lastPurgeTick = DateTime.MinValue;
+        private static readonly TimeSpan minTickDelta = TimeSpan.FromSeconds(0.5);
+
+        /// <summary>
         /// Indicates whether the behavior applies just to this element, or to all children of the element (if the element is a Panel).
         /// </summary>
         public FluidMoveScope AppliesTo
@@ -45,10 +84,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (FluidMoveScope)this.GetValue(AppliesToProperty); }
             set { this.SetValue(AppliesToProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the scope of the behavior. See FluidMoveScope for more details.
-        /// </summary>
-        public static readonly DependencyProperty AppliesToProperty = DependencyProperty.Register("AppliesTo", typeof(FluidMoveScope), typeof(FluidMoveBehaviorBase), new PropertyMetadata(FluidMoveScope.Self));
 
         /// <summary>
         /// Indicates whether the behavior is currently active.
@@ -58,10 +93,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (bool)this.GetValue(IsActiveProperty); }
             set { this.SetValue(IsActiveProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the active state of the behavior.
-        /// </summary>
-        public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(FluidMoveBehaviorBase), new PropertyMetadata(true));
 
         /// <summary>
         /// Indicates whether to use the element as its own tag, or to use the binding on the element as the tag.
@@ -71,10 +102,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (TagType)this.GetValue(TagProperty); }
             set { this.SetValue(TagProperty, value); }
         }
-        /// <summary>
-        /// Dependency property that provides the ability to use the element as its own tag, or the binding on the element.
-        /// </summary>
-        public static readonly DependencyProperty TagProperty = DependencyProperty.Register("Tag", typeof(TagType), typeof(FluidMoveBehaviorBase), new PropertyMetadata(TagType.Element));
 
         /// <summary>
         /// Extra path to add to the binding when TagType is specified.
@@ -84,37 +111,18 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (string)this.GetValue(TagPathProperty); }
             set { this.SetValue(TagPathProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the extra path to add to the binding when UsaBindingAsTag is true.
-        /// </summary>
-        public static readonly DependencyProperty TagPathProperty = DependencyProperty.Register("TagPath", typeof(string), typeof(FluidMoveBehaviorBase), new PropertyMetadata(String.Empty));
 
-        /// <summary>
-        /// Identity tag used to detect element motion between containers.
-        /// </summary>
-        protected static readonly DependencyProperty IdentityTagProperty = DependencyProperty.RegisterAttached("IdentityTag", typeof(object), typeof(FluidMoveBehaviorBase), new PropertyMetadata(null));
-        protected static object GetIdentityTag(DependencyObject obj) { return obj.GetValue(IdentityTagProperty); }
-        protected static void SetIdentityTag(DependencyObject obj, object value) { obj.SetValue(IdentityTagProperty, value); }
-
-        /// <summary>
-        /// Private structure that stores all relevant data pertaining to a tagged item.
-        /// </summary>
-        internal class TagData
+        protected virtual bool ShouldSkipInitialLayout
         {
-            public FrameworkElement Child { get; set; } // the element
-            public FrameworkElement Parent { get; set; }// the parent
-            public Rect ParentRect { get; set; }        // the parent-relative rect
-            public Rect AppRect { get; set; }           // the app-relative rect
-            public DateTime Timestamp { get; set; }     // the last time we saw the element
-            public object InitialTag { get; set; }      // the tag to spawn from
+            get { return (this.Tag == TagType.DataContext); }
         }
 
-        internal static Dictionary<object, TagData> TagDictionary = new Dictionary<object, TagData>();
+        protected static object GetIdentityTag(DependencyObject obj) { return obj.GetValue(IdentityTagProperty); }
 
-        // timer data to help purge objects we should no longer be tracking
-        private static DateTime nextToLastPurgeTick = DateTime.MinValue;
-        private static DateTime lastPurgeTick = DateTime.MinValue;
-        private static TimeSpan minTickDelta = TimeSpan.FromSeconds(0.5);
+        protected static void SetIdentityTag(DependencyObject obj, object value)
+        {
+            obj.SetValue(IdentityTagProperty, value);
+        }
 
         protected override void OnAttached()
         {
@@ -139,7 +147,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
             // objects could reappear on the very next layout pass, we'll purge any tag who hasn't been seen since the purge tick before that.
             //
             // If we got a notification when elements were deleted, we would maintain a far shorter list of tags whose FEs were deleted since the last purge.
-            // 
+            //
             // We might also be able to use a WeakReference solution here, but this one is pretty cheap as it only runs when Layout is running anyway.
             if (DateTime.Now - lastPurgeTick >= minTickDelta)
             {
@@ -153,6 +161,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                         {
                             deadTags = new List<object>();
                         }
+
                         deadTags.Add(pair.Key);
                     }
                 }
@@ -172,8 +181,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
             if (this.AppliesTo == FluidMoveScope.Self)
             {
                 this.UpdateLayoutTransition(this.AssociatedObject);
-            }
-            else
+            } else
             {
                 Panel panel = this.AssociatedObject as Panel;
                 if (panel != null)
@@ -207,8 +215,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
             try
             {
                 newTagData.AppRect = TranslateRect(newTagData.ParentRect, newTagData.Parent, root);
-            }
-            catch (System.ArgumentException)
+            } catch (ArgumentException)
             {
                 if (this.ShouldSkipInitialLayout)
                 {
@@ -228,12 +235,8 @@ namespace Microsoft.Xaml.Behaviors.Layout
             this.UpdateLayoutTransitionCore(child, root, tag, newTagData);
         }
 
-        protected virtual bool ShouldSkipInitialLayout
-        {
-            get { return (this.Tag == TagType.DataContext); }
-        }
-
-        internal abstract void UpdateLayoutTransitionCore(FrameworkElement child, FrameworkElement root, object tag, TagData newTagData);
+        internal abstract void UpdateLayoutTransitionCore(FrameworkElement child, FrameworkElement root, object tag,
+            TagData newTagData);
 
         protected virtual void EnsureTags(FrameworkElement child)
         {
@@ -258,11 +261,13 @@ namespace Microsoft.Xaml.Behaviors.Layout
                 {
                     return child;
                 }
+
                 // The WPF floating solution relies on the AdornerLayer - we have to make sure that is still available
-                if (System.Windows.Documents.AdornerLayer.GetAdornerLayer(parent) == null)
+                if (AdornerLayer.GetAdornerLayer(parent) == null)
                 {
                     return child;
                 }
+
                 child = parent;
             }
         }
@@ -279,11 +284,25 @@ namespace Microsoft.Xaml.Behaviors.Layout
             point = from.TransformToVisual(to).Transform(point);
             return new Rect(point.X, point.Y, rect.Width, rect.Height);
         }
+
+        /// <summary>
+        /// Private structure that stores all relevant data pertaining to a tagged item.
+        /// </summary>
+        internal class TagData
+        {
+            public FrameworkElement Child { get; set; } // the element
+            public FrameworkElement Parent { get; set; } // the parent
+            public Rect ParentRect { get; set; } // the parent-relative rect
+            public Rect AppRect { get; set; } // the app-relative rect
+            public DateTime Timestamp { get; set; } // the last time we saw the element
+            public object InitialTag { get; set; } // the tag to spawn from
+        }
     }
 
     public sealed class FluidMoveSetTagBehavior : FluidMoveBehaviorBase
     {
-        internal override void UpdateLayoutTransitionCore(FrameworkElement child, FrameworkElement root, object tag, TagData newTagData)
+        internal override void UpdateLayoutTransitionCore(FrameworkElement child, FrameworkElement root, object tag,
+            TagData newTagData)
         {
             TagData tagData;
             bool gotData = TagDictionary.TryGetValue(tag, out tagData);
@@ -309,6 +328,73 @@ namespace Microsoft.Xaml.Behaviors.Layout
     public sealed class FluidMoveBehavior : FluidMoveBehaviorBase
     {
         /// <summary>
+        /// Dependency property for the duration of the move.
+        /// </summary>
+        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register(nameof(Duration),
+            typeof(Duration), typeof(FluidMoveBehavior), new PropertyMetadata(new Duration(TimeSpan.FromSeconds(1.0))));
+
+        /// <summary>
+        /// Dependency property for the tag type to use just before the object is loaded.
+        /// </summary>
+        public static readonly DependencyProperty InitialTagProperty = DependencyProperty.Register(nameof(InitialTag),
+            typeof(TagType), typeof(FluidMoveBehavior), new PropertyMetadata(TagType.Element));
+
+        /// <summary>
+        /// Dependency property for the extra path to add to the binding when UsaBindingAsTag is true.
+        /// </summary>
+        public static readonly DependencyProperty InitialTagPathProperty =
+            DependencyProperty.Register(nameof(InitialTagPath), typeof(string), typeof(FluidMoveBehavior),
+                new PropertyMetadata(String.Empty));
+
+        /// <summary>
+        /// Identity tag used to detect element motion between containers.
+        /// </summary>
+        private static readonly DependencyProperty initialIdentityTagProperty =
+            DependencyProperty.RegisterAttached("InitialIdentityTag", typeof(object), typeof(FluidMoveBehavior),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Dependency property for the FloatAbove flag.
+        /// </summary>
+        public static readonly DependencyProperty FloatAboveProperty = DependencyProperty.Register(nameof(FloatAbove),
+            typeof(bool), typeof(FluidMoveBehavior), new PropertyMetadata(true));
+
+        /// <summary>
+        /// Dependency property for the EasingFunction to use for the horizontal component of the move.
+        /// </summary>
+        public static readonly DependencyProperty EaseXProperty = DependencyProperty.Register(nameof(EaseX),
+            typeof(IEasingFunction), typeof(FluidMoveBehavior), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Dependency property for the EasingFunction to use for the vertical component of the move.
+        /// </summary>
+        public static readonly DependencyProperty EaseYProperty = DependencyProperty.Register(nameof(EaseY),
+            typeof(IEasingFunction), typeof(FluidMoveBehavior), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Remember the popup/adorner being used, in case of element motion between containers when FloatAbove is true.
+        /// </summary>
+        private static readonly DependencyProperty overlayProperty = DependencyProperty.RegisterAttached("Overlay",
+            typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
+
+        /// <summary>
+        /// Opacity cache used when floating a Popup.
+        /// </summary>
+        private static readonly DependencyProperty cacheDuringOverlayProperty =
+            DependencyProperty.RegisterAttached("CacheDuringOverlay", typeof(object), typeof(FluidMoveBehavior),
+                new PropertyMetadata(null));
+
+        /// <summary>
+        /// Marks the animation transform.
+        /// </summary>
+        private static readonly DependencyProperty hasTransformWrapperProperty =
+            DependencyProperty.RegisterAttached("HasTransformWrapper", typeof(bool), typeof(FluidMoveBehavior),
+                new PropertyMetadata(false));
+
+        private static readonly Dictionary<object, Storyboard> transitionStoryboardDictionary =
+            new Dictionary<object, Storyboard>();
+
+        /// <summary>
         /// The duration of the move.
         /// </summary>
         public Duration Duration
@@ -316,10 +402,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (Duration)this.GetValue(DurationProperty); }
             set { this.SetValue(DurationProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the duration of the move.
-        /// </summary>
-        public static readonly DependencyProperty DurationProperty = DependencyProperty.Register("Duration", typeof(Duration), typeof(FluidMoveBehavior), new PropertyMetadata(new Duration(TimeSpan.FromSeconds(1.0))));
 
         /// <summary>
         /// Spawning point for this item.
@@ -329,10 +411,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (TagType)this.GetValue(InitialTagProperty); }
             set { this.SetValue(InitialTagProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the tag type to use just before the object is loaded.
-        /// </summary>
-        public static readonly DependencyProperty InitialTagProperty = DependencyProperty.Register("InitialTag", typeof(TagType), typeof(FluidMoveBehavior), new PropertyMetadata(TagType.Element));
 
         /// <summary>
         /// Extra path to add to the binding when TagType is specified.
@@ -342,18 +420,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (string)this.GetValue(InitialTagPathProperty); }
             set { this.SetValue(InitialTagPathProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the extra path to add to the binding when UsaBindingAsTag is true.
-        /// </summary>
-        public static readonly DependencyProperty InitialTagPathProperty = DependencyProperty.Register("InitialTagPath", typeof(string), typeof(FluidMoveBehavior), new PropertyMetadata(String.Empty));
-
-        /// <summary>
-        /// Identity tag used to detect element motion between containers.
-        /// </summary>
-
-        private static readonly DependencyProperty initialIdentityTagProperty = DependencyProperty.RegisterAttached("InitialIdentityTag", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-        private static object GetInitialIdentityTag(DependencyObject obj) { return obj.GetValue(initialIdentityTagProperty); }
-        private static void SetInitialIdentityTag(DependencyObject obj, object value) { obj.SetValue(initialIdentityTagProperty, value); }
 
         /// <summary>
         /// Flag that says whether elements are allowed to float above their containers (in a Popup or Adorner) when changing containers.
@@ -363,10 +429,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (bool)this.GetValue(FloatAboveProperty); }
             set { this.SetValue(FloatAboveProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the FloatAbove flag.
-        /// </summary>
-        public static readonly DependencyProperty FloatAboveProperty = DependencyProperty.Register("FloatAbove", typeof(bool), typeof(FluidMoveBehavior), new PropertyMetadata(true));
 
         /// <summary>
         /// EasingFunction to use for the horizontal component of the move.
@@ -376,10 +438,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (IEasingFunction)this.GetValue(EaseXProperty); }
             set { this.SetValue(EaseXProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the EasingFunction to use for the horizontal component of the move.
-        /// </summary>
-        public static readonly DependencyProperty EaseXProperty = DependencyProperty.Register("EaseX", typeof(IEasingFunction), typeof(FluidMoveBehavior), new PropertyMetadata(null));
 
         /// <summary>
         /// EasingFunction to use for the vertical component of the move.
@@ -389,33 +447,6 @@ namespace Microsoft.Xaml.Behaviors.Layout
             get { return (IEasingFunction)this.GetValue(EaseYProperty); }
             set { this.SetValue(EaseYProperty, value); }
         }
-        /// <summary>
-        /// Dependency property for the EasingFunction to use for the vertical component of the move.
-        /// </summary>
-        public static readonly DependencyProperty EaseYProperty = DependencyProperty.Register("EaseY", typeof(IEasingFunction), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-
-        /// <summary>
-        /// Remember the popup/adorner being used, in case of element motion between containers when FloatAbove is true.
-        /// </summary>
-        private static readonly DependencyProperty overlayProperty = DependencyProperty.RegisterAttached("Overlay", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-        private static object GetOverlay(DependencyObject obj) { return obj.GetValue(overlayProperty); }
-        private static void SetOverlay(DependencyObject obj, object value) { obj.SetValue(overlayProperty, value); }
-
-        /// <summary>
-        /// Opacity cache used when floating a Popup.
-        /// </summary>
-        private static readonly DependencyProperty cacheDuringOverlayProperty = DependencyProperty.RegisterAttached("CacheDuringOverlay", typeof(object), typeof(FluidMoveBehavior), new PropertyMetadata(null));
-        private static object GetCacheDuringOverlay(DependencyObject obj) { return obj.GetValue(cacheDuringOverlayProperty); }
-        private static void SetCacheDuringOverlay(DependencyObject obj, object value) { obj.SetValue(cacheDuringOverlayProperty, value); }
-
-        /// <summary>
-        /// Marks the animation transform.
-        /// </summary>
-        private static readonly DependencyProperty hasTransformWrapperProperty = DependencyProperty.RegisterAttached("HasTransformWrapper", typeof(bool), typeof(FluidMoveBehavior), new PropertyMetadata(false));
-        private static bool GetHasTransformWrapper(DependencyObject obj) { return (bool)obj.GetValue(hasTransformWrapperProperty); }
-        private static void SetHasTransformWrapper(DependencyObject obj, bool value) { obj.SetValue(hasTransformWrapperProperty, value); }
-
-        private static Dictionary<object, Storyboard> transitionStoryboardDictionary = new Dictionary<object, Storyboard>();
 
         protected override bool ShouldSkipInitialLayout
         {
@@ -423,6 +454,39 @@ namespace Microsoft.Xaml.Behaviors.Layout
             {
                 return base.ShouldSkipInitialLayout || (this.InitialTag == TagType.DataContext);
             }
+        }
+
+        private static object GetInitialIdentityTag(DependencyObject obj)
+        {
+            return obj.GetValue(initialIdentityTagProperty);
+        }
+
+        private static void SetInitialIdentityTag(DependencyObject obj, object value)
+        {
+            obj.SetValue(initialIdentityTagProperty, value);
+        }
+
+        private static object GetOverlay(DependencyObject obj) { return obj.GetValue(overlayProperty); }
+        private static void SetOverlay(DependencyObject obj, object value) { obj.SetValue(overlayProperty, value); }
+
+        private static object GetCacheDuringOverlay(DependencyObject obj)
+        {
+            return obj.GetValue(cacheDuringOverlayProperty);
+        }
+
+        private static void SetCacheDuringOverlay(DependencyObject obj, object value)
+        {
+            obj.SetValue(cacheDuringOverlayProperty, value);
+        }
+
+        private static bool GetHasTransformWrapper(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(hasTransformWrapperProperty);
+        }
+
+        private static void SetHasTransformWrapper(DependencyObject obj, bool value)
+        {
+            obj.SetValue(hasTransformWrapperProperty, value);
         }
 
         protected override void EnsureTags(FrameworkElement child)
@@ -440,8 +504,10 @@ namespace Microsoft.Xaml.Behaviors.Layout
             }
         }
 
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "Trying to keep the number of function parameters down to a minimum.")]
-        internal override void UpdateLayoutTransitionCore(FrameworkElement child, FrameworkElement root, object tag, TagData newTagData)
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity",
+            Justification = "Trying to keep the number of function parameters down to a minimum.")]
+        internal override void UpdateLayoutTransitionCore(FrameworkElement child, FrameworkElement root, object tag,
+            TagData newTagData)
         {
             TagData tagData;
             Rect previousRect;
@@ -459,6 +525,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                 gotData = false;
                 TagDictionary.Remove(tag);
             }
+
             if (!gotData)
             {
                 TagData spawnData;
@@ -468,28 +535,35 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     previousRect = TranslateRect(spawnData.AppRect, root, newTagData.Parent);
                     parentChange = true;
                     usingBeforeLoaded = true;
-                }
-                else
+                } else
                 {
                     previousRect = Rect.Empty;
                 }
 
-                tagData = new TagData() { ParentRect = Rect.Empty, AppRect = Rect.Empty, Parent = newTagData.Parent, Child = child, Timestamp = DateTime.Now, InitialTag = initialTag };
+                tagData = new TagData
+                {
+                    ParentRect = Rect.Empty,
+                    AppRect = Rect.Empty,
+                    Parent = newTagData.Parent,
+                    Child = child,
+                    Timestamp = DateTime.Now,
+                    InitialTag = initialTag
+                };
                 TagDictionary.Add(tag, tagData);
-            }
-            else if (tagData.Parent != VisualTreeHelper.GetParent(child))
+            } else if (tagData.Parent != VisualTreeHelper.GetParent(child))
             {
                 previousRect = TranslateRect(tagData.AppRect, root, newTagData.Parent);
                 parentChange = true;
-            }
-            else
+            } else
             {
                 previousRect = tagData.ParentRect;
             }
 
             FrameworkElement originalChild = child;
 
-            if ((!FluidMoveBehavior.IsEmptyRect(previousRect) && !FluidMoveBehavior.IsEmptyRect(newTagData.ParentRect)) && (!IsClose(previousRect.Left, newTagData.ParentRect.Left) || !IsClose(previousRect.Top, newTagData.ParentRect.Top)) ||
+            if ((!IsEmptyRect(previousRect) && !IsEmptyRect(newTagData.ParentRect) &&
+                 (!IsClose(previousRect.Left, newTagData.ParentRect.Left) ||
+                  !IsClose(previousRect.Top, newTagData.ParentRect.Top))) ||
                 (child != tagData.Child && transitionStoryboardDictionary.ContainsKey(tag)))
             {
                 Rect currentRect = previousRect;
@@ -497,7 +571,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
                 // If this element was animating before, append its current transform to the start position and kill the old animation.
                 // Note that in an overlay scenario, the animation is on the image in the overlay.
-                Storyboard oldTransitionStoryboard = null;
+                Storyboard oldTransitionStoryboard;
                 if (transitionStoryboardDictionary.TryGetValue(tag, out oldTransitionStoryboard))
                 {
                     object tagOverlay = GetOverlay(tagData.Child);
@@ -508,8 +582,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
                     if (tagOverlay != null)
                     {
-                        Canvas overlayCanvas = adornerContainer.Child as Canvas;
-                        if (overlayCanvas != null)
+                        if (adornerContainer.Child is Canvas overlayCanvas)
                         {
                             elementWithTransform = overlayCanvas.Children[0] as FrameworkElement;
                         }
@@ -529,8 +602,9 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
                     if (tagOverlay != null)
                     {
-                        System.Windows.Documents.AdornerLayer.GetAdornerLayer(root).Remove(adornerContainer);
-                        TransferLocalValue(tagData.Child, FluidMoveBehavior.cacheDuringOverlayProperty, FrameworkElement.RenderTransformProperty);
+                        AdornerLayer.GetAdornerLayer(root)?.Remove(adornerContainer);
+                        TransferLocalValue(tagData.Child, cacheDuringOverlayProperty,
+                            UIElement.RenderTransformProperty);
                         SetOverlay(tagData.Child, null);
                     }
                 }
@@ -545,10 +619,20 @@ namespace Microsoft.Xaml.Behaviors.Layout
                 // 5. Keep track of all the info we need to unwind this later
                 if (forceFloatAbove || (parentChange && this.FloatAbove))
                 {
-                    Canvas canvas = new Canvas() { Width = newTagData.ParentRect.Width, Height = newTagData.ParentRect.Height, IsHitTestVisible = false };
+                    Canvas canvas = new Canvas
+                    {
+                        Width = newTagData.ParentRect.Width,
+                        Height = newTagData.ParentRect.Height,
+                        IsHitTestVisible = false
+                    };
 
-                    Rectangle rectangle = new Rectangle() { Width = newTagData.ParentRect.Width, Height = newTagData.ParentRect.Height, IsHitTestVisible = false };
-                    rectangle.Fill = new VisualBrush(child);
+                    Rectangle rectangle = new Rectangle
+                    {
+                        Width = newTagData.ParentRect.Width,
+                        Height = newTagData.ParentRect.Height,
+                        IsHitTestVisible = false,
+                        Fill = new VisualBrush(child)
+                    };
                     canvas.Children.Add(rectangle);
                     AdornerContainer adornerContainer = new AdornerContainer(child) { Child = canvas };
                     overlay = adornerContainer;
@@ -556,7 +640,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     // remember this overlay so we can get info from it
                     SetOverlay(originalChild, overlay);
 
-                    System.Windows.Documents.AdornerLayer adorners = System.Windows.Documents.AdornerLayer.GetAdornerLayer(root);
+                    AdornerLayer adorners = AdornerLayer.GetAdornerLayer(root);
                     adorners.Add(adornerContainer);
 
                     // Note: Not using this approach currently because the bitmap is not ready yet
@@ -566,7 +650,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
                     //image.Source = bitmap;
 
                     // can't animate this or it will flash, have to set the value outright
-                    TransferLocalValue(child, FrameworkElement.RenderTransformProperty, FluidMoveBehavior.cacheDuringOverlayProperty);
+                    TransferLocalValue(child, UIElement.RenderTransformProperty, cacheDuringOverlayProperty);
                     child.RenderTransform = new TranslateTransform(-10000, -10000);
                     canvas.RenderTransform = new TranslateTransform(10000, 10000);
 
@@ -576,28 +660,34 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
                 // OK, now build the actual animation
                 Rect parentRect = newTagData.ParentRect;
-                Storyboard transitionStoryboard = CreateTransitionStoryboard(child, usingBeforeLoaded, ref parentRect, ref currentRect);
+                Storyboard transitionStoryboard =
+                    CreateTransitionStoryboard(child, usingBeforeLoaded, ref parentRect, ref currentRect);
 
                 // Put this storyboard in the running dictionary so we can detect reentrancy
                 transitionStoryboardDictionary.Add(tag, transitionStoryboard);
 
-                transitionStoryboard.Completed += delegate (object sender, EventArgs e)
+                transitionStoryboard.Completed += delegate
                 {
                     Storyboard currentlyRunningStoryboard;
-                    if (transitionStoryboardDictionary.TryGetValue(tag, out currentlyRunningStoryboard) && currentlyRunningStoryboard == transitionStoryboard)
+                    if (!transitionStoryboardDictionary.TryGetValue(tag, out currentlyRunningStoryboard) ||
+                        currentlyRunningStoryboard != transitionStoryboard)
                     {
-                        transitionStoryboardDictionary.Remove(tag);
-                        transitionStoryboard.Stop();
-                        RemoveTransform(child);
-                        child.InvalidateMeasure();
-
-                        if (overlay != null)
-                        {
-                            System.Windows.Documents.AdornerLayer.GetAdornerLayer(root).Remove((AdornerContainer)overlay);
-                            TransferLocalValue(originalChild, FluidMoveBehavior.cacheDuringOverlayProperty, FrameworkElement.RenderTransformProperty);
-                            SetOverlay(originalChild, null);
-                        }
+                        return;
                     }
+
+                    transitionStoryboardDictionary.Remove(tag);
+                    transitionStoryboard.Stop();
+                    RemoveTransform(child);
+                    child.InvalidateMeasure();
+
+                    if (overlay == null)
+                    {
+                        return;
+                    }
+
+                    AdornerLayer.GetAdornerLayer(root)?.Remove((AdornerContainer)overlay);
+                    TransferLocalValue(originalChild, cacheDuringOverlayProperty, UIElement.RenderTransformProperty);
+                    SetOverlay(originalChild, null);
                 };
 
                 transitionStoryboard.Begin();
@@ -611,26 +701,29 @@ namespace Microsoft.Xaml.Behaviors.Layout
             tagData.Timestamp = newTagData.Timestamp;
         }
 
-        private Storyboard CreateTransitionStoryboard(FrameworkElement child, bool usingBeforeLoaded, ref Rect layoutRect, ref Rect currentRect)
+        private Storyboard CreateTransitionStoryboard(FrameworkElement child, bool usingBeforeLoaded,
+            ref Rect layoutRect, ref Rect currentRect)
         {
             Duration duration = this.Duration;
-            Storyboard transitionStoryboard = new Storyboard();
-            transitionStoryboard.Duration = duration;
+            Storyboard transitionStoryboard = new Storyboard { Duration = duration };
 
-            double xScaleFrom = (!usingBeforeLoaded || layoutRect.Width == 0.0) ? 1.0 : (currentRect.Width / layoutRect.Width);
-            double yScaleFrom = (!usingBeforeLoaded || layoutRect.Height == 0.0) ? 1.0 : (currentRect.Height / layoutRect.Height);
+            double xScaleFrom = (!usingBeforeLoaded || layoutRect.Width == 0.0)
+                ? 1.0
+                : (currentRect.Width / layoutRect.Width);
+            double yScaleFrom = (!usingBeforeLoaded || layoutRect.Height == 0.0)
+                ? 1.0
+                : (currentRect.Height / layoutRect.Height);
             double xFrom = currentRect.Left - layoutRect.Left;
             double yFrom = currentRect.Top - layoutRect.Top;
 
             TransformGroup transform = new TransformGroup();
-            transform.Children.Add(new ScaleTransform() { ScaleX = xScaleFrom, ScaleY = yScaleFrom });
-            transform.Children.Add(new TranslateTransform() { X = xFrom, Y = yFrom });
+            transform.Children.Add(new ScaleTransform { ScaleX = xScaleFrom, ScaleY = yScaleFrom });
+            transform.Children.Add(new TranslateTransform { X = xFrom, Y = yFrom });
             AddTransform(child, transform);
 
             string prefix = "(FrameworkElement.RenderTransform).";
 
-            TransformGroup transformGroup = child.RenderTransform as TransformGroup;
-            if (transformGroup != null && GetHasTransformWrapper(child))
+            if (child.RenderTransform is TransformGroup transformGroup && GetHasTransformWrapper(child))
             {
                 prefix += "(TransformGroup.Children)[" + (transformGroup.Children.Count - 1) + "].";
             }
@@ -639,18 +732,22 @@ namespace Microsoft.Xaml.Behaviors.Layout
             {
                 if (xScaleFrom != 1.0)
                 {
-                    DoubleAnimation xScaleAnimation = new DoubleAnimation() { Duration = duration, From = xScaleFrom, To = 1.0 };
+                    DoubleAnimation xScaleAnimation =
+                        new DoubleAnimation { Duration = duration, From = xScaleFrom, To = 1.0 };
                     Storyboard.SetTarget(xScaleAnimation, child);
-                    Storyboard.SetTargetProperty(xScaleAnimation, new PropertyPath(prefix + "(TransformGroup.Children)[0].(ScaleTransform.ScaleX)", new object[0]));
+                    Storyboard.SetTargetProperty(xScaleAnimation,
+                        new PropertyPath(prefix + "(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"));
                     xScaleAnimation.EasingFunction = this.EaseX;
                     transitionStoryboard.Children.Add(xScaleAnimation);
                 }
 
                 if (yScaleFrom != 1.0)
                 {
-                    DoubleAnimation yScaleAnimation = new DoubleAnimation() { Duration = duration, From = yScaleFrom, To = 1.0 };
+                    DoubleAnimation yScaleAnimation =
+                        new DoubleAnimation { Duration = duration, From = yScaleFrom, To = 1.0 };
                     Storyboard.SetTarget(yScaleAnimation, child);
-                    Storyboard.SetTargetProperty(yScaleAnimation, new PropertyPath(prefix + "(TransformGroup.Children)[0].(ScaleTransform.ScaleY)", new object[0]));
+                    Storyboard.SetTargetProperty(yScaleAnimation,
+                        new PropertyPath(prefix + "(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"));
                     yScaleAnimation.EasingFunction = this.EaseY;
                     transitionStoryboard.Children.Add(yScaleAnimation);
                 }
@@ -658,30 +755,32 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
             if (xFrom != 0.0)
             {
-                DoubleAnimation xAnimation = new DoubleAnimation() { Duration = duration, From = xFrom, To = 0.0 };
+                DoubleAnimation xAnimation = new DoubleAnimation { Duration = duration, From = xFrom, To = 0.0 };
                 Storyboard.SetTarget(xAnimation, child);
-                Storyboard.SetTargetProperty(xAnimation, new PropertyPath(prefix + "(TransformGroup.Children)[1].(TranslateTransform.X)", new object[0]));
+                Storyboard.SetTargetProperty(xAnimation,
+                    new PropertyPath(prefix + "(TransformGroup.Children)[1].(TranslateTransform.X)"));
                 xAnimation.EasingFunction = this.EaseX;
                 transitionStoryboard.Children.Add(xAnimation);
             }
 
-            if (yFrom != 0.0)
+            if (yFrom == 0.0)
             {
-                DoubleAnimation yAnimation = new DoubleAnimation() { Duration = duration, From = yFrom, To = 0.0 };
-                Storyboard.SetTarget(yAnimation, child);
-                Storyboard.SetTargetProperty(yAnimation, new PropertyPath(prefix + "(TransformGroup.Children)[1].(TranslateTransform.Y)", new object[0]));
-                yAnimation.EasingFunction = this.EaseY;
-                transitionStoryboard.Children.Add(yAnimation);
+                return transitionStoryboard;
             }
+
+            DoubleAnimation yAnimation = new DoubleAnimation { Duration = duration, From = yFrom, To = 0.0 };
+            Storyboard.SetTarget(yAnimation, child);
+            Storyboard.SetTargetProperty(yAnimation,
+                new PropertyPath(prefix + "(TransformGroup.Children)[1].(TranslateTransform.Y)"));
+            yAnimation.EasingFunction = this.EaseY;
+            transitionStoryboard.Children.Add(yAnimation);
 
             return transitionStoryboard;
         }
 
-        private static void AddTransform(FrameworkElement child, Transform transform)
+        private static void AddTransform(UIElement child, Transform transform)
         {
-            TransformGroup transformGroup = child.RenderTransform as TransformGroup;
-
-            if (transformGroup == null)
+            if (!(child.RenderTransform is TransformGroup transformGroup))
             {
                 transformGroup = new TransformGroup();
                 transformGroup.Children.Add(child.RenderTransform);
@@ -692,51 +791,45 @@ namespace Microsoft.Xaml.Behaviors.Layout
             transformGroup.Children.Add(transform);
         }
 
-        private static Transform GetTransform(FrameworkElement child)
+        private static Transform GetTransform(UIElement child)
         {
-            TransformGroup transformGroup = child.RenderTransform as TransformGroup;
-            if (transformGroup != null && transformGroup.Children.Count > 0)
+            if (child.RenderTransform is TransformGroup transformGroup && transformGroup.Children.Count > 0)
             {
                 return transformGroup.Children[transformGroup.Children.Count - 1];
             }
-            else
-            {
-                return new TranslateTransform();
-            }
+
+            return new TranslateTransform();
         }
 
-        private static void RemoveTransform(FrameworkElement child)
+        private static void RemoveTransform(UIElement child)
         {
-            TransformGroup transformGroup = child.RenderTransform as TransformGroup;
-
-            if (transformGroup != null)
+            if (!(child.RenderTransform is TransformGroup transformGroup))
             {
-                if (GetHasTransformWrapper(child))
-                {
-                    child.RenderTransform = transformGroup.Children[0];
-                    SetHasTransformWrapper(child, false);
-                }
-                else
-                {
-                    transformGroup.Children.RemoveAt(transformGroup.Children.Count - 1);
-                }
+                return;
+            }
+
+            if (GetHasTransformWrapper(child))
+            {
+                child.RenderTransform = transformGroup.Children[0];
+                SetHasTransformWrapper(child, false);
+            } else
+            {
+                transformGroup.Children.RemoveAt(transformGroup.Children.Count - 1);
             }
         }
 
-        private static void TransferLocalValue(FrameworkElement element, DependencyProperty source, DependencyProperty dest)
+        private static void TransferLocalValue(FrameworkElement element, DependencyProperty source,
+            DependencyProperty dest)
         {
             object value = element.ReadLocalValue(source);
 
-            BindingExpressionBase bindingExpressionBase = value as BindingExpressionBase;
-            if (bindingExpressionBase != null)
+            if (value is BindingExpressionBase bindingExpressionBase)
             {
                 element.SetBinding(dest, bindingExpressionBase.ParentBindingBase);
-            }
-            else if (value == DependencyProperty.UnsetValue)
+            } else if (value == DependencyProperty.UnsetValue)
             {
                 element.ClearValue(dest);
-            }
-            else
+            } else
             {
                 element.SetValue(dest, element.GetAnimationBaseValue(source));
             }
@@ -746,7 +839,7 @@ namespace Microsoft.Xaml.Behaviors.Layout
 
         private static bool IsClose(double a, double b)
         {
-            return (Math.Abs((double)(a - b)) < 1E-07);
+            return Math.Abs(a - b) < 1E-07;
         }
 
         private static bool IsEmptyRect(Rect rect)
@@ -758,22 +851,12 @@ namespace Microsoft.Xaml.Behaviors.Layout
     /// <summary>
     /// Simple helper class to allow any UIElements to be used as an Adorner.
     /// </summary>
-    public class AdornerContainer : System.Windows.Documents.Adorner
+    public class AdornerContainer : Adorner
     {
         private UIElement child;
 
         public AdornerContainer(UIElement adornedElement) : base(adornedElement)
         {
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (this.child != null)
-            {
-                this.child.Arrange(new Rect(finalSize));
-            }
-
-            return finalSize;
         }
 
         public UIElement Child
@@ -789,6 +872,13 @@ namespace Microsoft.Xaml.Behaviors.Layout
         protected override int VisualChildrenCount
         {
             get { return this.child == null ? 0 : 1; }
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            this.child?.Arrange(new Rect(finalSize));
+
+            return finalSize;
         }
 
         protected override Visual GetVisualChild(int index)

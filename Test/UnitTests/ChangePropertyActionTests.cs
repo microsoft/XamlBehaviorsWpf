@@ -1,19 +1,24 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+using TriggerAction = Microsoft.Xaml.Behaviors.TriggerAction;
+using TriggerBase = Microsoft.Xaml.Behaviors.TriggerBase;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows.Controls;
-    using System.Windows.Media;
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     [TestClass]
     public class ChangePropertyActionTests
     {
         #region Setup and Teardown
+
         [TestInitialize]
         public void Setup()
         {
@@ -25,6 +30,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         {
             Interaction.ShouldRunInDesignMode = false;
         }
+
         #endregion
 
         #region Factory methods
@@ -41,11 +47,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private ChangePropertyAction CreateChangePropertyAction(string propertyName, object value)
         {
-            return new ChangePropertyAction()
-            {
-                PropertyName = propertyName,
-                Value = value,
-            };
+            return new ChangePropertyAction { PropertyName = propertyName, Value = value, };
         }
 
         private static StubTrigger CreateStubTrigger()
@@ -56,11 +58,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private static Rectangle CreateRectangle()
         {
-            Rectangle rectangle = new Rectangle()
-            {
-                Fill = Brushes.Red,
-                Stroke = Brushes.Purple
-            };
+            Rectangle rectangle = new Rectangle { Fill = Brushes.Red, Stroke = Brushes.Purple };
             return rectangle;
         }
 
@@ -83,7 +81,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         #region Helper methods and classes
 
-        private static void AttachAction(System.Windows.DependencyObject dependencyObject, TriggerBase trigger, TriggerAction action)
+        private static void AttachAction(DependencyObject dependencyObject, TriggerBase trigger, TriggerAction action)
         {
             trigger.Actions.Add(action);
             trigger.Attach(dependencyObject);
@@ -131,6 +129,11 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         private class AdditiveObjectStub
         {
+            public AdditiveObjectStub()
+            {
+                this.Added = false;
+            }
+
             public bool Added
             {
                 get;
@@ -141,11 +144,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             {
                 get;
                 private set;
-            }
-
-            public AdditiveObjectStub()
-            {
-                this.Added = false;
             }
 
             public static AdditiveObjectStub operator +(AdditiveObjectStub a, AdditiveObjectStub b)
@@ -184,6 +182,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         #endregion
 
         #region Test methods
+
         [TestMethod]
         public void Invoke_NoPropertyName_IsNoOp()
         {
@@ -275,7 +274,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button button = CreateButton();
             ChangePropertyActionTargetStub stubTarget = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, 10);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, 10);
             AttachAction(button, trigger, action);
             action.Duration = TimeSpan.FromMilliseconds(10);
             action.TargetObject = stubTarget;
@@ -357,7 +357,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Invoke_AnimatedPointChange_Changes()
         {
             Ellipse e = new Ellipse();
-            ChangePropertyAction c = CreateChangePropertyAction("RenderTransformOrigin", new System.Windows.Point(0.3, 0.3));
+            ChangePropertyAction c = this.CreateChangePropertyAction("RenderTransformOrigin", new Point(0.3, 0.3));
             StubTrigger t = CreateStubTrigger();
             AttachAction(e, t, c);
             c.Duration = TimeSpan.FromMilliseconds(5);
@@ -393,7 +393,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, value);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, value);
 
             action.TargetObject = target;
             AttachAction(host, trigger, action);
@@ -409,13 +410,15 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, value);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, value);
 
             action.TargetObject = target;
             AttachAction(host, trigger, action);
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(target.ObjectProperty, value, "target.ObjectProperty should point to the Button after Invoke");
+            Assert.AreEqual(target.ObjectProperty, value,
+                "target.ObjectProperty should point to the Button after Invoke");
         }
 
         [TestMethod]
@@ -424,14 +427,16 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             ChangePropertyActionTargetStub target = CreateTargetStub();
             Button host = CreateButton();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, null);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, null);
             AttachAction(host, trigger, action);
             action.TargetObject = target;
             action.Increment = true;
             target.ObjectProperty = "not null";
 
             trigger.FireStubTrigger();
-            Assert.IsNull(target.ObjectProperty, "Target.ObjectProperty should have been set to null, ignoring the increment.");
+            Assert.IsNull(target.ObjectProperty,
+                "Target.ObjectProperty should have been set to null, ignoring the increment.");
         }
 
         [TestMethod]
@@ -440,7 +445,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             ChangePropertyActionTargetStub target = CreateTargetStub();
             Button host = CreateButton();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, 10.5d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, 10.5d);
 
             target.DoubleProperty = 10.0d;
             action.TargetObject = target;
@@ -448,7 +454,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             AttachAction(host, trigger, action);
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(target.DoubleProperty, 20.5d, "DoubleProperty should have been incremented by 10.5 to a total of 20.5");
+            Assert.AreEqual(target.DoubleProperty, 20.5d,
+                "DoubleProperty should have been incremented by 10.5 to a total of 20.5");
         }
 
         [TestMethod]
@@ -457,7 +464,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             ChangePropertyActionTargetStub target = CreateTargetStub();
             Button host = CreateButton();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, " World!");
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, " World!");
 
             target.StringProperty = "Hello";
             action.TargetObject = target;
@@ -465,7 +473,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             AttachAction(host, trigger, action);
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(target.StringProperty, "Hello World!", "StringProperty should have been appended with 'World!', resulting in 'Hello World!'");
+            Assert.AreEqual(target.StringProperty, "Hello World!",
+                "StringProperty should have been appended with 'World!', resulting in 'Hello World!'");
         }
 
         [TestMethod]
@@ -474,7 +483,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             ChangePropertyActionTargetStub target = CreateTargetStub();
             Button host = CreateButton();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, CreateAdditiveObject());
+            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName,
+                CreateAdditiveObject());
             AdditiveObjectStub addObject = CreateAdditiveObject();
 
             target.ObjectProperty = addObject;
@@ -483,7 +493,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             AttachAction(host, trigger, action);
             trigger.FireStubTrigger();
 
-            Assert.IsTrue(((AdditiveObjectStub)target.ObjectProperty).Added, "AddObject.op_Addition should have been called.");
+            Assert.IsTrue(((AdditiveObjectStub)target.ObjectProperty).Added,
+                "AddObject.op_Addition should have been called.");
         }
 
         [TestMethod]
@@ -493,7 +504,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 10.0d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 10.0d);
 
             action.TargetObject = target;
             AttachAction(host, trigger, action);
@@ -510,7 +522,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 10.0d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 10.0d);
 
             action.TargetObject = target;
             AttachAction(host, trigger, action);
@@ -527,7 +540,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 10.0d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 10.0d);
 
             action.TargetObject = target;
             AttachAction(host, trigger, action);
@@ -543,7 +557,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, 10.0d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.DoublePropertyName, 10.0d);
 
             // setting to 5 so we have an assurance that we didn't just increment twice
             target.DoubleProperty = 5.0d;
@@ -554,7 +569,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             action.Increment = true;
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(target.DoubleProperty, 20.0d, "target.DoubleProperty should be 20 after Invoke, then incremental Invoke");
+            Assert.AreEqual(target.DoubleProperty, 20.0d,
+                "target.DoubleProperty should be 20 after Invoke, then incremental Invoke");
         }
 
         [TestMethod]
@@ -564,7 +580,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.WriteOnlyPropertyName, null);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.WriteOnlyPropertyName, null);
 
             action.TargetObject = target;
             AttachAction(host, trigger, action);
@@ -583,7 +600,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             ChangePropertyAction action = CreateChangePropertyAction("Opacity", 0.5d);
 
             action.Increment = true;
-            action.Duration = new System.Windows.Duration(TimeSpan.FromSeconds(1));
+            action.Duration = new Duration(TimeSpan.FromSeconds(1));
             AttachAction(host, trigger, action);
 
             trigger.FireStubTrigger();
@@ -595,7 +612,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 0.5d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, 0.5d);
 
             target.ObjectProperty = CreateAdditiveObject();
             action.TargetObject = target;
@@ -604,7 +622,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(((AdditiveObjectStub)target.ObjectProperty).AddType, "double", "Double addition override should have been called.");
+            Assert.AreEqual(((AdditiveObjectStub)target.ObjectProperty).AddType, "double",
+                "Double addition override should have been called.");
         }
 
         [TestMethod]
@@ -614,7 +633,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, "#FF00FF00");
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.ObjectPropertyName, "#FF00FF00");
 
             target.ObjectProperty = CreateAdditiveObject();
             action.TargetObject = target;
@@ -647,7 +667,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             AttachAction(host, trigger, action);
 
             trigger.FireStubTrigger();
-            Assert.AreEqual(host.Fill, Brushes.Red, "Rectangle's Fill should have been set to Red, ignoring the Increment.");
+            Assert.AreEqual(host.Fill, Brushes.Red,
+                "Rectangle's Fill should have been set to Red, ignoring the Increment.");
         }
 
         [TestMethod]
@@ -656,13 +677,15 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, 100.5d);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, 100.5d);
             AttachAction(host, trigger, action);
 
             action.TargetObject = target;
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(target.StringProperty, "100.5", "StringProperty should have been assigned 100.5 as a string");
+            Assert.AreEqual(target.StringProperty, "100.5",
+                "StringProperty should have been assigned 100.5 as a string");
         }
 
         [TestMethod]
@@ -671,7 +694,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, (int)-100);
+            ChangePropertyAction action =
+                this.CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, -100);
             AttachAction(host, trigger, action);
 
             action.TargetObject = target;
@@ -686,7 +710,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, (uint)100);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, (uint)100);
             AttachAction(host, trigger, action);
 
             action.TargetObject = target;
@@ -701,7 +726,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Button host = CreateButton();
             ChangePropertyActionTargetStub target = CreateTargetStub();
             StubTrigger trigger = CreateStubTrigger();
-            ChangePropertyAction action = CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, true);
+            ChangePropertyAction action =
+                CreateChangePropertyAction(ChangePropertyActionTargetStub.StringPropertyName, true);
             AttachAction(host, trigger, action);
 
             action.TargetObject = target;
@@ -709,6 +735,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             Assert.AreEqual(target.StringProperty, "True", "StringProperty should have been assigned True as a string");
         }
-#endregion
+
+        #endregion
     }
 }

@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
     using SysWindows = System.Windows;
 
     [TestClass]
@@ -39,17 +41,14 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             return new Rectangle();
         }
 
-        private static DataTrigger CreateDataTrigger(object bindingValue, ComparisonConditionType comparisonType, object valueValue)
+        private static DataTrigger CreateDataTrigger(object bindingValue, ComparisonConditionType comparisonType,
+            object valueValue)
         {
-            return new DataTrigger()
-            {
-                Binding = bindingValue,
-                Comparison = comparisonType,
-                Value = valueValue,
-            };
+            return new DataTrigger { Binding = bindingValue, Comparison = comparisonType, Value = valueValue, };
         }
 
-        private static StubAction AttachActionToDataTrigger(DataTrigger dataTrigger, SysWindows.DependencyObject hostObject)
+        private static StubAction AttachActionToDataTrigger(DataTrigger dataTrigger,
+            SysWindows.DependencyObject hostObject)
         {
             StubAction stubAction = CreateStubAction();
             dataTrigger.Actions.Add(stubAction);

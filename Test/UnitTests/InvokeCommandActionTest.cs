@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Globalization;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Globalization;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Input;
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     using SysWindows = System.Windows;
 
     [TestClass]
@@ -92,7 +93,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         #region Helper methods
 
-        private static StubTrigger AttachActionToObject(InvokeCommandAction invokeCommandAction, SysWindows.DependencyObject dependencyObject)
+        private static StubTrigger AttachActionToObject(InvokeCommandAction invokeCommandAction,
+            SysWindows.DependencyObject dependencyObject)
         {
             TriggerCollection triggersCollection = Interaction.GetTriggers(dependencyObject);
             StubTrigger stubTrigger = CreateTrigger();
@@ -108,6 +110,20 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 NotCalled,
                 Failure,
                 Success,
+            }
+
+            public CommandHelper()
+            {
+                this.Result = CommandResults.NotCalled;
+
+                this.SuccessCommand = new ActionCommand(() =>
+                {
+                    this.Result = CommandResults.Success;
+                });
+                this.FailCommand = new ActionCommand(() =>
+                {
+                    this.Result = CommandResults.Failure;
+                });
             }
 
             public CommandResults Result
@@ -132,28 +148,10 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             {
                 get { return this.Result == CommandResults.Success; }
             }
-
-            public CommandHelper()
-            {
-                this.Result = CommandResults.NotCalled;
-
-                this.SuccessCommand = new ActionCommand(() =>
-                    {
-                        this.Result = CommandResults.Success;
-                    });
-                this.FailCommand = new ActionCommand(() =>
-                    {
-                        this.Result = CommandResults.Failure;
-                    });
-            }
         }
 
         internal class EventArgsMock : EventArgs
         {
-            public PocoMock Poco { get; set; }
-
-            public string Name { get; set; } = "default";
-
             public EventArgsMock() { }
 
             public EventArgsMock(string name)
@@ -161,6 +159,10 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 Name = name;
                 Poco = new PocoMock { Name = name, Child = new PocoMock { Name = name } };
             }
+
+            public PocoMock Poco { get; set; }
+
+            public string Name { get; set; } = "default";
         }
 
         internal class PocoMock
@@ -188,6 +190,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         #endregion
 
         #region Test methods
+
         [TestMethod]
         public void Invoke_LegalCommandName_InvokesCommand()
         {
@@ -204,7 +207,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         {
             Rectangle triggerParameter = CreateRectangle();
             Button behaviorParameter = CreateButton();
-            InvokeCommandAction invokeCommandAction = CreateInvokeCommandActionWithCommandNameAndParameter("StubCommandWithParameter", behaviorParameter);
+            InvokeCommandAction invokeCommandAction =
+                CreateInvokeCommandActionWithCommandNameAndParameter("StubCommandWithParameter", behaviorParameter);
             StubBehavior stubBehavior = CreateStubBehavior();
             StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
 
@@ -216,7 +220,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Invoke_WithCommand_InvokesCommand()
         {
             CommandHelper commandHelper = CreateCommandHelper();
-            InvokeCommandAction invokeCommandAction = CreateInvokeCommandActionWithCommand(commandHelper.SuccessCommand);
+            InvokeCommandAction invokeCommandAction =
+                CreateInvokeCommandActionWithCommand(commandHelper.SuccessCommand);
             Button button = CreateButton();
             StubTrigger trigger = AttachActionToObject(invokeCommandAction, button);
 
@@ -235,7 +240,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             StubTrigger trigger = AttachActionToObject(invokeCommandAction, button);
 
             trigger.FireStubTrigger();
-            Assert.IsTrue(commandHelper.Successful, "Command should have been invoked, CommandName should not have been invoked.");
+            Assert.IsTrue(commandHelper.Successful,
+                "Command should have been invoked, CommandName should not have been invoked.");
         }
 
         [TestMethod]
@@ -340,7 +346,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             InvokeCommandAction invokeCommandAction = CreateInvokeCommandAction();
             invokeCommandAction.Command = stubBehavior.StubCommandWithParameter;
             invokeCommandAction.PassEventArgsToCommand = true;
-            
+
             StubTrigger trigger = AttachActionToObject(invokeCommandAction, stubBehavior);
 
             var args = new EventArgsMock();
@@ -350,6 +356,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             Assert.IsNotNull(stubBehavior.LastParameter);
             Assert.IsInstanceOfType(stubBehavior.LastParameter, typeof(EventArgsMock));
         }
+
         #endregion
     }
 }

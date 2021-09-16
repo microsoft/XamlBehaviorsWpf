@@ -1,24 +1,27 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System; //Do not remove this - as the cref in the comments breaks if this is not included.
-    using System.Collections;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using Microsoft.Xaml.Behaviors;
+    //Do not remove this - as the cref in the comments breaks if this is not included.
 
-    [DefaultTrigger(typeof(ButtonBase), typeof(Behaviors.EventTrigger), "Click")]
-    [DefaultTrigger(typeof(TextBox), typeof(Behaviors.EventTrigger), "TextChanged")]
-    [DefaultTrigger(typeof(RichTextBox), typeof(Behaviors.EventTrigger), "TextChanged")]
-    [DefaultTrigger(typeof(ListBoxItem), typeof(Behaviors.EventTrigger), "Selected")]
-    [DefaultTrigger(typeof(TreeViewItem), typeof(Behaviors.EventTrigger), "Selected")]
-    [DefaultTrigger(typeof(Selector), typeof(Behaviors.EventTrigger), "SelectionChanged")]
-    [DefaultTrigger(typeof(TreeView), typeof(Behaviors.EventTrigger), "SelectedItemChanged")]
-    [DefaultTrigger(typeof(RangeBase), typeof(Behaviors.EventTrigger), "ValueChanged")]
+    [DefaultTrigger(typeof(ButtonBase), typeof(EventTrigger), "Click")]
+    [DefaultTrigger(typeof(TextBox), typeof(EventTrigger), "TextChanged")]
+    [DefaultTrigger(typeof(RichTextBox), typeof(EventTrigger), "TextChanged")]
+    [DefaultTrigger(typeof(ListBoxItem), typeof(EventTrigger), "Selected")]
+    [DefaultTrigger(typeof(TreeViewItem), typeof(EventTrigger), "Selected")]
+    [DefaultTrigger(typeof(Selector), typeof(EventTrigger), "SelectionChanged")]
+    [DefaultTrigger(typeof(TreeView), typeof(EventTrigger), "SelectedItemChanged")]
+    [DefaultTrigger(typeof(RangeBase), typeof(EventTrigger), "ValueChanged")]
     public abstract class PrototypingActionBase : TriggerAction<DependencyObject>
     {
         //	for unittests
@@ -29,22 +32,27 @@ namespace Microsoft.Xaml.Behaviors.Core
 
         protected UserControl GetContainingScreen()
         {
-            var userControlAncestors = this.AssociatedObject.GetSelfAndAncestors().OfType<UserControl>();
+            IEnumerable<UserControl> userControlAncestors =
+                this.AssociatedObject.GetSelfAndAncestors().OfType<UserControl>();
 
             // Find the first screen up the visual tree, so that we can invoke state on the proper UserControl
-            var screen = userControlAncestors.FirstOrDefault(userControl => InteractionContext.IsScreen(userControl.GetType().FullName));
+            IEnumerable<UserControl> controlAncestors = userControlAncestors.ToList();
+            UserControl screen = controlAncestors.FirstOrDefault(userControl =>
+                InteractionContext.IsScreen(userControl.GetType().FullName));
 
             // If we couldn't find a hosting screen, take the first UserControl we find.
-            return screen ?? userControlAncestors.First();
+            return screen ?? controlAncestors.First();
         }
     }
 
     public sealed class ActivateStateAction : PrototypingActionBase
     {
         public static readonly DependencyProperty TargetScreenProperty = DependencyProperty.Register(
-            "TargetScreen", typeof(string), typeof(ActivateStateAction), new PropertyMetadata(null));
+            nameof(TargetScreen), typeof(string), typeof(ActivateStateAction), new PropertyMetadata(null));
+
         public static readonly DependencyProperty TargetStateProperty = DependencyProperty.Register(
-            "TargetState", typeof(string), typeof(ActivateStateAction), new PropertyMetadata(null));
+            nameof(TargetState), typeof(string), typeof(ActivateStateAction), new PropertyMetadata(null));
+
         public string TargetScreen
         {
             get { return GetValue(TargetScreenProperty) as string; }
@@ -83,14 +91,15 @@ namespace Microsoft.Xaml.Behaviors.Core
         public string TargetScreen
         {
             get { return GetValue(TargetScreenProperty) as string; }
-            set { SetValue(TargetScreenProperty, value as string); }
+            set { this.SetValue(TargetScreenProperty, value); }
         }
 
         protected override void Invoke(object parameter)
         {
             Assembly libraryAssembly = null;
 
-            UserControl hostControl = this.AssociatedObject.GetSelfAndAncestors().OfType<UserControl>().FirstOrDefault();
+            UserControl hostControl =
+                this.AssociatedObject.GetSelfAndAncestors().OfType<UserControl>().FirstOrDefault();
             if (hostControl != null)
             {
                 libraryAssembly = hostControl.GetType().Assembly;
@@ -134,7 +143,8 @@ namespace Microsoft.Xaml.Behaviors.Core
     public sealed class PlaySketchFlowAnimationAction : PrototypingActionBase
     {
         public static readonly DependencyProperty TargetScreenProperty = DependencyProperty.Register(
-            "TargetScreen", typeof(string), typeof(PlaySketchFlowAnimationAction), new PropertyMetadata(null));
+            nameof(TargetScreen), typeof(string), typeof(PlaySketchFlowAnimationAction), new PropertyMetadata(null));
+
         public static readonly DependencyProperty SketchFlowAnimationProperty = DependencyProperty.Register(
             "StateAnimation", typeof(string), typeof(PlaySketchFlowAnimationAction), new PropertyMetadata(null));
 
@@ -168,24 +178,24 @@ namespace Microsoft.Xaml.Behaviors.Core
         }
     }
 
-    [DefaultTrigger(typeof(FrameworkElement), typeof(Behaviors.EventTrigger), "Loaded")]
-    [DefaultTrigger(typeof(ButtonBase), typeof(Behaviors.EventTrigger), "Loaded")]
+    [DefaultTrigger(typeof(FrameworkElement), typeof(EventTrigger), "Loaded")]
+    [DefaultTrigger(typeof(ButtonBase), typeof(EventTrigger), "Loaded")]
     public sealed class NavigationMenuAction : TargetedTriggerAction<FrameworkElement>
     {
         public static readonly DependencyProperty InactiveStateProperty = DependencyProperty.Register(
-            "InactiveState",
+            nameof(InactiveState),
             typeof(string),
             typeof(NavigationMenuAction),
             new PropertyMetadata(null));
 
         public static readonly DependencyProperty TargetScreenProperty = DependencyProperty.Register(
-            "TargetScreen",
+            nameof(TargetScreen),
             typeof(string),
             typeof(NavigationMenuAction),
             new PropertyMetadata(null));
 
         public static readonly DependencyProperty ActiveStateProperty = DependencyProperty.Register(
-            "ActiveState",
+            nameof(ActiveState),
             typeof(string),
             typeof(NavigationMenuAction),
             new PropertyMetadata(null));
@@ -212,7 +222,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             get
             {
-                bool isLocallySet = this.ReadLocalValue(TargetedTriggerAction.TargetObjectProperty) != DependencyProperty.UnsetValue;
+                bool isLocallySet = this.ReadLocalValue(TargetObjectProperty) != DependencyProperty.UnsetValue;
                 // if the value can be set indirectly (via trigger, style, etc), should also check ValueSource, but not a concern for behaviors right now.
                 return isLocallySet;
             }
@@ -234,9 +244,9 @@ namespace Microsoft.Xaml.Behaviors.Core
 
             if (string.IsNullOrEmpty(this.TargetName) && !this.IsTargetObjectSet)
             {
-                VisualStateUtilities.TryFindNearestStatefulControl(this.AssociatedObject as FrameworkElement, out frameworkElement);
-            }
-            else
+                VisualStateUtilities.TryFindNearestStatefulControl(this.AssociatedObject as FrameworkElement,
+                    out frameworkElement);
+            } else
             {
                 frameworkElement = this.Target;
             }
@@ -254,45 +264,48 @@ namespace Microsoft.Xaml.Behaviors.Core
 
         internal void InvokeImpl(FrameworkElement stateTarget)
         {
-            if (stateTarget != null &&
-                !string.IsNullOrEmpty(this.ActiveState) &&
-                !string.IsNullOrEmpty(this.InactiveState) &&
-                !string.IsNullOrEmpty(this.TargetScreen))
+            if (stateTarget == null || string.IsNullOrEmpty(this.ActiveState) ||
+                string.IsNullOrEmpty(this.InactiveState) || string.IsNullOrEmpty(this.TargetScreen))
             {
-                UserControl screen = stateTarget
-                        .GetSelfAndAncestors()
-                        .OfType<UserControl>()
-                        .FirstOrDefault(control => control.GetType().ToString() == this.TargetScreen);
+                return;
+            }
 
-                string stateName = this.InactiveState;
-                if (screen != null)
-                {
-                    stateName = this.ActiveState;
-                }
+            UserControl screen = stateTarget
+                .GetSelfAndAncestors()
+                .OfType<UserControl>()
+                .FirstOrDefault(control => control.GetType().ToString() == this.TargetScreen);
 
-                if (!string.IsNullOrEmpty(stateName))
+            string stateName = this.InactiveState;
+            if (screen != null)
+            {
+                stateName = this.ActiveState;
+            }
+
+            if (string.IsNullOrEmpty(stateName))
+            {
+                return;
+            }
+
+            if (stateTarget is ToggleButton toggleButton)
+            {
+                switch (stateName)
                 {
-                    ToggleButton toggleButton = stateTarget as ToggleButton;
-                    if (toggleButton != null)
-                    {
-                        switch (stateName)
-                        {
-                            case "Checked":
-                                toggleButton.IsChecked = true;
-                                return;
-                            case "Unchecked":
-                                toggleButton.IsChecked = false;
-                                return;
-                        }
-                    }
-                    if (stateName == "Disabled")
-                    {
-                        stateTarget.IsEnabled = false;
+                    case "Checked":
+                        toggleButton.IsChecked = true;
                         return;
-                    }
-                    VisualStateUtilities.GoToState(stateTarget, stateName, true);
+                    case "Unchecked":
+                        toggleButton.IsChecked = false;
+                        return;
                 }
             }
+
+            if (stateName == "Disabled")
+            {
+                stateTarget.IsEnabled = false;
+                return;
+            }
+
+            VisualStateUtilities.GoToState(stateTarget, stateName, true);
         }
 
         protected override Freezable CreateInstanceCore()
@@ -306,42 +319,12 @@ namespace Microsoft.Xaml.Behaviors.Core
     /// </summary>
     public sealed class RemoveItemInListBoxAction : TriggerAction<FrameworkElement>
     {
-        protected override void Invoke(object parameter)
-        {
-            ItemsControl items = this.ItemsControl;
-            if (items != null)
-            {
-                if (items.ItemsSource != null)
-                {
-                    // Given the flexibility of databinding, we won't always have a collection where we can 
-                    // remove an item.  But let's try a common scenario.
-                    IList list = items.ItemsSource as IList;
-                    if (list != null && !list.IsReadOnly && list.Contains(this.AssociatedObject.DataContext))
-                    {
-                        list.Remove(this.AssociatedObject.DataContext);
-                    }
-                }
-                else
-                {
-                    ListBox listBox = this.ItemsControl as ListBox;
-                    if (listBox != null)
-                    {
-                        ListBoxItem listBoxItem = this.ItemContainer;
-                        if (listBoxItem != null)
-                        {
-                            listBox.Items.Remove(listBoxItem.Content);
-                        }
-                    }
-                }
-            }
-
-        }
-
         private ListBoxItem ItemContainer
         {
             get
             {
-                return (ListBoxItem)DependencyObjectHelper.GetSelfAndAncestors(this.AssociatedObject).FirstOrDefault(element => element is ListBoxItem);
+                return (ListBoxItem)this.AssociatedObject.GetSelfAndAncestors()
+                    .FirstOrDefault(element => element is ListBoxItem);
             }
         }
 
@@ -349,7 +332,40 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             get
             {
-                return (ItemsControl)DependencyObjectHelper.GetSelfAndAncestors(this.AssociatedObject).FirstOrDefault(element => element is ItemsControl);
+                return (ItemsControl)this.AssociatedObject.GetSelfAndAncestors()
+                    .FirstOrDefault(element => element is ItemsControl);
+            }
+        }
+
+        protected override void Invoke(object parameter)
+        {
+            ItemsControl items = this.ItemsControl;
+            if (items == null)
+            {
+                return;
+            }
+
+            if (items.ItemsSource != null)
+            {
+                // Given the flexibility of databinding, we won't always have a collection where we can
+                // remove an item.  But let's try a common scenario.
+                if (items.ItemsSource is IList list && !list.IsReadOnly &&
+                    list.Contains(this.AssociatedObject.DataContext))
+                {
+                    list.Remove(this.AssociatedObject.DataContext);
+                }
+            } else
+            {
+                if (!(this.ItemsControl is ListBox listBox))
+                {
+                    return;
+                }
+
+                ListBoxItem listBoxItem = this.ItemContainer;
+                if (listBoxItem != null)
+                {
+                    listBox.Items.Remove(listBoxItem.Content);
+                }
             }
         }
     }

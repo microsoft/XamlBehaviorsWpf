@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows.Controls;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows.Controls;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     using SysWindows = System.Windows;
 
     [TestClass]
@@ -29,12 +30,12 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         #region Helper methods
 
-        private void AttachTo(IAttachedObject attachedObject, SysWindows::DependencyObject element)
+        private void AttachTo(IAttachedObject attachedObject, SysWindows.DependencyObject element)
         {
-            ((IAttachedObject)attachedObject).Attach(element);
+            attachedObject.Attach(element);
         }
 
-        private StubTrigger AttachAction(TriggerAction triggerAction, SysWindows::DependencyObject obj)
+        private StubTrigger AttachAction(TriggerAction triggerAction, SysWindows.DependencyObject obj)
         {
             WindowedStubTrigger trigger = new WindowedStubTrigger();
             trigger.Actions.Add(triggerAction);
@@ -42,12 +43,13 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             return trigger;
         }
 
-        private static void AddNamedChild(Panel panel, SysWindows::FrameworkElement childElement)
+        private static void AddNamedChild(Panel panel, SysWindows.FrameworkElement childElement)
         {
             if (panel.GetValue(SysWindows.NameScope.NameScopeProperty) == null)
             {
-                SysWindows::NameScope.SetNameScope(panel, new SysWindows::NameScope());
+                SysWindows.NameScope.SetNameScope(panel, new SysWindows.NameScope());
             }
+
             panel.Children.Add(childElement);
             panel.RegisterName(childElement.Name, childElement);
         }
@@ -80,7 +82,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             goToStateAction.UseTransitions = false;
             trigger.FireStubTrigger();
 
-            Assert.IsTrue(vsm.LastUseTransitions.HasValue && !vsm.LastUseTransitions.Value, "UseTransitions should be respected by the GoToState call.");
+            Assert.IsTrue(vsm.LastUseTransitions.HasValue && !vsm.LastUseTransitions.Value,
+                "UseTransitions should be respected by the GoToState call.");
         }
 
         [TestMethod]
@@ -154,37 +157,38 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             private object FindContent()
             {
-                SysWindows::FrameworkElement content = this.AssociatedObject as SysWindows::FrameworkElement;
+                SysWindows.FrameworkElement content = this.AssociatedObject as SysWindows.FrameworkElement;
                 while (content != null)
                 {
-                    SysWindows::FrameworkElement parent = content.Parent as SysWindows::FrameworkElement ?? content.TemplatedParent as SysWindows::FrameworkElement;
-                    if (parent == null || parent is SysWindows::Window)
+                    SysWindows.FrameworkElement parent = content.Parent as SysWindows.FrameworkElement ??
+                                                         content.TemplatedParent as SysWindows.FrameworkElement;
+                    if (parent == null || parent is SysWindows.Window)
                     {
                         break;
                     }
-                    else
-                    {
-                        content = parent;
-                    }
+
+                    content = parent;
                 }
+
                 return content;
             }
         }
 
         private class TestGoToStateAction : GoToStateAction
         {
-            public SysWindows::FrameworkElement StateElement
+            public SysWindows.FrameworkElement StateElement
             {
                 get;
                 set;
             }
 
-            public void ChangeTarget(SysWindows::FrameworkElement oldTarget, SysWindows::FrameworkElement newTarget)
+            public void ChangeTarget(SysWindows.FrameworkElement oldTarget, SysWindows.FrameworkElement newTarget)
             {
                 this.OnTargetChanged(oldTarget, newTarget);
             }
 
-            protected override void OnTargetChanged(SysWindows::FrameworkElement oldTarget, SysWindows::FrameworkElement newTarget)
+            protected override void OnTargetChanged(SysWindows.FrameworkElement oldTarget,
+                SysWindows.FrameworkElement newTarget)
             {
                 base.OnTargetChanged(oldTarget, newTarget);
             }

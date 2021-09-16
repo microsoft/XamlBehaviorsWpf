@@ -1,22 +1,23 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Markup;
+using System.Windows.Media.Animation;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Markup;
-    using System.Windows.Media.Animation;
-    using System.Globalization;
-
     /// <summary>
     /// Represents an object that can invoke actions conditionally.
     /// </summary>
     /// <typeparam name="T">The type to which this trigger can be attached.</typeparam>
     /// <remarks>
-    ///		TriggerBase is the base class for controlling actions. Override OnAttached() and 
-    ///		OnDetaching() to hook and unhook handlers on the AssociatedObject. You may 
-    ///		constrain the types that a derived TriggerBase may be attached to by specifying 
-    ///		the generic parameter. Call InvokeActions() to fire all Actions associated with 
+    ///		TriggerBase is the base class for controlling actions. Override OnAttached() and
+    ///		OnDetaching() to hook and unhook handlers on the AssociatedObject. You may
+    ///		constrain the types that a derived TriggerBase may be attached to by specifying
+    ///		the generic parameter. Call InvokeActions() to fire all Actions associated with
     ///		this TriggerBase.
     ///	</remarks>
     public abstract class TriggerBase<T> : TriggerBase where T : DependencyObject
@@ -72,15 +73,15 @@ namespace Microsoft.Xaml.Behaviors
         Animatable,
         IAttachedObject
     {
-        private DependencyObject associatedObject;
-        private Type associatedObjectTypeConstraint;
-
-        private static readonly DependencyPropertyKey ActionsPropertyKey = DependencyProperty.RegisterReadOnly("Actions",
-                                                                                                            typeof(TriggerActionCollection),
-                                                                                                            typeof(TriggerBase),
-                                                                                                            new FrameworkPropertyMetadata());
+        private static readonly DependencyPropertyKey ActionsPropertyKey = DependencyProperty.RegisterReadOnly(
+            nameof(Actions),
+            typeof(TriggerActionCollection),
+            typeof(TriggerBase),
+            new FrameworkPropertyMetadata());
 
         public static readonly DependencyProperty ActionsProperty = ActionsPropertyKey.DependencyProperty;
+        private readonly Type associatedObjectTypeConstraint;
+        private DependencyObject associatedObject;
 
         internal TriggerBase(Type associatedObjectTypeConstraint)
         {
@@ -140,11 +141,11 @@ namespace Microsoft.Xaml.Behaviors
         {
             if (this.PreviewInvoke != null)
             {
-                // Fire the previewInvoke event 
+                // Fire the previewInvoke event
                 PreviewInvokeEventArgs previewInvokeEventArg = new PreviewInvokeEventArgs();
                 this.PreviewInvoke(this, previewInvokeEventArg);
                 // If a handler has cancelled the event, abort the invoke
-                if (previewInvokeEventArg.Cancelling == true)
+                if (previewInvokeEventArg.Cancelling)
                 {
                     return;
                 }
@@ -206,17 +207,19 @@ namespace Microsoft.Xaml.Behaviors
             {
                 if (this.AssociatedObject != null)
                 {
-                    throw new InvalidOperationException(ExceptionStringTable.CannotHostTriggerMultipleTimesExceptionMessage);
+                    throw new InvalidOperationException(ExceptionStringTable
+                        .CannotHostTriggerMultipleTimesExceptionMessage);
                 }
 
                 // Ensure the type constraint is met
-                if (dependencyObject != null && !this.AssociatedObjectTypeConstraint.IsAssignableFrom(dependencyObject.GetType()))
+                if (dependencyObject != null &&
+                    !this.AssociatedObjectTypeConstraint.IsAssignableFrom(dependencyObject.GetType()))
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                                                                        ExceptionStringTable.TypeConstraintViolatedExceptionMessage,
-                                                                        this.GetType().Name,
-                                                                        dependencyObject.GetType().Name,
-                                                                        this.AssociatedObjectTypeConstraint.Name));
+                        ExceptionStringTable.TypeConstraintViolatedExceptionMessage,
+                        this.GetType().Name,
+                        dependencyObject.GetType().Name,
+                        this.AssociatedObjectTypeConstraint.Name));
                 }
 
                 this.WritePreamble();

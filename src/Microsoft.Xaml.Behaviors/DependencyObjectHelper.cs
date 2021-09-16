@@ -1,15 +1,19 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Media;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System.Collections.Generic;
-    using System.Windows;
-    using System.Windows.Media;
-
+    /// <summary>
+    ///     Contains DependencyObject extension methods
+    /// </summary>
     public static class DependencyObjectHelper
     {
         /// <summary>
-        /// This method will use the VisualTreeHelper.GetParent method to do a depth first walk up 
+        /// This method will use the VisualTreeHelper.GetParent method to do a depth first walk up
         /// the visual tree and return all ancestors of the specified object, including the object itself.
         /// </summary>
         /// <param name="dependencyObject">The object in the visual tree to find ancestors of.</param>

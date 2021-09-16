@@ -1,17 +1,18 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows.Input;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System;
-    using System.Windows.Input;
-
     /// <summary>
     /// A basic implementation of ICommand that wraps a method that takes no parameters or a method that takes one parameter.
     /// </summary>
     public sealed class ActionCommand : ICommand
     {
-        private Action action;
-        private Action<object> objectAction;
+        private readonly Action action;
+        private readonly Action<object> objectAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ActionCommand"/> class.
@@ -34,6 +35,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         }
 
         #region ICommand Members
+
 #pragma warning disable 67
         private event EventHandler CanExecuteChanged;
 #pragma warning restore 67
@@ -68,12 +70,12 @@ namespace Microsoft.Xaml.Behaviors.Core
             if (this.objectAction != null)
             {
                 this.objectAction(parameter);
-            }
-            else
+            } else
             {
                 this.action();
             }
         }
+
         #endregion
     }
 }

@@ -1,16 +1,17 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.ComponentModel;
-    using System.Globalization;
-    using Microsoft.Xaml.Behaviors.Core;
-
     internal static class ComparisonLogic
     {
         /// <summary>
-        /// This method evaluates operands. 
+        /// This method evaluates operands.
         /// </summary>
         /// <param name="leftOperand">Left operand from the LeftOperand property.</param>
         /// <param name="operatorType">Operator from Operator property.</param>
@@ -18,7 +19,7 @@ namespace Microsoft.Xaml.Behaviors
         /// <returns>Returns true if the condition is met; otherwise, returns false.</returns>
         internal static bool EvaluateImpl(object leftOperand, ComparisonConditionType operatorType, object rightOperand)
         {
-            bool result = false;
+            bool result;
 
             if (leftOperand != null)
             {
@@ -37,16 +38,16 @@ namespace Microsoft.Xaml.Behaviors
             // If both operands are comparable, use arithmetic comparison
             if (leftComparableOperand != null && rightComparableOperand != null)
             {
-                return ComparisonLogic.EvaluateComparable(leftComparableOperand, operatorType, rightComparableOperand);
+                return EvaluateComparable(leftComparableOperand, operatorType, rightComparableOperand);
             }
 
             switch (operatorType)
             {
                 case ComparisonConditionType.Equal:
-                    result = object.Equals(leftOperand, rightOperand);
+                    result = Equals(leftOperand, rightOperand);
                     break;
                 case ComparisonConditionType.NotEqual:
-                    result = !object.Equals(leftOperand, rightOperand);
+                    result = !Equals(leftOperand, rightOperand);
                     break;
 
                 case ComparisonConditionType.GreaterThan:
@@ -56,26 +57,27 @@ namespace Microsoft.Xaml.Behaviors
                     if (leftComparableOperand == null && rightComparableOperand == null)
                     {
                         throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                            ExceptionStringTable.InvalidOperands,
-                                                            leftOperand != null ? leftOperand.GetType().Name : "null",
-                                                            rightOperand != null ? rightOperand.GetType().Name : "null",
-                                                            operatorType.ToString()));
-                    }
-                    else if (leftComparableOperand == null)
+                            ExceptionStringTable.InvalidOperands,
+                            leftOperand != null ? leftOperand.GetType().Name : "null",
+                            rightOperand != null ? rightOperand.GetType().Name : "null",
+                            operatorType.ToString()));
+                    } else if (leftComparableOperand == null)
                     {
                         throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                            ExceptionStringTable.InvalidLeftOperand,
-                                                            leftOperand != null ? leftOperand.GetType().Name : "null",
-                                                            operatorType.ToString()));
-                    }
-                    else
+                            ExceptionStringTable.InvalidLeftOperand,
+                            leftOperand != null ? leftOperand.GetType().Name : "null",
+                            operatorType.ToString()));
+                    } else
                     {
                         throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                        ExceptionStringTable.InvalidRightOperand,
-                                        rightOperand != null ? rightOperand.GetType().Name : "null",
-                                        operatorType.ToString()));
+                            ExceptionStringTable.InvalidRightOperand,
+                            rightOperand != null ? rightOperand.GetType().Name : "null",
+                            operatorType.ToString()));
                     }
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(operatorType), operatorType, null);
             }
+
             return result;
         }
 
@@ -86,19 +88,18 @@ namespace Microsoft.Xaml.Behaviors
         /// <param name="operatorType">Operator from Operator property.</param>
         /// <param name="rightOperand">Right operand from the RightOperand property.</param>
         /// <returns>Returns true if the condition is met; otherwise, returns false.</returns>
-        private static bool EvaluateComparable(IComparable leftOperand, ComparisonConditionType operatorType, IComparable rightOperand)
+        private static bool EvaluateComparable(IComparable leftOperand, ComparisonConditionType operatorType,
+            IComparable rightOperand)
         {
             object convertedOperand = null;
 
             try
             {
                 convertedOperand = Convert.ChangeType(rightOperand, leftOperand.GetType(), CultureInfo.CurrentCulture);
-            }
-            catch (FormatException)
+            } catch (FormatException)
             {
                 // FormatException: Convert.ChangeType("hello", typeof(double), ...);
-            }
-            catch (InvalidCastException)
+            } catch (InvalidCastException)
             {
                 // InvalidCastException: Convert.ChangeType(4.0d, typeof(Rectangle), ...);
             }
@@ -108,8 +109,8 @@ namespace Microsoft.Xaml.Behaviors
                 return operatorType == ComparisonConditionType.NotEqual;
             }
 
-            int comparison = ((IComparable)leftOperand).CompareTo((IComparable)convertedOperand);
-            bool result = false;
+            int comparison = leftOperand.CompareTo((IComparable)convertedOperand);
+            bool result;
 
             switch (operatorType)
             {
@@ -131,7 +132,10 @@ namespace Microsoft.Xaml.Behaviors
                 case ComparisonConditionType.NotEqual:
                     result = comparison != 0;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(operatorType), operatorType, null);
             }
+
             return result;
         }
     }

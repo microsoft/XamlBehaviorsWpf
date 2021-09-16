@@ -1,25 +1,26 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Reflection;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Windows;
-
     /// <summary>
     /// Represents a trigger that can listen to an element other than its AssociatedObject.
     /// </summary>
     /// <typeparam name="T">The type that this trigger can be associated with.</typeparam>
     /// <remarks>
-    ///		EventTriggerBase extends TriggerBase to add knowledge of another object than the one it is attached to. 
-    ///		This allows a user to attach a Trigger/Action pair to one element and invoke the Action in response to a 
-    ///		change in another object somewhere else. Override OnSourceChanged to hook or unhook handlers on the source 
-    ///		element, and OnAttached/OnDetaching for the associated element. The type of the Source element can be 
-    ///		constrained by the generic type parameter. If you need control over the type of the 
+    ///		EventTriggerBase extends TriggerBase to add knowledge of another object than the one it is attached to.
+    ///		This allows a user to attach a Trigger/Action pair to one element and invoke the Action in response to a
+    ///		change in another object somewhere else. Override OnSourceChanged to hook or unhook handlers on the source
+    ///		element, and OnAttached/OnDetaching for the associated element. The type of the Source element can be
+    ///		constrained by the generic type parameter. If you need control over the type of the
     ///		AssociatedObject, set a TypeConstraintAttribute on your derived type.
     ///	</remarks>
     public abstract class EventTriggerBase<T> : EventTriggerBase where T : class
@@ -68,23 +69,37 @@ namespace Microsoft.Xaml.Behaviors
     /// <remarks>This is an infrastructure class. Trigger authors should derive from EventTriggerBase&lt;T&gt; instead of this class.</remarks>
     public abstract class EventTriggerBase : TriggerBase
     {
-        private Type sourceTypeConstraint;
-        private bool isSourceChangedRegistered;
-        private NameResolver sourceNameResolver;
+        /// <summary>
+        ///     DependencyProperty for <see cref="SourceObject" />
+        /// </summary>
+        public static readonly DependencyProperty SourceObjectProperty = DependencyProperty.Register(
+            nameof(SourceObject),
+            typeof(object),
+            typeof(EventTriggerBase),
+            new PropertyMetadata(
+                OnSourceObjectChanged));
+
+        /// <summary>
+        ///     DependencyProperty for <see cref="SourceName" />
+        /// </summary>
+        public static readonly DependencyProperty SourceNameProperty = DependencyProperty.Register(nameof(SourceName),
+            typeof(string),
+            typeof(EventTriggerBase),
+            new PropertyMetadata(
+                OnSourceNameChanged));
+
+        private readonly NameResolver sourceNameResolver;
         private MethodInfo eventHandlerMethodInfo;
 
-        public static readonly DependencyProperty SourceObjectProperty = DependencyProperty.Register("SourceObject",
-                                                                                                    typeof(object),
-                                                                                                    typeof(EventTriggerBase),
-                                                                                                    new PropertyMetadata(
-                                                                                                        new PropertyChangedCallback(OnSourceObjectChanged)));
+        private bool isSourceChangedRegistered;
 
-
-        public static readonly DependencyProperty SourceNameProperty = DependencyProperty.Register("SourceName",
-                                                                                                    typeof(string),
-                                                                                                    typeof(EventTriggerBase),
-                                                                                                    new PropertyMetadata(
-                                                                                                        new PropertyChangedCallback(OnSourceNameChanged)));
+        internal EventTriggerBase(Type sourceTypeConstraint)
+            : base(typeof(DependencyObject))
+        {
+            this.SourceTypeConstraint = sourceTypeConstraint;
+            this.sourceNameResolver = new NameResolver();
+            this.RegisterSourceChanged();
+        }
 
         /// <summary>
         /// Gets the type constraint of the associated object.
@@ -96,13 +111,10 @@ namespace Microsoft.Xaml.Behaviors
             get
             {
                 AttributeCollection attributes = TypeDescriptor.GetAttributes(this.GetType());
-                TypeConstraintAttribute typeConstraintAttribute = attributes[typeof(TypeConstraintAttribute)] as TypeConstraintAttribute;
+                TypeConstraintAttribute typeConstraintAttribute =
+                    attributes[typeof(TypeConstraintAttribute)] as TypeConstraintAttribute;
 
-                if (typeConstraintAttribute != null)
-                {
-                    return typeConstraintAttribute.Constraint;
-                }
-                return typeof(DependencyObject);
+                return typeConstraintAttribute != null ? typeConstraintAttribute.Constraint : typeof(DependencyObject);
             }
         }
 
@@ -110,13 +122,7 @@ namespace Microsoft.Xaml.Behaviors
         /// Gets the source type constraint.
         /// </summary>
         /// <value>The source type constraint.</value>
-        protected Type SourceTypeConstraint
-        {
-            get
-            {
-                return this.sourceTypeConstraint;
-            }
-        }
+        protected Type SourceTypeConstraint { get; }
 
         /// <summary>
         /// Gets or sets the target object. If TargetObject is not set, the target will look for the object specified by TargetName. If an element referred to by TargetName cannot be found, the target will default to the AssociatedObject. This is a dependency property.
@@ -153,8 +159,7 @@ namespace Microsoft.Xaml.Behaviors
                 if (this.SourceObject != null)
                 {
                     source = this.SourceObject;
-                }
-                else if (this.IsSourceNameSet)
+                } else if (this.IsSourceNameSet)
                 {
                     source = this.SourceNameResolver.Object;
                     if (source != null && !this.SourceTypeConstraint.IsAssignableFrom(source.GetType()))
@@ -168,6 +173,7 @@ namespace Microsoft.Xaml.Behaviors
                             "Source"));
                     }
                 }
+
                 return source;
             }
         }
@@ -187,7 +193,8 @@ namespace Microsoft.Xaml.Behaviors
         {
             get
             {
-                return !string.IsNullOrEmpty(this.SourceName) || this.ReadLocalValue(SourceNameProperty) != DependencyProperty.UnsetValue;
+                return !string.IsNullOrEmpty(this.SourceName) ||
+                       this.ReadLocalValue(SourceNameProperty) != DependencyProperty.UnsetValue;
             }
         }
 
@@ -197,19 +204,12 @@ namespace Microsoft.Xaml.Behaviors
             set;
         }
 
-        internal EventTriggerBase(Type sourceTypeConstraint)
-            : base(typeof(DependencyObject))
-        {
-            this.sourceTypeConstraint = sourceTypeConstraint;
-            this.sourceNameResolver = new NameResolver();
-            this.RegisterSourceChanged();
-        }
-
         /// <summary>
         /// Specifies the name of the Event this EventTriggerBase is listening for.
         /// </summary>
         /// <returns></returns>
-        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "NikhilKo convinced us this was the right choice.")]
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
+            Justification = "NikhilKo convinced us this was the right choice.")]
         protected abstract string GetEventName();
 
         /// <summary>
@@ -242,6 +242,7 @@ namespace Microsoft.Xaml.Behaviors
             {
                 return;
             }
+
             // we'll handle loaded elsewhere
             if (string.Compare(this.GetEventName(), "Loaded", StringComparison.Ordinal) != 0)
             {
@@ -266,7 +267,7 @@ namespace Microsoft.Xaml.Behaviors
             // Hence, if we are Hosted on a Behavior, we need to resolve against the Behavior's
             // Host rather than our own. See comment in TargetedTriggerAction.
             // TODO jekelly 6/20/08: Ideally we could do a namespace walk, but SL doesn't expose
-            //						 a way to do this. This solution only looks one level deep. 
+            //						 a way to do this. This solution only looks one level deep.
             //						 A Behavior with a Behavior attached won't work. This is OK
             //						 for now, but should consider a more general solution if needed.
             base.OnAttached();
@@ -277,24 +278,20 @@ namespace Microsoft.Xaml.Behaviors
             this.RegisterSourceChanged();
             if (newBehavior != null)
             {
-                newHost = ((IAttachedObject)newBehavior).AssociatedObject;
-                newBehavior.AssociatedObjectChanged += new EventHandler(OnBehaviorHostChanged);
-            }
-            else if (this.SourceObject != null || newHostElement == null)
+                newBehavior.AssociatedObjectChanged += this.OnBehaviorHostChanged;
+            } else if (this.SourceObject != null || newHostElement == null)
             {
                 try
                 {
                     this.OnSourceChanged(null, this.Source);
-                }
-                catch (InvalidOperationException)
+                } catch (InvalidOperationException)
                 {
                     // If we're hosted on a DependencyObject, we don't have a name scope reference element.
                     // Hence, we'll fire off the source changed manually when we first attach. However, if we've
                     // been attached to something that doesn't meet the target type constraint, accessing Source
                     // will throw.
                 }
-            }
-            else
+            } else
             {
                 this.SourceNameResolver.NameScopeReferenceElement = newHostElement;
             }
@@ -319,17 +316,17 @@ namespace Microsoft.Xaml.Behaviors
             try
             {
                 this.OnSourceChanged(this.Source, null);
-            }
-            catch (InvalidOperationException)
+            } catch (InvalidOperationException)
             {
-                // We fire off the source changed manually when we detach. However, if we've been attached to 
+                // We fire off the source changed manually when we detach. However, if we've been attached to
                 // something that doesn't meet the target type constraint, accessing Source will throw.
             }
+
             this.UnregisterSourceChanged();
 
             if (oldBehavior != null)
             {
-                oldBehavior.AssociatedObjectChanged -= new EventHandler(OnBehaviorHostChanged);
+                oldBehavior.AssociatedObjectChanged -= this.OnBehaviorHostChanged;
             }
 
             this.SourceNameResolver.NameScopeReferenceElement = null;
@@ -344,7 +341,8 @@ namespace Microsoft.Xaml.Behaviors
 
         private void OnBehaviorHostChanged(object sender, EventArgs e)
         {
-            this.SourceNameResolver.NameScopeReferenceElement = ((IAttachedObject)sender).AssociatedObject as FrameworkElement;
+            this.SourceNameResolver.NameScopeReferenceElement =
+                ((IAttachedObject)sender).AssociatedObject as FrameworkElement;
         }
 
         private static void OnSourceObjectChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -354,13 +352,13 @@ namespace Microsoft.Xaml.Behaviors
             if (args.NewValue == null)
             {
                 eventTriggerBase.OnSourceChanged(args.OldValue, sourceNameObject);
-            }
-            else
+            } else
             {
                 if (args.OldValue == null && sourceNameObject != null)
                 {
                     eventTriggerBase.UnregisterEvent(sourceNameObject, eventTriggerBase.GetEventName());
                 }
+
                 eventTriggerBase.OnSourceChanged(args.OldValue, args.NewValue);
             }
         }
@@ -421,7 +419,8 @@ namespace Microsoft.Xaml.Behaviors
         /// <exception cref="ArgumentException">Could not find eventName on the Target.</exception>
         private void RegisterEvent(object obj, string eventName)
         {
-            Debug.Assert(this.eventHandlerMethodInfo == null && string.Compare(eventName, "Loaded", StringComparison.Ordinal) != 0);
+            Debug.Assert(this.eventHandlerMethodInfo == null &&
+                         string.Compare(eventName, "Loaded", StringComparison.Ordinal) != 0);
             Type targetType = obj.GetType();
             EventInfo eventInfo = targetType.GetEvent(eventName);
             if (eventInfo == null)
@@ -429,57 +428,58 @@ namespace Microsoft.Xaml.Behaviors
                 if (this.SourceObject != null)
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                                ExceptionStringTable.EventTriggerCannotFindEventNameExceptionMessage,
-                                                                eventName,
-                                                                obj.GetType().Name));
+                        ExceptionStringTable.EventTriggerCannotFindEventNameExceptionMessage,
+                        eventName,
+                        obj.GetType().Name));
                 }
-                else
-                {
-                    return;
-                }
+
+                return;
             }
 
-            if (!EventTriggerBase.IsValidEvent(eventInfo))
+            if (!IsValidEvent(eventInfo))
             {
                 if (this.SourceObject != null)
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                                ExceptionStringTable.EventTriggerBaseInvalidEventExceptionMessage,
-                                                                eventName,
-                                                                obj.GetType().Name));
+                        ExceptionStringTable.EventTriggerBaseInvalidEventExceptionMessage,
+                        eventName,
+                        obj.GetType().Name));
                 }
-                else
-                {
-                    return;
-                }
+
+                return;
             }
-            this.eventHandlerMethodInfo = typeof(EventTriggerBase).GetMethod("OnEventImpl", BindingFlags.NonPublic | BindingFlags.Instance);
-            eventInfo.AddEventHandler(obj, Delegate.CreateDelegate(eventInfo.EventHandlerType, this, this.eventHandlerMethodInfo));
+
+            this.eventHandlerMethodInfo =
+                typeof(EventTriggerBase).GetMethod("OnEventImpl", BindingFlags.NonPublic | BindingFlags.Instance);
+            eventInfo.AddEventHandler(obj,
+                Delegate.CreateDelegate(eventInfo.EventHandlerType, this,
+                    this.eventHandlerMethodInfo ?? throw new InvalidOperationException()));
         }
 
         private static bool IsValidEvent(EventInfo eventInfo)
         {
             Type eventHandlerType = eventInfo.EventHandlerType;
-            if (typeof(Delegate).IsAssignableFrom(eventInfo.EventHandlerType))
+            if (!typeof(Delegate).IsAssignableFrom(eventInfo.EventHandlerType))
             {
-                MethodInfo invokeMethod = eventHandlerType.GetMethod("Invoke");
-                ParameterInfo[] parameters = invokeMethod.GetParameters();
-                return parameters.Length == 2 && typeof(object).IsAssignableFrom(parameters[0].ParameterType) && typeof(EventArgs).IsAssignableFrom(parameters[1].ParameterType);
+                return false;
             }
-            return false;
+
+            MethodInfo invokeMethod = eventHandlerType.GetMethod("Invoke");
+            ParameterInfo[] parameters = invokeMethod?.GetParameters();
+            return parameters != null && parameters.Length == 2 &&
+                   typeof(object).IsAssignableFrom(parameters[0].ParameterType) &&
+                   typeof(EventArgs).IsAssignableFrom(parameters[1].ParameterType);
         }
 
         private void UnregisterEvent(object obj, string eventName)
         {
             if (string.Compare(eventName, "Loaded", StringComparison.Ordinal) == 0)
             {
-                FrameworkElement frameworkElement = obj as FrameworkElement;
-                if (frameworkElement != null)
+                if (obj is FrameworkElement frameworkElement)
                 {
                     this.UnregisterLoaded(frameworkElement);
                 }
-            }
-            else
+            } else
             {
                 this.UnregisterEventImpl(obj, eventName);
             }
@@ -497,7 +497,8 @@ namespace Microsoft.Xaml.Behaviors
 
             EventInfo eventInfo = targetType.GetEvent(eventName);
             Debug.Assert(eventInfo != null, "Should not try to unregister an event that we successfully registered");
-            eventInfo.RemoveEventHandler(obj, Delegate.CreateDelegate(eventInfo.EventHandlerType, this, this.eventHandlerMethodInfo));
+            eventInfo.RemoveEventHandler(obj,
+                Delegate.CreateDelegate(eventInfo.EventHandlerType, this, this.eventHandlerMethodInfo));
             this.eventHandlerMethodInfo = null;
         }
 
@@ -515,16 +516,15 @@ namespace Microsoft.Xaml.Behaviors
                 if (associatedElement != null && string.Compare(oldEventName, "Loaded", StringComparison.Ordinal) == 0)
                 {
                     this.UnregisterLoaded(associatedElement);
-                }
-                else if (!string.IsNullOrEmpty(oldEventName))
+                } else if (!string.IsNullOrEmpty(oldEventName))
                 {
                     this.UnregisterEvent(this.Source, oldEventName);
                 }
+
                 if (associatedElement != null && string.Compare(newEventName, "Loaded", StringComparison.Ordinal) == 0)
                 {
                     this.RegisterLoaded(associatedElement);
-                }
-                else if (!string.IsNullOrEmpty(newEventName))
+                } else if (!string.IsNullOrEmpty(newEventName))
                 {
                     this.RegisterEvent(this.Source, newEventName);
                 }

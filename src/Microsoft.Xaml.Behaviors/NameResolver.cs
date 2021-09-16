@@ -1,20 +1,26 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Windows;
-    using System.Diagnostics;
-    using System.Windows.Media;
-    using System.Globalization;
-
     /// <summary>
     /// Provides data about which objects were affected when resolving a name change.
     /// </summary>
     internal sealed class NameResolvedEventArgs : EventArgs
     {
-        private object oldObject;
-        private object newObject;
+        private readonly object newObject;
+        private readonly object oldObject;
+
+        public NameResolvedEventArgs(object oldObject, object newObject)
+        {
+            this.oldObject = oldObject;
+            this.newObject = newObject;
+        }
 
         public object OldObject
         {
@@ -24,12 +30,6 @@ namespace Microsoft.Xaml.Behaviors
         public object NewObject
         {
             get { return newObject; }
-        }
-
-        public NameResolvedEventArgs(object oldObject, object newObject)
-        {
-            this.oldObject = oldObject;
-            this.newObject = newObject;
         }
     }
 
@@ -41,11 +41,6 @@ namespace Microsoft.Xaml.Behaviors
     {
         private string name;
         private FrameworkElement nameScopeReferenceElement;
-
-        /// <summary>
-        /// Occurs when the resolved element has changed.
-        /// </summary>
-        public event EventHandler<NameResolvedEventArgs> ResolvedElementChanged;
 
         /// <summary>
         /// Gets or sets the name of the element to attempt to resolve.
@@ -76,6 +71,7 @@ namespace Microsoft.Xaml.Behaviors
                 {
                     return this.NameScopeReferenceElement;
                 }
+
                 return this.ResolvedObject;
             }
         }
@@ -99,10 +95,12 @@ namespace Microsoft.Xaml.Behaviors
         {
             get
             {
-                if (this.NameScopeReferenceElement == null || !Interaction.IsElementLoaded(this.NameScopeReferenceElement))
+                if (this.NameScopeReferenceElement == null ||
+                    !Interaction.IsElementLoaded(this.NameScopeReferenceElement))
                 {
                     return null;
                 }
+
                 return GetActualNameScopeReference(this.NameScopeReferenceElement);
             }
         }
@@ -135,13 +133,19 @@ namespace Microsoft.Xaml.Behaviors
             set;
         }
 
+        /// <summary>
+        /// Occurs when the resolved element has changed.
+        /// </summary>
+        public event EventHandler<NameResolvedEventArgs> ResolvedElementChanged;
+
         private void OnNameScopeReferenceElementChanged(FrameworkElement oldNameScopeReference)
         {
             if (this.PendingReferenceElementLoad)
             {
-                oldNameScopeReference.Loaded -= new RoutedEventHandler(OnNameScopeReferenceLoaded);
+                oldNameScopeReference.Loaded -= this.OnNameScopeReferenceLoaded;
                 this.PendingReferenceElementLoad = false;
             }
+
             this.HasAttempedResolve = false;
             this.UpdateObjectFromName(this.Object);
         }
@@ -168,7 +172,7 @@ namespace Microsoft.Xaml.Behaviors
                 if (!Interaction.IsElementLoaded(this.NameScopeReferenceElement))
                 {
                     // We had a debug message here, but it seems like too common a scenario
-                    this.NameScopeReferenceElement.Loaded += new RoutedEventHandler(OnNameScopeReferenceLoaded);
+                    this.NameScopeReferenceElement.Loaded += this.OnNameScopeReferenceLoaded;
                     this.PendingReferenceElementLoad = true;
                     return;
                 }
@@ -184,10 +188,12 @@ namespace Microsoft.Xaml.Behaviors
 
                     if (newObject == null)
                     {
-                        Debug.WriteLine(string.Format(CultureInfo.CurrentCulture, ExceptionStringTable.UnableToResolveTargetNameWarningMessage, this.Name));
+                        Debug.WriteLine(string.Format(CultureInfo.CurrentCulture,
+                            ExceptionStringTable.UnableToResolveTargetNameWarningMessage, this.Name));
                     }
                 }
             }
+
             this.HasAttempedResolve = true;
             // note that this.Object will be null if it doesn't resolve
             this.ResolvedObject = newObject;
@@ -215,6 +221,7 @@ namespace Microsoft.Xaml.Behaviors
             {
                 nameScopeReference = initialReferenceElement.Parent as FrameworkElement ?? nameScopeReference;
             }
+
             return nameScopeReference;
         }
 
@@ -231,19 +238,20 @@ namespace Microsoft.Xaml.Behaviors
                 //			yes				|			yes				 |			yes*
                 // * Note that if the resolved element is the same, it doesn't matter if we use the parent or child,
                 //   so we choose the parent. If they are different, we've found a name collision across namescopes,
-                //	 and our rule is to use the parent as the namescope in that case and discourage people from 
+                //	 and our rule is to use the parent as the namescope in that case and discourage people from
                 //	 getting into this state by disallowing creation of targeted types on Control XAML root elements.
                 // Hence, we only need to check if Name resolves in the parent scope to know if we need to use the parent.
                 object resolvedInParentScope = parentElement.FindName(this.Name);
                 return resolvedInParentScope != null;
             }
+
             return false;
         }
 
         private void OnNameScopeReferenceLoaded(object sender, RoutedEventArgs e)
         {
             this.PendingReferenceElementLoad = false;
-            this.NameScopeReferenceElement.Loaded -= new RoutedEventHandler(OnNameScopeReferenceLoaded);
+            this.NameScopeReferenceElement.Loaded -= this.OnNameScopeReferenceLoaded;
             this.UpdateObjectFromName(this.Object);
         }
     }

@@ -1,13 +1,14 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media.Animation;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Media.Animation;
-    using System.Globalization;
-    using System.Windows.Controls.Primitives;
-
     /// <summary>
     /// Represents an attachable object that encapsulates a unit of functionality.
     /// </summary>
@@ -51,20 +52,25 @@ namespace Microsoft.Xaml.Behaviors
     /// Represents an attachable object that encapsulates a unit of functionality.
     /// </summary>
     /// <remarks>This is an infrastructure class. Action authors should derive from TriggerAction&lt;T&gt; instead of this class.</remarks>
-    [DefaultTrigger(typeof(UIElement), typeof(Microsoft.Xaml.Behaviors.EventTrigger), "MouseLeftButtonDown")]
-    [DefaultTrigger(typeof(ButtonBase), typeof(Microsoft.Xaml.Behaviors.EventTrigger), "Click")]
+    [DefaultTrigger(typeof(UIElement), typeof(EventTrigger), "MouseLeftButtonDown")]
+    [DefaultTrigger(typeof(ButtonBase), typeof(EventTrigger), "Click")]
     public abstract class TriggerAction :
         Animatable,
         IAttachedObject
     {
-        private bool isHosted;
-        private DependencyObject associatedObject;
-        private Type associatedObjectTypeConstraint;
+        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(nameof(IsEnabled),
+            typeof(bool),
+            typeof(TriggerAction),
+            new FrameworkPropertyMetadata(true));
 
-        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register("IsEnabled",
-                                                                                                    typeof(bool),
-                                                                                                    typeof(TriggerAction),
-                                                                                                    new FrameworkPropertyMetadata(true));
+        private readonly Type associatedObjectTypeConstraint;
+        private DependencyObject associatedObject;
+        private bool isHosted;
+
+        internal TriggerAction(Type associatedObjectTypeConstraint)
+        {
+            this.associatedObjectTypeConstraint = associatedObjectTypeConstraint;
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether this action will run when invoked. This is a dependency property.
@@ -74,10 +80,10 @@ namespace Microsoft.Xaml.Behaviors
         /// </value>
         public bool IsEnabled
         {
-            get { return (bool)this.GetValue(TriggerAction.IsEnabledProperty); }
+            get { return (bool)this.GetValue(IsEnabledProperty); }
             set
             {
-                this.SetValue(TriggerAction.IsEnabledProperty, value);
+                this.SetValue(IsEnabledProperty, value);
             }
         }
 
@@ -124,11 +130,6 @@ namespace Microsoft.Xaml.Behaviors
                 this.isHosted = value;
                 this.WritePostscript();
             }
-        }
-
-        internal TriggerAction(Type associatedObjectTypeConstraint)
-        {
-            this.associatedObjectTypeConstraint = associatedObjectTypeConstraint;
         }
 
         /// <summary>
@@ -199,17 +200,19 @@ namespace Microsoft.Xaml.Behaviors
             {
                 if (this.AssociatedObject != null)
                 {
-                    throw new InvalidOperationException(ExceptionStringTable.CannotHostTriggerActionMultipleTimesExceptionMessage);
+                    throw new InvalidOperationException(ExceptionStringTable
+                        .CannotHostTriggerActionMultipleTimesExceptionMessage);
                 }
 
                 // Ensure the type constraint is met
-                if (dependencyObject != null && !this.AssociatedObjectTypeConstraint.IsAssignableFrom(dependencyObject.GetType()))
+                if (dependencyObject != null &&
+                    !this.AssociatedObjectTypeConstraint.IsAssignableFrom(dependencyObject.GetType()))
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                                                                        ExceptionStringTable.TypeConstraintViolatedExceptionMessage,
-                                                                        this.GetType().Name,
-                                                                        dependencyObject.GetType().Name,
-                                                                        this.AssociatedObjectTypeConstraint.Name));
+                        ExceptionStringTable.TypeConstraintViolatedExceptionMessage,
+                        this.GetType().Name,
+                        dependencyObject.GetType().Name,
+                        this.AssociatedObjectTypeConstraint.Name));
                 }
 
                 this.WritePreamble();

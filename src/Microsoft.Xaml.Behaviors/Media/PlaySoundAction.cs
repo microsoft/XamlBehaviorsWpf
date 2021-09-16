@@ -1,31 +1,27 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+
 namespace Microsoft.Xaml.Behaviors.Media
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Controls.Primitives;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
     /// An action that will play a sound to completion.
     /// </summary>
     /// <remarks>
-    /// This action is intended for use with short sound effects that don't need to be stopped or controlled. If you're trying 
+    /// This action is intended for use with short sound effects that don't need to be stopped or controlled. If you're trying
     /// to create a music player or game, it may not meet your needs.
     /// </remarks>
     public class PlaySoundAction : TriggerAction<DependencyObject>
     {
-        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(Uri), typeof(PlaySoundAction), null);
-        public static readonly DependencyProperty VolumeProperty = DependencyProperty.Register("Volume", typeof(double), typeof(PlaySoundAction), new PropertyMetadata(0.5));
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register(nameof(Source), typeof(Uri), typeof(PlaySoundAction), null);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PlaySoundAction"/> class.
-        /// </summary>
-        public PlaySoundAction()
-        {
-        }
+        public static readonly DependencyProperty VolumeProperty = DependencyProperty.Register(nameof(Volume),
+            typeof(double), typeof(PlaySoundAction), new PropertyMetadata(0.5));
 
         /// <summary>
         /// A Uri defining the location of the sound file. This is used to set the source property of the MediaElement. This is a dependency property.
@@ -53,25 +49,27 @@ namespace Microsoft.Xaml.Behaviors.Media
         /// When the action is invoked, this method is used to customize the dynamically created MediaElement.
         /// </summary>
         /// <remarks>
-        /// This method may be useful for Action authors who wish to extend PlaySoundAction. If you want to control the 
+        /// This method may be useful for Action authors who wish to extend PlaySoundAction. If you want to control the
         /// MediaElement Balance property, you could inherit from PlaySoundAction and override this method.
         /// </remarks>
         /// <param name="mediaElement"></param>
         protected virtual void SetMediaElementProperties(MediaElement mediaElement)
         {
-            if (mediaElement != null)
+            if (mediaElement == null)
             {
-                mediaElement.Source = this.Source;
-                mediaElement.Volume = this.Volume;
+                return;
             }
+
+            mediaElement.Source = this.Source;
+            mediaElement.Volume = this.Volume;
         }
 
         /// <summary>
-        /// This method is called when some criteria are met and the action should be invoked. 
+        /// This method is called when some criteria are met and the action should be invoked.
         /// </summary>
         /// <remarks>
-        /// Each invocation of the Action plays a new sound. Although the implementation is subject-to-change, the caller should 
-        /// anticipate that this will create a new MediaElement that will be cleaned up when the sound completes or if the media 
+        /// Each invocation of the Action plays a new sound. Although the implementation is subject-to-change, the caller should
+        /// anticipate that this will create a new MediaElement that will be cleaned up when the sound completes or if the media
         /// fails to play.
         /// </remarks>
         /// <param name="parameter"></param>
@@ -90,7 +88,7 @@ namespace Microsoft.Xaml.Behaviors.Media
 
             this.SetMediaElementProperties(mediaElement);
 
-            // Setup delegates that will free the MediaElement upon completion or failure 
+            // Setup delegates that will free the MediaElement upon completion or failure
             mediaElement.MediaEnded += delegate
             {
                 popup.Child = null;

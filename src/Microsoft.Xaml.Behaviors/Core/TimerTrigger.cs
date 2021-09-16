@@ -1,29 +1,31 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows;
+using System.Windows.Threading;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Threading;
-
     /// <summary>
     /// A trigger that is triggered by a specified event occurring on its source and fires after a delay when that event is fired.
     /// </summary>
-    public class TimerTrigger : Microsoft.Xaml.Behaviors.EventTrigger
+    public class TimerTrigger : EventTrigger
     {
-        public static readonly DependencyProperty MillisecondsPerTickProperty = DependencyProperty.Register("MillisecondsPerTick",
-                                                                                                    typeof(double),
-                                                                                                    typeof(TimerTrigger),
-                                                                                                    new FrameworkPropertyMetadata(1000.0)
-                                                                                                    );
+        public static readonly DependencyProperty MillisecondsPerTickProperty = DependencyProperty.Register(
+            nameof(MillisecondsPerTick),
+            typeof(double),
+            typeof(TimerTrigger),
+            new FrameworkPropertyMetadata(1000.0)
+        );
 
-        public static readonly DependencyProperty TotalTicksProperty = DependencyProperty.Register("TotalTicks",
-                                                                                                    typeof(int),
-                                                                                                    typeof(TimerTrigger),
-                                                                                                    new FrameworkPropertyMetadata(-1)
-                                                                                                    );
+        public static readonly DependencyProperty TotalTicksProperty = DependencyProperty.Register(nameof(TotalTicks),
+            typeof(int),
+            typeof(TimerTrigger),
+            new FrameworkPropertyMetadata(-1)
+        );
 
-        private ITickTimer timer;
+        private readonly ITickTimer timer;
         private EventArgs eventArgs;
         private int tickCount;
 
@@ -78,21 +80,25 @@ namespace Microsoft.Xaml.Behaviors.Core
 
         internal void StartTimer()
         {
-            if (this.timer != null)
+            if (this.timer == null)
             {
-                this.timer.Interval = TimeSpan.FromMilliseconds(this.MillisecondsPerTick);
-                this.timer.Tick += this.OnTimerTick;
-                this.timer.Start();
+                return;
             }
+
+            this.timer.Interval = TimeSpan.FromMilliseconds(this.MillisecondsPerTick);
+            this.timer.Tick += this.OnTimerTick;
+            this.timer.Start();
         }
 
         internal void StopTimer()
         {
-            if (this.timer != null)
+            if (this.timer == null)
             {
-                this.timer.Stop();
-                this.timer.Tick -= this.OnTimerTick;
+                return;
             }
+
+            this.timer.Stop();
+            this.timer.Tick -= this.OnTimerTick;
         }
 
         private void OnTimerTick(object sender, EventArgs e)
@@ -107,7 +113,7 @@ namespace Microsoft.Xaml.Behaviors.Core
 
         internal class DispatcherTickTimer : ITickTimer
         {
-            private DispatcherTimer dispatcherTimer;
+            private readonly DispatcherTimer dispatcherTimer;
 
             public DispatcherTickTimer()
             {

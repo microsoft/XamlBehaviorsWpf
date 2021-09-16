@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System.Windows;
-    using System.ComponentModel;
-
     ///<summary>
     /// Represents a collection of triggers with a shared AssociatedObject and provides change notifications to its contents when that AssociatedObject changes.
     /// </summary>

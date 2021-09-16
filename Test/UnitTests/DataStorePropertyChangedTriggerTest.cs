@@ -1,28 +1,18 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Data;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Data;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     internal class StubDataStore : INotifyPropertyChanged
     {
         private string foo;
-        #region INotifyPropertyChanged Members
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-        #endregion
 
         public string Foo
         {
@@ -39,6 +29,20 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 }
             }
         }
+
+        #region INotifyPropertyChanged Members
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        #endregion
     }
 
     [TestClass]
@@ -72,7 +76,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             return new StubAction();
         }
 
-        private TriggerType CreateTrigger<TriggerType>(object bindingValue, string propertyName) where TriggerType : DependencyObject, new()
+        private TriggerType CreateTrigger<TriggerType>(object bindingValue, string propertyName)
+            where TriggerType : DependencyObject, new()
         {
             Binding binding = new Binding();
             binding.Source = bindingValue;
@@ -83,7 +88,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             return trigger;
         }
 
-        private void Test_SetBindingValue_ValueChanged(TriggerBase<DependencyObject> trigger, StubAction stubAction, StubDataStore dataStore)
+        private void Test_SetBindingValue_ValueChanged(TriggerBase<DependencyObject> trigger, StubAction stubAction,
+            StubDataStore dataStore)
         {
             using (StubWindow window = new StubWindow(null))
             {
@@ -95,7 +101,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             }
         }
 
-        private void Test_SetBindingValue_ValueChangedWithSameValue(TriggerBase<DependencyObject> trigger, StubAction stubAction, StubDataStore dataStore)
+        private void Test_SetBindingValue_ValueChangedWithSameValue(TriggerBase<DependencyObject> trigger,
+            StubAction stubAction, StubDataStore dataStore)
         {
             using (StubWindow window = new StubWindow(null))
             {
@@ -111,7 +118,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             }
         }
 
-        private void Test_SetBindingValue_ValueChangedTwice(TriggerBase<DependencyObject> trigger, StubAction stubAction, StubDataStore dataStore)
+        private void Test_SetBindingValue_ValueChangedTwice(TriggerBase<DependencyObject> trigger,
+            StubAction stubAction, StubDataStore dataStore)
         {
             using (StubWindow window = new StubWindow(null))
             {
@@ -126,6 +134,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 Assert.AreEqual(stubAction.InvokeCount, 2, "The trigger should have been invoked twice.");
             }
         }
+
         #endregion
 
         #region Test methods
@@ -195,6 +204,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
             this.Test_SetBindingValue_ValueChangedTwice(trigger, stubAction, dataStore);
         }
+
         #endregion
     }
 }

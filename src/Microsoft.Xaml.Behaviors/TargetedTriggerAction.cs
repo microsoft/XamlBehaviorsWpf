@@ -1,21 +1,22 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Globalization;
-
     /// <summary>
     /// Represents an action that can be targeted to affect an object other than its AssociatedObject.
     /// </summary>
     /// <typeparam name="T">The type constraint on the target.</typeparam>
     /// <remarks>
-    ///		TargetedTriggerAction extends TriggerAction to add knowledge of another element than the one it is attached to. 
-    ///		This allows a user to invoke the action on an element other than the one it is attached to in response to a 
-    ///		trigger firing. Override OnTargetChanged to hook or unhook handlers on the target element, and OnAttached/OnDetaching 
-    ///		for the associated element. The type of the Target element can be constrained by the generic type parameter. If 
+    ///		TargetedTriggerAction extends TriggerAction to add knowledge of another element than the one it is attached to.
+    ///		This allows a user to invoke the action on an element other than the one it is attached to in response to a
+    ///		trigger firing. Override OnTargetChanged to hook or unhook handlers on the target element, and OnAttached/OnDetaching
+    ///		for the associated element. The type of the Target element can be constrained by the generic type parameter. If
     ///		you need control over the type of the AssociatedObject, set a TypeConstraintAttribute on your derived type.
     /// </remarks>
     public abstract class TargetedTriggerAction<T> : TargetedTriggerAction where T : class
@@ -64,21 +65,30 @@ namespace Microsoft.Xaml.Behaviors
     /// <remarks>This is an infrastructure class. Action authors should derive from TargetedTriggerAction&lt;T&gt; instead of this class.</remarks>
     public abstract class TargetedTriggerAction : TriggerAction
     {
-        private Type targetTypeConstraint;
+        public static readonly DependencyProperty TargetObjectProperty = DependencyProperty.Register(
+            nameof(TargetObject),
+            typeof(object),
+            typeof(TargetedTriggerAction),
+            new FrameworkPropertyMetadata(
+                OnTargetObjectChanged));
+
+        public static readonly DependencyProperty TargetNameProperty = DependencyProperty.Register(nameof(TargetName),
+            typeof(string),
+            typeof(TargetedTriggerAction),
+            new FrameworkPropertyMetadata(
+                OnTargetNameChanged));
+
+        private readonly NameResolver targetResolver;
+        private readonly Type targetTypeConstraint;
         private bool isTargetChangedRegistered;
-        private NameResolver targetResolver;
 
-        public static readonly DependencyProperty TargetObjectProperty = DependencyProperty.Register("TargetObject",
-                                                                                                    typeof(object),
-                                                                                                    typeof(TargetedTriggerAction),
-                                                                                                     new FrameworkPropertyMetadata(
-                                                                                                        new PropertyChangedCallback(OnTargetObjectChanged)));
-
-        public static readonly DependencyProperty TargetNameProperty = DependencyProperty.Register("TargetName",
-                                                                                                    typeof(string),
-                                                                                                    typeof(TargetedTriggerAction),
-                                                                                                    new FrameworkPropertyMetadata(
-                                                                                                        new PropertyChangedCallback(OnTargetNameChanged)));
+        internal TargetedTriggerAction(Type targetTypeConstraint)
+            : base(typeof(DependencyObject))
+        {
+            this.targetTypeConstraint = targetTypeConstraint;
+            this.targetResolver = new NameResolver();
+            this.RegisterTargetChanged();
+        }
 
         /// <summary>
         /// Gets or sets the target object. If TargetObject is not set, the target will look for the object specified by TargetName. If an element referred to by TargetName cannot be found, the target will default to the AssociatedObject. This is a dependency property.
@@ -114,8 +124,7 @@ namespace Microsoft.Xaml.Behaviors
                 if (this.TargetObject != null)
                 {
                     target = this.TargetObject;
-                }
-                else if (this.IsTargetNameSet)
+                } else if (this.IsTargetNameSet)
                 {
                     target = this.TargetResolver.Object;
                 }
@@ -130,6 +139,7 @@ namespace Microsoft.Xaml.Behaviors
                         this.TargetTypeConstraint,
                         "Target"));
                 }
+
                 return target;
             }
         }
@@ -144,12 +154,14 @@ namespace Microsoft.Xaml.Behaviors
             get
             {
                 AttributeCollection attributes = TypeDescriptor.GetAttributes(this.GetType());
-                TypeConstraintAttribute typeConstraintAttribute = attributes[typeof(TypeConstraintAttribute)] as TypeConstraintAttribute;
+                TypeConstraintAttribute typeConstraintAttribute =
+                    attributes[typeof(TypeConstraintAttribute)] as TypeConstraintAttribute;
 
                 if (typeConstraintAttribute != null)
                 {
                     return typeConstraintAttribute.Constraint;
                 }
+
                 return typeof(DependencyObject);
             }
         }
@@ -171,7 +183,8 @@ namespace Microsoft.Xaml.Behaviors
         {
             get
             {
-                return !string.IsNullOrEmpty(this.TargetName) || this.ReadLocalValue(TargetNameProperty) != DependencyProperty.UnsetValue;
+                return !string.IsNullOrEmpty(this.TargetName) ||
+                       this.ReadLocalValue(TargetNameProperty) != DependencyProperty.UnsetValue;
             }
         }
 
@@ -184,14 +197,6 @@ namespace Microsoft.Xaml.Behaviors
         {
             get { return this.isTargetChangedRegistered; }
             set { this.isTargetChangedRegistered = value; }
-        }
-
-        internal TargetedTriggerAction(Type targetTypeConstraint)
-            : base(typeof(DependencyObject))
-        {
-            this.targetTypeConstraint = targetTypeConstraint;
-            this.targetResolver = new NameResolver();
-            this.RegisterTargetChanged();
         }
 
         /// <summary>
@@ -214,7 +219,7 @@ namespace Microsoft.Xaml.Behaviors
             // Hence, if we are Hosted on a Behavior, we need to resolve against the Behavior's
             // Host rather than our own. See comment in EventTriggerBase.
             // TODO jekelly 6/20/08: Ideally we could do a namespace walk, but SL doesn't expose
-            //						 a way to do this. This solution only looks one level deep. 
+            //						 a way to do this. This solution only looks one level deep.
             //						 A Behavior with a Behavior attached won't work. This is OK
             //						 for now, but should consider a more general solution if needed.
             DependencyObject hostObject = this.AssociatedObject;
@@ -224,8 +229,9 @@ namespace Microsoft.Xaml.Behaviors
             if (newBehavior != null)
             {
                 hostObject = ((IAttachedObject)newBehavior).AssociatedObject;
-                newBehavior.AssociatedObjectChanged += new EventHandler(OnBehaviorHostChanged);
+                newBehavior.AssociatedObjectChanged += this.OnBehaviorHostChanged;
             }
+
             this.TargetResolver.NameScopeReferenceElement = hostObject as FrameworkElement;
         }
 
@@ -241,21 +247,23 @@ namespace Microsoft.Xaml.Behaviors
 
             if (oldBehavior != null)
             {
-                oldBehavior.AssociatedObjectChanged -= new EventHandler(OnBehaviorHostChanged);
+                oldBehavior.AssociatedObjectChanged -= this.OnBehaviorHostChanged;
             }
+
             this.TargetResolver.NameScopeReferenceElement = null;
         }
 
         private void OnBehaviorHostChanged(object sender, EventArgs e)
         {
-            this.TargetResolver.NameScopeReferenceElement = ((IAttachedObject)sender).AssociatedObject as FrameworkElement;
+            this.TargetResolver.NameScopeReferenceElement =
+                ((IAttachedObject)sender).AssociatedObject as FrameworkElement;
         }
 
         private void RegisterTargetChanged()
         {
             if (!this.IsTargetChangedRegistered)
             {
-                this.TargetResolver.ResolvedElementChanged += new EventHandler<NameResolvedEventArgs>(OnTargetChanged);
+                this.TargetResolver.ResolvedElementChanged += this.OnTargetChanged;
                 this.IsTargetChangedRegistered = true;
             }
         }
@@ -264,7 +272,7 @@ namespace Microsoft.Xaml.Behaviors
         {
             if (this.IsTargetChangedRegistered)
             {
-                this.TargetResolver.ResolvedElementChanged -= new EventHandler<NameResolvedEventArgs>(OnTargetChanged);
+                this.TargetResolver.ResolvedElementChanged -= this.OnTargetChanged;
                 this.IsTargetChangedRegistered = false;
             }
         }

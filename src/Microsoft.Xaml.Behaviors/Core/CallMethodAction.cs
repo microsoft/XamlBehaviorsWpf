@@ -1,31 +1,40 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
     /// Calls a method on a specified object when invoked.
     /// </summary>
     public class CallMethodAction : TriggerAction<DependencyObject>
     {
+        public static readonly DependencyProperty TargetObjectProperty =
+            DependencyProperty.Register(nameof(TargetObject), typeof(object), typeof(CallMethodAction),
+                new PropertyMetadata(OnTargetObjectChanged));
+
+        public static readonly DependencyProperty MethodNameProperty = DependencyProperty.Register(nameof(MethodName),
+            typeof(string), typeof(CallMethodAction), new PropertyMetadata(OnMethodNameChanged));
+
         private List<MethodDescriptor> methodDescriptors;
 
-        public static readonly DependencyProperty TargetObjectProperty = DependencyProperty.Register("TargetObject", typeof(object), typeof(CallMethodAction), new PropertyMetadata(OnTargetObjectChanged));
-        public static readonly DependencyProperty MethodNameProperty = DependencyProperty.Register("MethodName", typeof(string), typeof(CallMethodAction), new PropertyMetadata(OnMethodNameChanged));
+        public CallMethodAction()
+        {
+            this.methodDescriptors = new List<MethodDescriptor>();
+        }
 
         /// <summary>
         /// The object that exposes the method of interest. This is a dependency property.
         /// </summary>
         public object TargetObject
         {
-            get { return (object)this.GetValue(TargetObjectProperty); }
+            get { return this.GetValue(TargetObjectProperty); }
             set { this.SetValue(TargetObjectProperty, value); }
         }
 
@@ -36,11 +45,6 @@ namespace Microsoft.Xaml.Behaviors.Core
         {
             get { return (string)this.GetValue(MethodNameProperty); }
             set { this.SetValue(MethodNameProperty, value); }
-        }
-
-        public CallMethodAction()
-        {
-            this.methodDescriptors = new List<MethodDescriptor>();
         }
 
         private object Target
@@ -69,18 +73,15 @@ namespace Microsoft.Xaml.Behaviors.Core
                     if (parameters.Length == 0)
                     {
                         methodDescriptor.MethodInfo.Invoke(this.Target, null);
-                    }
-                    else if (parameters.Length == 2 && this.AssociatedObject != null && parameter != null)
+                    } else if (parameters.Length == 2 && this.AssociatedObject != null && parameter != null)
                     {
-                        if (parameters[0].ParameterType.IsAssignableFrom(this.AssociatedObject.GetType())
-                            && parameters[1].ParameterType.IsAssignableFrom(parameter.GetType()))
+                        if (parameters[0].ParameterType.IsInstanceOfType(this.AssociatedObject)
+                            && parameters[1].ParameterType.IsInstanceOfType(parameter))
                         {
-
-                            methodDescriptor.MethodInfo.Invoke(this.Target, new object[] { this.AssociatedObject, parameter });
+                            methodDescriptor.MethodInfo.Invoke(this.Target, new[] { this.AssociatedObject, parameter });
                         }
                     }
-                }
-                else if (this.TargetObject != null)
+                } else if (this.TargetObject != null)
                 {
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         ExceptionStringTable.CallMethodActionValidMethodNotFoundExceptionMessage,
@@ -112,61 +113,59 @@ namespace Microsoft.Xaml.Behaviors.Core
 
         private MethodDescriptor FindBestMethod(object parameter)
         {
-            Type parameterType = (parameter == null) ? null : parameter.GetType();
-
-            return this.methodDescriptors.FirstOrDefault((methodDescriptor) =>
-                {
-                    // todo jekelly: Need spec clarification on if we want to call an (object, EventArgs) overload if there is no parameter or void() sig. Currently, no. (see above)
-                    return !methodDescriptor.HasParameters ||
-                        (parameter != null &&
-                        methodDescriptor.SecondParameterType.IsAssignableFrom(parameter.GetType()));
-                });
+            return this.methodDescriptors.FirstOrDefault(methodDescriptor => !methodDescriptor.HasParameters ||
+                                                                             (parameter != null &&
+                                                                              methodDescriptor.SecondParameterType
+                                                                                  .IsInstanceOfType(parameter)));
         }
 
         private void UpdateMethodInfo()
         {
             this.methodDescriptors.Clear();
 
-            if (this.Target != null && !string.IsNullOrEmpty(this.MethodName))
+            if (this.Target == null || string.IsNullOrEmpty(this.MethodName))
             {
-                Type targetType = this.Target.GetType();
-                MethodInfo[] methods = targetType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+                return;
+            }
 
-                for (int i = 0; i < methods.Length; i++)
+            Type targetType = this.Target.GetType();
+            MethodInfo[] methods = targetType.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (MethodInfo method in methods)
+            {
+                if (!this.IsMethodValid(method))
                 {
-                    MethodInfo method = methods[i];
-
-                    if (!this.IsMethodValid(method))
-                    {
-                        continue;
-                    }
-
-                    ParameterInfo[] methodParams = method.GetParameters();
-
-                    if (!CallMethodAction.AreMethodParamsValid(methodParams))
-                    {
-                        continue;
-                    }
-
-                    this.methodDescriptors.Add(new MethodDescriptor(method, methodParams));
+                    continue;
                 }
 
-                this.methodDescriptors = this.methodDescriptors.OrderByDescending((methodDescriptor) =>
-                {
-                    int distanceFromBaseClass = 0;
+                ParameterInfo[] methodParams = method.GetParameters();
 
-                    if (methodDescriptor.HasParameters)
-                    {
-                        Type typeWalker = methodDescriptor.SecondParameterType;
-                        while (typeWalker != typeof(EventArgs))
-                        {
-                            distanceFromBaseClass++;
-                            typeWalker = typeWalker.BaseType;
-                        }
-                    }
-                    return methodDescriptor.ParameterCount + distanceFromBaseClass;
-                }).ToList();
+                if (!AreMethodParamsValid(methodParams))
+                {
+                    continue;
+                }
+
+                this.methodDescriptors.Add(new MethodDescriptor(method, methodParams));
             }
+
+            this.methodDescriptors = this.methodDescriptors.OrderByDescending(methodDescriptor =>
+            {
+                int distanceFromBaseClass = 0;
+
+                if (!methodDescriptor.HasParameters)
+                {
+                    return methodDescriptor.ParameterCount;
+                }
+
+                Type typeWalker = methodDescriptor.SecondParameterType;
+                while (typeWalker != typeof(EventArgs))
+                {
+                    distanceFromBaseClass++;
+                    typeWalker = typeWalker?.BaseType;
+                }
+
+                return methodDescriptor.ParameterCount + distanceFromBaseClass;
+            }).ToList();
         }
 
         private bool IsMethodValid(MethodInfo method)
@@ -176,12 +175,7 @@ namespace Microsoft.Xaml.Behaviors.Core
                 return false;
             }
 
-            if (method.ReturnType != typeof(void))
-            {
-                return false;
-            }
-
-            return true;
+            return method.ReturnType == typeof(void);
         }
 
         private static bool AreMethodParamsValid(ParameterInfo[] methodParams)
@@ -197,8 +191,7 @@ namespace Microsoft.Xaml.Behaviors.Core
                 {
                     return false;
                 }
-            }
-            else if (methodParams.Length != 0)
+            } else if (methodParams.Length != 0)
             {
                 return false;
             }
@@ -220,6 +213,12 @@ namespace Microsoft.Xaml.Behaviors.Core
 
         private class MethodDescriptor
         {
+            public MethodDescriptor(MethodInfo methodInfo, ParameterInfo[] methodParams)
+            {
+                this.MethodInfo = methodInfo;
+                this.Parameters = methodParams;
+            }
+
             public MethodInfo MethodInfo
             {
                 get;
@@ -246,18 +245,8 @@ namespace Microsoft.Xaml.Behaviors.Core
             {
                 get
                 {
-                    if (this.Parameters.Length >= 2)
-                    {
-                        return this.Parameters[1].ParameterType;
-                    }
-                    return null;
+                    return this.Parameters.Length >= 2 ? this.Parameters[1].ParameterType : null;
                 }
-            }
-
-            public MethodDescriptor(MethodInfo methodInfo, ParameterInfo[] methodParams)
-            {
-                this.MethodInfo = methodInfo;
-                this.Parameters = methodParams;
             }
         }
     }

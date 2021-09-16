@@ -1,15 +1,16 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
-    using System.Windows;
-    using System.ComponentModel;
-    using System.Globalization;
-
     /// <summary>
     /// Represents a collection of IAttachedObject with a shared AssociatedObject and provides change notifications to its contents when that AssociatedObject changes.
     /// </summary>
@@ -17,8 +18,20 @@ namespace Microsoft.Xaml.Behaviors
         FreezableCollection<T>,
         IAttachedObject where T : DependencyObject, IAttachedObject
     {
-        private Collection<T> snapshot;
         private DependencyObject associatedObject;
+        private Collection<T> snapshot;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AttachableCollection&lt;T&gt;"/> class.
+        /// </summary>
+        /// <remarks>Internal, because this should not be inherited outside this assembly.</remarks>
+        internal AttachableCollection()
+        {
+            INotifyCollectionChanged notifyCollectionChanged = this;
+            notifyCollectionChanged.CollectionChanged += this.OnCollectionChanged;
+
+            this.snapshot = new Collection<T>();
+        }
 
         /// <summary>
         /// The object on which the collection is hosted.
@@ -30,18 +43,6 @@ namespace Microsoft.Xaml.Behaviors
                 this.ReadPreamble();
                 return this.associatedObject;
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AttachableCollection&lt;T&gt;"/> class.
-        /// </summary>
-        /// <remarks>Internal, because this should not be inherited outside this assembly.</remarks>
-        internal AttachableCollection()
-        {
-            INotifyCollectionChanged notifyCollectionChanged = (INotifyCollectionChanged)this;
-            notifyCollectionChanged.CollectionChanged += new NotifyCollectionChangedEventHandler(OnCollectionChanged);
-
-            this.snapshot = new Collection<T>();
         }
 
         /// <summary>
@@ -74,13 +75,16 @@ namespace Microsoft.Xaml.Behaviors
             {
                 for (int i = 0; i < this.Count; i++)
                 {
-                    if (this[i] != this.snapshot[i])
+                    if (ReferenceEquals(this[i], this.snapshot[i]))
                     {
-                        isValid = false;
-                        break;
+                        continue;
                     }
+
+                    isValid = false;
+                    break;
                 }
             }
+
             Debug.Assert(isValid, "ReferentialCollection integrity has been compromised.");
         }
 
@@ -89,7 +93,9 @@ namespace Microsoft.Xaml.Behaviors
         {
             if (this.snapshot.Contains(item))
             {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, ExceptionStringTable.DuplicateItemInCollectionExceptionMessage, typeof(T).Name, this.GetType().Name));
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
+                    ExceptionStringTable.DuplicateItemInCollectionExceptionMessage, typeof(T).Name,
+                    this.GetType().Name));
             }
         }
 
@@ -105,12 +111,12 @@ namespace Microsoft.Xaml.Behaviors
                         {
                             this.VerifyAdd(item);
                             this.ItemAdded(item);
-                        }
-                        finally
+                        } finally
                         {
                             this.snapshot.Insert(this.IndexOf(item), item);
                         }
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Replace:
@@ -119,18 +125,19 @@ namespace Microsoft.Xaml.Behaviors
                         this.ItemRemoved(item);
                         this.snapshot.Remove(item);
                     }
+
                     foreach (T item in e.NewItems)
                     {
                         try
                         {
                             this.VerifyAdd(item);
                             this.ItemAdded(item);
-                        }
-                        finally
+                        } finally
                         {
                             this.snapshot.Insert(this.IndexOf(item), item);
                         }
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
@@ -139,6 +146,7 @@ namespace Microsoft.Xaml.Behaviors
                         this.ItemRemoved(item);
                         this.snapshot.Remove(item);
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
@@ -146,20 +154,21 @@ namespace Microsoft.Xaml.Behaviors
                     {
                         this.ItemRemoved(item);
                     }
+
                     this.snapshot = new Collection<T>();
                     foreach (T item in this)
                     {
                         this.VerifyAdd(item);
                         this.ItemAdded(item);
                     }
+
                     break;
-                case NotifyCollectionChangedAction.Move:
                 default:
                     Debug.Fail("Unsupported collection operation attempted.");
                     break;
             }
 #if DEBUG
-			this.VerifySnapshotIntegrity();
+            this.VerifySnapshotIntegrity();
 #endif
         }
 
@@ -191,12 +200,14 @@ namespace Microsoft.Xaml.Behaviors
                     throw new InvalidOperationException();
                 }
 
-                if (Interaction.ShouldRunInDesignMode || !(bool)this.GetValue(DesignerProperties.IsInDesignModeProperty))
+                if (Interaction.ShouldRunInDesignMode ||
+                    !(bool)this.GetValue(DesignerProperties.IsInDesignModeProperty))
                 {
                     this.WritePreamble();
                     this.associatedObject = dependencyObject;
                     this.WritePostscript();
                 }
+
                 this.OnAttached();
             }
         }

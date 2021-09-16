@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows.Media;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     [TestClass]
     public sealed class ComparisonLogicTest
     {
@@ -28,8 +30,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_EqualIntegers_AreFoundEqual()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.Equal,
-                                                        BehaviorTestUtilities.IntegerOperand4);
+                ComparisonConditionType.Equal,
+                BehaviorTestUtilities.IntegerOperand4);
             Assert.IsTrue(result, "4 should equal 4.");
         }
 
@@ -37,8 +39,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_DifferentIntegers_AreNotFoundEqual()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.Equal,
-                                                        BehaviorTestUtilities.IntegerOperand5);
+                ComparisonConditionType.Equal,
+                BehaviorTestUtilities.IntegerOperand5);
             Assert.IsFalse(result, "4 should not equal 5.");
         }
 
@@ -46,8 +48,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_DifferentIntegers_AreNotEqual()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.NotEqual,
-                                                        BehaviorTestUtilities.IntegerOperand5);
+                ComparisonConditionType.NotEqual,
+                BehaviorTestUtilities.IntegerOperand5);
             Assert.IsTrue(result, "4 should not equal 5.");
         }
 
@@ -55,8 +57,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_DifferentIntegers_FourLessThanFive()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.LessThan,
-                                                        BehaviorTestUtilities.IntegerOperand5);
+                ComparisonConditionType.LessThan,
+                BehaviorTestUtilities.IntegerOperand5);
             Assert.IsTrue(result, "4 should be less than 5.");
         }
 
@@ -64,8 +66,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_DifferentIntegers_FourNotGreaterThanFive()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.GreaterThan,
-                                                        BehaviorTestUtilities.IntegerOperand5);
+                ComparisonConditionType.GreaterThan,
+                BehaviorTestUtilities.IntegerOperand5);
             Assert.IsFalse(result, "4 should not be greater than 5.");
         }
 
@@ -73,8 +75,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_SameString_AreEqual()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.StringOperandLoremIpsum,
-                                                        ComparisonConditionType.Equal,
-                                                        BehaviorTestUtilities.StringOperandLoremIpsum);
+                ComparisonConditionType.Equal,
+                BehaviorTestUtilities.StringOperandLoremIpsum);
             Assert.IsTrue(result, "Identical strings should be found equal.");
         }
 
@@ -82,8 +84,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_DifferentStrings_AreNotEqual()
         {
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.StringOperandLoremIpsum,
-                                                        ComparisonConditionType.Equal,
-                                                        BehaviorTestUtilities.StringOperandNuncViverra);
+                ComparisonConditionType.Equal,
+                BehaviorTestUtilities.StringOperandNuncViverra);
             Assert.IsFalse(result, "Different strings should not be found equal.");
         }
 
@@ -92,8 +94,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         {
             StubClass stubClass = CreateStubClass();
             bool result = ComparisonLogic.EvaluateImpl(stubClass,
-                                                        ComparisonConditionType.Equal,
-                                                        stubClass);
+                ComparisonConditionType.Equal,
+                stubClass);
             Assert.IsTrue(result, "An object should be equal to itself.");
         }
 
@@ -108,8 +110,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             StubClass stubClass = CreateStubClass();
             StubComparableClass stubComparableClass = CreateStubComparableClass();
             bool result = ComparisonLogic.EvaluateImpl(stubClass,
-                                                        ComparisonConditionType.NotEqual,
-                                                        stubComparableClass);
+                ComparisonConditionType.NotEqual,
+                stubComparableClass);
             Assert.IsTrue(result, "An arbitrary object should not be equal to another arbitrary object.");
         }
 
@@ -118,8 +120,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         {
             StubClass stubClass = CreateStubClass();
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.Equal,
-                                                        stubClass);
+                ComparisonConditionType.Equal,
+                stubClass);
             Assert.IsFalse(result, "An integer should not be equal to an arbitrary object.");
         }
 
@@ -128,9 +130,10 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         {
             StubComparableConvertibleClass stubComparableConvertibleClass = new StubComparableConvertibleClass();
             bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
-                                                        ComparisonConditionType.Equal,
-                                                        stubComparableConvertibleClass);
-            Assert.IsTrue(result, "An integer should be equal to an IComparableObject that reports the same value as the integer.");
+                ComparisonConditionType.Equal,
+                stubComparableConvertibleClass);
+            Assert.IsTrue(result,
+                "An integer should be equal to an IComparableObject that reports the same value as the integer.");
         }
 
         [TestMethod]
@@ -143,14 +146,16 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [TestMethod]
         public void Compare_NullToInteger_IsNotEqual()
         {
-            bool result = ComparisonLogic.EvaluateImpl(null, ComparisonConditionType.Equal, BehaviorTestUtilities.IntegerOperand4);
+            bool result = ComparisonLogic.EvaluateImpl(null, ComparisonConditionType.Equal,
+                BehaviorTestUtilities.IntegerOperand4);
             Assert.IsFalse(result, "Null should not be equal to an integer.");
         }
 
         [TestMethod]
         public void Compare_IntegerWithNullNotEqual_IsTrue()
         {
-            bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.NotEqual, null);
+            bool result = ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
+                ComparisonConditionType.NotEqual, null);
             Assert.IsTrue(result, "4 is not equal to null, so NotEquals should return true");
         }
 
@@ -166,7 +171,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_ComparableObjectWithNonComparableObjectGreaterThan_ThrowsArgumentException()
         {
             StubClass stubClass = CreateStubClass();
-            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.GreaterThan, stubClass);
+            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.GreaterThan,
+                stubClass);
         }
 
         [TestMethod]
@@ -174,7 +180,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_ComparableObjectWithNonComparableObjectGreaterThanOrEqual_ThrowsArgumentException()
         {
             StubClass stubClass = CreateStubClass();
-            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.GreaterThanOrEqual, stubClass);
+            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4,
+                ComparisonConditionType.GreaterThanOrEqual, stubClass);
         }
 
         [TestMethod]
@@ -182,7 +189,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_ComparableObjectWithNonComparableObjectLessThan_ThrowsArgumentException()
         {
             StubClass stubClass = CreateStubClass();
-            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.LessThan, stubClass);
+            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.LessThan,
+                stubClass);
         }
 
         [TestMethod]
@@ -190,21 +198,24 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Compare_ComparableObjectWithNonComparableObjectLessThanOrEqual_ThrowsArgumentException()
         {
             StubClass stubClass = CreateStubClass();
-            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.LessThanOrEqual, stubClass);
+            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.LessThanOrEqual,
+                stubClass);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Compare_ComparableObjectWithNullLessThanOrEqual_ThrowsArgumentException()
         {
-            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.LessThanOrEqual, null);
+            ComparisonLogic.EvaluateImpl(BehaviorTestUtilities.IntegerOperand4, ComparisonConditionType.LessThanOrEqual,
+                null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void Compare_NullWithComparableObjectLessThanOrEqual_ThrowsArgumentException()
         {
-            ComparisonLogic.EvaluateImpl(null, ComparisonConditionType.LessThanOrEqual, BehaviorTestUtilities.IntegerOperand4);
+            ComparisonLogic.EvaluateImpl(null, ComparisonConditionType.LessThanOrEqual,
+                BehaviorTestUtilities.IntegerOperand4);
         }
 
         [TestMethod]
@@ -217,7 +228,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [TestMethod]
         public void Compare_BrushWithBrushString_AreEqual()
         {
-            System.Windows.Media.SolidColorBrush brush = System.Windows.Media.Brushes.Red;
+            SolidColorBrush brush = Brushes.Red;
             bool result = ComparisonLogic.EvaluateImpl(brush, ComparisonConditionType.Equal, "Red");
             Assert.IsTrue(result, "Red brush should equal 'Red'");
         }
@@ -225,7 +236,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [TestMethod]
         public void Compare_DoubleWithInconvertibleString_IsNotEqual()
         {
-            bool result = ComparisonLogic.EvaluateImpl(ComparisonLogicTest.DoubleOperand, ComparisonConditionType.NotEqual, ComparisonLogicTest.NonIntegerString);
+            bool result =
+                ComparisonLogic.EvaluateImpl(DoubleOperand, ComparisonConditionType.NotEqual, NonIntegerString);
             Assert.IsTrue(result, "Double should not be equal to 'Foo'");
         }
 

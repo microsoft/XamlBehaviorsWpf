@@ -1,13 +1,13 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+
 namespace Microsoft.Xaml.Behaviors.Input
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using Microsoft.Xaml.Behaviors;
-
     public enum KeyTriggerFiredOn
     {
         KeyDown,
@@ -19,13 +19,17 @@ namespace Microsoft.Xaml.Behaviors.Input
     /// </summary>
     public class KeyTrigger : EventTriggerBase<UIElement>
     {
-        public static readonly DependencyProperty KeyProperty = DependencyProperty.Register("Key", typeof(Key), typeof(KeyTrigger));
+        public static readonly DependencyProperty KeyProperty =
+            DependencyProperty.Register(nameof(Key), typeof(Key), typeof(KeyTrigger));
 
-        public static readonly DependencyProperty ModifiersProperty = DependencyProperty.Register("Modifiers", typeof(ModifierKeys), typeof(KeyTrigger));
+        public static readonly DependencyProperty ModifiersProperty =
+            DependencyProperty.Register(nameof(Modifiers), typeof(ModifierKeys), typeof(KeyTrigger));
 
-        public static readonly DependencyProperty ActiveOnFocusProperty = DependencyProperty.Register("ActiveOnFocus", typeof(bool), typeof(KeyTrigger));
+        public static readonly DependencyProperty ActiveOnFocusProperty =
+            DependencyProperty.Register(nameof(ActiveOnFocus), typeof(bool), typeof(KeyTrigger));
 
-        public static readonly DependencyProperty FiredOnProperty = DependencyProperty.Register("FiredOn", typeof(KeyTriggerFiredOn), typeof(KeyTrigger));
+        public static readonly DependencyProperty FiredOnProperty =
+            DependencyProperty.Register(nameof(FiredOn), typeof(KeyTriggerFiredOn), typeof(KeyTrigger));
 
         private UIElement targetElement;
 
@@ -34,8 +38,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public Key Key
         {
-            get { return (Key)this.GetValue(KeyTrigger.KeyProperty); }
-            set { this.SetValue(KeyTrigger.KeyProperty, value); }
+            get { return (Key)this.GetValue(KeyProperty); }
+            set { this.SetValue(KeyProperty, value); }
         }
 
         /// <summary>
@@ -43,8 +47,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public ModifierKeys Modifiers
         {
-            get { return (ModifierKeys)this.GetValue(KeyTrigger.ModifiersProperty); }
-            set { this.SetValue(KeyTrigger.ModifiersProperty, value); }
+            get { return (ModifierKeys)this.GetValue(ModifiersProperty); }
+            set { this.SetValue(ModifiersProperty, value); }
         }
 
         /// <summary>
@@ -53,8 +57,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public bool ActiveOnFocus
         {
-            get { return (bool)this.GetValue(KeyTrigger.ActiveOnFocusProperty); }
-            set { this.SetValue(KeyTrigger.ActiveOnFocusProperty, value); }
+            get { return (bool)this.GetValue(ActiveOnFocusProperty); }
+            set { this.SetValue(ActiveOnFocusProperty, value); }
         }
 
         /// <summary>
@@ -62,8 +66,8 @@ namespace Microsoft.Xaml.Behaviors.Input
         /// </summary>
         public KeyTriggerFiredOn FiredOn
         {
-            get { return (KeyTriggerFiredOn)this.GetValue(KeyTrigger.FiredOnProperty); }
-            set { this.SetValue(KeyTrigger.FiredOnProperty, value); }
+            get { return (KeyTriggerFiredOn)this.GetValue(FiredOnProperty); }
+            set { this.SetValue(FiredOnProperty, value); }
         }
 
         protected override string GetEventName()
@@ -85,35 +89,26 @@ namespace Microsoft.Xaml.Behaviors.Input
             if (key == Key.LeftCtrl || key == Key.RightCtrl)
             {
                 modifiers |= ModifierKeys.Control;
-            }
-            else if (key == Key.LeftAlt || key == Key.RightAlt || key == Key.System)
+            } else if (key == Key.LeftAlt || key == Key.RightAlt || key == Key.System)
             {
                 modifiers |= ModifierKeys.Alt;
-            }
-            else if (key == Key.LeftShift || key == Key.RightShift)
+            } else if (key == Key.LeftShift || key == Key.RightShift)
             {
                 modifiers |= ModifierKeys.Shift;
             }
+
             return modifiers;
         }
 
         protected override void OnEvent(EventArgs eventArgs)
         {
             // Listen to keyboard events.
-            if (this.ActiveOnFocus)
-            {
-                this.targetElement = this.Source;
-            }
-            else
-            {
-                this.targetElement = KeyTrigger.GetRoot(this.Source);
-            }
+            this.targetElement = this.ActiveOnFocus ? this.Source : GetRoot(this.Source);
 
             if (this.FiredOn == KeyTriggerFiredOn.KeyDown)
             {
                 this.targetElement.KeyDown += this.OnKeyPress;
-            }
-            else
+            } else
             {
                 this.targetElement.KeyUp += this.OnKeyPress;
             }
@@ -126,8 +121,7 @@ namespace Microsoft.Xaml.Behaviors.Input
                 if (this.FiredOn == KeyTriggerFiredOn.KeyDown)
                 {
                     this.targetElement.KeyDown -= this.OnKeyPress;
-                }
-                else
+                } else
                 {
                     this.targetElement.KeyUp -= this.OnKeyPress;
                 }

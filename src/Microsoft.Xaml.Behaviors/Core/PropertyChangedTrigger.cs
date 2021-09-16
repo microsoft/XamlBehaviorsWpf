@@ -1,28 +1,29 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors.Core
 {
-    using System;
-    using System.Windows;
-    using Microsoft.Xaml.Behaviors;
-
     /// <summary>
-    /// Represents a trigger that performs actions when the bound data have changed. 
+    /// Represents a trigger that performs actions when the bound data have changed.
     /// </summary>
     public class PropertyChangedTrigger : TriggerBase<DependencyObject>
     {
-        public static readonly DependencyProperty BindingProperty = DependencyProperty.Register("Binding", typeof(object), typeof(PropertyChangedTrigger), new PropertyMetadata(OnBindingChanged));
+        public static readonly DependencyProperty BindingProperty = DependencyProperty.Register(nameof(Binding),
+            typeof(object), typeof(PropertyChangedTrigger), new PropertyMetadata(OnBindingChanged));
+
         /// <summary>
         /// A binding object that the trigger will listen to, and that causes the trigger to fire when it changes.
         /// </summary>
         public object Binding
         {
-            get { return (object)this.GetValue(BindingProperty); }
+            get { return this.GetValue(BindingProperty); }
             set { this.SetValue(BindingProperty, value); }
         }
 
         /// <summary>
-        /// Called when the binding property has changed. 
+        /// Called when the binding property has changed.
         /// </summary>
         /// <param name="args"><see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> argument.</param>
         protected virtual void EvaluateBindingChange(object args)
@@ -59,6 +60,5 @@ namespace Microsoft.Xaml.Behaviors.Core
             PropertyChangedTrigger propertyChangedTrigger = (PropertyChangedTrigger)sender;
             propertyChangedTrigger.EvaluateBindingChange(args);
         }
-
     }
 }

@@ -1,12 +1,13 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media.Animation;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Globalization;
-    using System.Windows;
-    using System.Windows.Media.Animation;
-
     /// <summary>
     /// Encapsulates state information and zero or more ICommands into an attachable object.
     /// </summary>
@@ -44,10 +45,13 @@ namespace Microsoft.Xaml.Behaviors
         Animatable,
         IAttachedObject
     {
-        private Type associatedType;
+        private readonly Type associatedType;
         private DependencyObject associatedObject;
 
-        internal event EventHandler AssociatedObjectChanged;
+        internal Behavior(Type associatedType)
+        {
+            this.associatedType = associatedType;
+        }
 
         /// <summary>
         /// The type to which this behavior can be attached.
@@ -73,10 +77,7 @@ namespace Microsoft.Xaml.Behaviors
             }
         }
 
-        internal Behavior(Type associatedType)
-        {
-            this.associatedType = associatedType;
-        }
+        internal event EventHandler AssociatedObjectChanged;
 
         /// <summary>
         /// Called after the behavior is attached to an AssociatedObject.
@@ -94,6 +95,10 @@ namespace Microsoft.Xaml.Behaviors
         {
         }
 
+        /// <summary>
+        ///     Creates a instance of <see cref="Freezable" />
+        /// </summary>
+        /// <returns>The instance</returns>
         protected override Freezable CreateInstanceCore()
         {
             Type classType = this.GetType();
@@ -102,10 +107,7 @@ namespace Microsoft.Xaml.Behaviors
 
         private void OnAssociatedObjectChanged()
         {
-            if (this.AssociatedObjectChanged != null)
-            {
-                this.AssociatedObjectChanged(this, new EventArgs());
-            }
+            this.AssociatedObjectChanged?.Invoke(this, EventArgs.Empty);
         }
 
         #region IAttachedObject Members
@@ -134,7 +136,8 @@ namespace Microsoft.Xaml.Behaviors
             {
                 if (this.AssociatedObject != null)
                 {
-                    throw new InvalidOperationException(ExceptionStringTable.CannotHostBehaviorMultipleTimesExceptionMessage);
+                    throw new InvalidOperationException(ExceptionStringTable
+                        .CannotHostBehaviorMultipleTimesExceptionMessage);
                 }
 
                 // todo jekelly: what do we do if dependencyObject is null?
@@ -143,10 +146,10 @@ namespace Microsoft.Xaml.Behaviors
                 if (dependencyObject != null && !this.AssociatedType.IsAssignableFrom(dependencyObject.GetType()))
                 {
                     throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                                                                        ExceptionStringTable.TypeConstraintViolatedExceptionMessage,
-                                                                        this.GetType().Name,
-                                                                        dependencyObject.GetType().Name,
-                                                                        this.AssociatedType.Name));
+                        ExceptionStringTable.TypeConstraintViolatedExceptionMessage,
+                        this.GetType().Name,
+                        dependencyObject.GetType().Name,
+                        this.AssociatedType.Name));
                 }
 
                 this.WritePreamble();

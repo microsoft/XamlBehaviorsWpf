@@ -1,18 +1,45 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows;
+
 namespace Microsoft.Xaml.Behaviors
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Windows;
-    using System.Windows.Media;
-    using System.Diagnostics;
-
     /// <summary>
     /// Static class that owns the Triggers and Behaviors attached properties. Handles propagation of AssociatedObject change notifications.
     /// </summary>
     public static class Interaction
     {
+        /// <summary>
+        /// This property is used as the internal backing store for the public Triggers attached property.
+        /// </summary>
+        /// <remarks>
+        /// This property is not exposed publicly. This forces clients to use the GetTriggers and SetTriggers methods to access the
+        /// collection, ensuring the collection exists and is set before it is used.
+        /// </remarks>
+        private static readonly DependencyProperty TriggersProperty = DependencyProperty.RegisterAttached(
+            "ShadowTriggers",
+            typeof(TriggerCollection),
+            typeof(Interaction),
+            new FrameworkPropertyMetadata(
+                OnTriggersChanged));
+
+        // Note that the parts of the xml document comments must be together in the source, even in the presense of #ifs
+        /// <summary>
+        /// This property is used as the internal backing store for the public Behaviors attached property.
+        /// </summary>
+        /// <remarks>
+        /// This property is not exposed publicly. This forces clients to use the GetBehaviors and SetBehaviors methods to access the
+        /// collection, ensuring the collection exists and is set before it is used.
+        /// </remarks>
+        private static readonly DependencyProperty BehaviorsProperty = DependencyProperty.RegisterAttached(
+            "ShadowBehaviors",
+            typeof(BehaviorCollection),
+            typeof(Interaction),
+            new FrameworkPropertyMetadata(
+                OnBehaviorsChanged));
+
         /// <summary>
         /// Gets or sets a value indicating whether to run as if in design mode.
         /// </summary>
@@ -26,33 +53,6 @@ namespace Microsoft.Xaml.Behaviors
             set;
         }
 
-        /// <summary>
-        /// This property is used as the internal backing store for the public Triggers attached property.
-        /// </summary>
-        /// <remarks>
-        /// This property is not exposed publicly. This forces clients to use the GetTriggers and SetTriggers methods to access the
-        /// collection, ensuring the collection exists and is set before it is used.
-        /// </remarks>
-        private static readonly DependencyProperty TriggersProperty = DependencyProperty.RegisterAttached("ShadowTriggers",
-                                                                                                                typeof(TriggerCollection),
-                                                                                                                typeof(Interaction),
-                                                                                                                new FrameworkPropertyMetadata(
-                                                                                                                    new PropertyChangedCallback(OnTriggersChanged)));
-
-        // Note that the parts of the xml document comments must be together in the source, even in the presense of #ifs
-        /// <summary>
-        /// This property is used as the internal backing store for the public Behaviors attached property.
-        /// </summary>
-        /// <remarks>
-        /// This property is not exposed publicly. This forces clients to use the GetBehaviors and SetBehaviors methods to access the
-        /// collection, ensuring the collection exists and is set before it is used.
-        /// </remarks>
-        private static readonly DependencyProperty BehaviorsProperty = DependencyProperty.RegisterAttached("ShadowBehaviors",
-                                                                                                                        typeof(BehaviorCollection),
-                                                                                                                        typeof(Interaction),
-                                                                                                                        new FrameworkPropertyMetadata(
-                                                                                                                            new PropertyChangedCallback(OnBehaviorsChanged)));
-
 
         /// <summary>
         /// Gets the TriggerCollection containing the triggers associated with the specified object.
@@ -61,12 +61,14 @@ namespace Microsoft.Xaml.Behaviors
         /// <returns>A TriggerCollection containing the triggers associated with the specified object.</returns>
         public static TriggerCollection GetTriggers(DependencyObject obj)
         {
-            TriggerCollection triggerCollection = (TriggerCollection)obj.GetValue(Interaction.TriggersProperty);
-            if (triggerCollection == null)
+            TriggerCollection triggerCollection = (TriggerCollection)obj.GetValue(TriggersProperty);
+            if (triggerCollection != null)
             {
-                triggerCollection = new TriggerCollection();
-                obj.SetValue(Interaction.TriggersProperty, triggerCollection);
+                return triggerCollection;
             }
+
+            triggerCollection = new TriggerCollection();
+            obj.SetValue(TriggersProperty, triggerCollection);
             return triggerCollection;
         }
 
@@ -77,12 +79,14 @@ namespace Microsoft.Xaml.Behaviors
         /// <returns>A <see cref="BehaviorCollection"/> containing the behaviors associated with the specified object.</returns>
         public static BehaviorCollection GetBehaviors(DependencyObject obj)
         {
-            BehaviorCollection behaviorCollection = (BehaviorCollection)obj.GetValue(Interaction.BehaviorsProperty);
-            if (behaviorCollection == null)
+            BehaviorCollection behaviorCollection = (BehaviorCollection)obj.GetValue(BehaviorsProperty);
+            if (behaviorCollection != null)
             {
-                behaviorCollection = new BehaviorCollection();
-                obj.SetValue(Interaction.BehaviorsProperty, behaviorCollection);
+                return behaviorCollection;
             }
+
+            behaviorCollection = new BehaviorCollection();
+            obj.SetValue(BehaviorsProperty, behaviorCollection);
             return behaviorCollection;
         }
 
@@ -92,23 +96,28 @@ namespace Microsoft.Xaml.Behaviors
             BehaviorCollection oldCollection = (BehaviorCollection)args.OldValue;
             BehaviorCollection newCollection = (BehaviorCollection)args.NewValue;
 
-            if (oldCollection != newCollection)
+            if (oldCollection == newCollection)
             {
-                if (oldCollection != null && ((IAttachedObject)oldCollection).AssociatedObject != null)
-                {
-                    oldCollection.Detach();
-                }
-
-                if (newCollection != null && obj != null)
-                {
-                    if (((IAttachedObject)newCollection).AssociatedObject != null)
-                    {
-                        throw new InvalidOperationException(ExceptionStringTable.CannotHostBehaviorCollectionMultipleTimesExceptionMessage);
-                    }
-
-                    newCollection.Attach(obj);
-                }
+                return;
             }
+
+            if (((IAttachedObject)oldCollection)?.AssociatedObject != null)
+            {
+                oldCollection.Detach();
+            }
+
+            if (newCollection == null || obj == null)
+            {
+                return;
+            }
+
+            if (((IAttachedObject)newCollection).AssociatedObject != null)
+            {
+                throw new InvalidOperationException(ExceptionStringTable
+                    .CannotHostBehaviorCollectionMultipleTimesExceptionMessage);
+            }
+
+            newCollection.Attach(obj);
         }
 
         /// <exception cref="InvalidOperationException">Cannot host the same TriggerCollection on more than one object at a time.</exception>
@@ -119,7 +128,7 @@ namespace Microsoft.Xaml.Behaviors
 
             if (oldCollection != newCollection)
             {
-                if (oldCollection != null && ((IAttachedObject)oldCollection).AssociatedObject != null)
+                if (((IAttachedObject)oldCollection)?.AssociatedObject != null)
                 {
                     oldCollection.Detach();
                 }
@@ -128,7 +137,8 @@ namespace Microsoft.Xaml.Behaviors
                 {
                     if (((IAttachedObject)newCollection).AssociatedObject != null)
                     {
-                        throw new InvalidOperationException(ExceptionStringTable.CannotHostTriggerCollectionMultipleTimesExceptionMessage);
+                        throw new InvalidOperationException(ExceptionStringTable
+                            .CannotHostTriggerCollectionMultipleTimesExceptionMessage);
                     }
 
                     newCollection.Attach(obj);

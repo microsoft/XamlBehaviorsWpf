@@ -1,16 +1,17 @@
 // Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Documents;
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
-
     [TestClass]
     public class RemoveElementActionTests
     {
@@ -145,7 +146,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             action.TargetObject = rectangle;
             trigger.FireStubTrigger();
 
-            Assert.AreEqual(rectangle.Parent, grid, "Because the action is not attached to anything, invoking it should not do anything.");
+            Assert.AreEqual(rectangle.Parent, grid,
+                "Because the action is not attached to anything, invoking it should not do anything.");
         }
     }
 }

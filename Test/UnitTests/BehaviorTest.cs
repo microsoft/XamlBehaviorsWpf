@@ -1,13 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+
+using System;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Shapes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows.Controls;
-    using System.Windows.Shapes;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
     using SysWindows = System.Windows;
 
     [TestClass]
@@ -29,14 +32,14 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void AttachDetachTest()
         {
             StubBehavior stubBehavior = new StubBehavior();
-            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)stubBehavior);
+            BehaviorTestUtilities.TestIAttachedObject<Button>(stubBehavior);
 
             Rectangle rectangle = new Rectangle();
             StubBehavior behavior = new StubBehavior();
             BehaviorCollection behaviorCollection = Interaction.GetBehaviors(rectangle);
             behaviorCollection.Add(behavior);
             behaviorCollection.Detach();
-            BehaviorTestUtilities.TestIAttachedObject<Button>((IAttachedObject)behaviorCollection);
+            BehaviorTestUtilities.TestIAttachedObject<Button>(behaviorCollection);
         }
 
         [TestMethod]
@@ -63,8 +66,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             {
                 behaviors2.Add(behavior);
                 Assert.Fail("InvalidOperationexception should be thrown if same behavior is attached to two elements");
-            }
-            catch (InvalidOperationException)
+            } catch (InvalidOperationException)
             {
             }
         }
@@ -80,19 +82,22 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             BehaviorCollection buttonBehaviors = Interaction.GetBehaviors(button4);
 
             rectangleBehaviors.Add(rectangleBehavior);
-            Assert.AreEqual(rectangleBehaviors.Count, 1, "After attaching RectangleBehavior to rectangleBehaviors, rectangleBehaviors.Count should be 1");
-            Assert.AreEqual(((IAttachedObject)rectangleBehavior).AssociatedObject, rectangle1, "rectangleBehavior.AssociatedObject == rectangle");
+            Assert.AreEqual(rectangleBehaviors.Count, 1,
+                "After attaching RectangleBehavior to rectangleBehaviors, rectangleBehaviors.Count should be 1");
+            Assert.AreEqual(((IAttachedObject)rectangleBehavior).AssociatedObject, rectangle1,
+                "rectangleBehavior.AssociatedObject == rectangle");
 
             rectangleBehaviors.Remove(rectangleBehavior);
-            Assert.AreEqual(rectangleBehaviors.Count, 0, "After detaching rectangleBehavior, rectangleBehaviors.Count should be 0");
-            Assert.IsNull(((IAttachedObject)rectangleBehavior).AssociatedObject, "rectangleBehavior.AssociatedObject == null");
+            Assert.AreEqual(rectangleBehaviors.Count, 0,
+                "After detaching rectangleBehavior, rectangleBehaviors.Count should be 0");
+            Assert.IsNull(((IAttachedObject)rectangleBehavior).AssociatedObject,
+                "rectangleBehavior.AssociatedObject == null");
 
             try
             {
                 buttonBehaviors.Add(rectangleBehavior);
                 Assert.Fail("Expected InvalidOperationException to be thrown thrown.");
-            }
-            catch (InvalidOperationException)
+            } catch (InvalidOperationException)
             {
             }
         }
@@ -118,9 +123,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [TestMethod]
         public void TestParameterlessActionCommand()
         {
-            ActionCommand action = new ActionCommand(new Action(this.ParameterlessActionSuccessful));
+            ActionCommand action = new ActionCommand(this.ParameterlessActionSuccessful);
             this.actionTestSucceeded = false;
-            Assert.IsTrue(((SysWindows.Input.ICommand)action).CanExecute(null), "action CanExecute(null) == true");
+            Assert.IsTrue(((ICommand)action).CanExecute(null), "action CanExecute(null) == true");
             action.Execute(null);
             Assert.IsTrue(this.actionTestSucceeded, "parameterlessAction test succeeded.");
         }
@@ -128,16 +133,17 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [TestMethod]
         public void TestParameterActionCommand()
         {
-            ActionCommand parameterAction = new ActionCommand(new Action<object>(this.ParameterActionSuccessful));
+            ActionCommand parameterAction = new ActionCommand(this.ParameterActionSuccessful);
             this.actionTestSucceeded = false;
-            Assert.IsTrue(((SysWindows.Input.ICommand)parameterAction).CanExecute(null), "parameterAction CanExecute(null) == true");
+            Assert.IsTrue(((ICommand)parameterAction).CanExecute(null), "parameterAction CanExecute(null) == true");
             parameterAction.Execute(this.actionTestButton);
             Assert.IsTrue(this.actionTestSucceeded, "parameterlessAction test succeeded.");
         }
 
         #region ActionCommand test cross-function state
+
         private bool actionTestSucceeded;
-        private Button actionTestButton = new Button();
+        private readonly Button actionTestButton = new Button();
 
         private void ParameterlessActionSuccessful()
         {
@@ -154,6 +160,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         {
             Assert.Fail("ActionCommand.CanExecuteChanged should never be called.");
         }
+
         #endregion
     }
 }

@@ -1,22 +1,25 @@
-// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Shapes;
+using Microsoft.Xaml.Behaviors;
+using Microsoft.Xaml.Behaviors.Core;
+
 namespace Microsoft.Xaml.Interactions.UnitTests
 {
-    using System;
-    using System.Windows.Input;
-    using System.Windows.Shapes;
-    using Microsoft.Xaml.Behaviors;
-    using Microsoft.Xaml.Behaviors.Core;
     using SysWindows = System.Windows;
 
-    public sealed class SingleConstructorArgumentTrigger : TriggerBase<System.Windows.Controls.Button>
+    public sealed class SingleConstructorArgumentTrigger : TriggerBase<Button>
     {
         public SingleConstructorArgumentTrigger(string s)
         {
         }
     }
 
-    public sealed class StubEventTriggerBase : EventTriggerBase<System.Windows.DependencyObject>
+    public sealed class StubEventTriggerBase : EventTriggerBase<SysWindows.DependencyObject>
     {
         public string EventName { get; set; }
 
@@ -72,13 +75,14 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
     public sealed class BindingTrigger : StubTrigger
     {
-        public static readonly SysWindows.DependencyProperty TestProperty = SysWindows.DependencyProperty.Register("Test", typeof(object), typeof(BindingTrigger));
+        public static readonly SysWindows.DependencyProperty TestProperty =
+            SysWindows.DependencyProperty.Register("Test", typeof(object), typeof(BindingTrigger));
 
         public object Test
         {
             get
             {
-                return (object)this.GetValue(TestProperty);
+                return this.GetValue(TestProperty);
             }
             set
             {
@@ -86,7 +90,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             }
         }
 
-        protected override System.Windows.Freezable CreateInstanceCore()
+        protected override SysWindows.Freezable CreateInstanceCore()
         {
             return new BindingTrigger();
         }
@@ -94,7 +98,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
     public class StubTrigger : StubTrigger<SysWindows.DependencyObject>
     {
-        protected override System.Windows.Freezable CreateInstanceCore()
+        protected override SysWindows.Freezable CreateInstanceCore()
         {
             return new StubTrigger();
         }
@@ -107,12 +111,12 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
     public abstract class StubTrigger<T> : EventTriggerBase<T> where T : SysWindows.DependencyObject
     {
+        private T firstHost;
+
         public T HostObject
         {
-            get { return (T)base.AssociatedObject; }
+            get { return (T)this.AssociatedObject; }
         }
-
-        private T firstHost;
 
         public bool AddedHost { get; set; }
         public bool ChangedHost { get; set; }
@@ -135,8 +139,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             if (this.firstHost == null)
             {
                 this.firstHost = (T)this.AssociatedObject;
-            }
-            else if (!this.AssociatedObject.Equals(this.firstHost))
+            } else if (!this.AssociatedObject.Equals(this.firstHost))
             {
                 this.ChangedHost = true;
             }
@@ -154,11 +157,13 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
     }
 
-    public class BindingAction : TriggerAction<System.Windows.DependencyObject>
+    public class BindingAction : TriggerAction<SysWindows.DependencyObject>
     {
-        public static readonly SysWindows.DependencyProperty BindingObjectProperty = SysWindows.DependencyProperty.Register("BindingObject",
-                                                                                                                                typeof(object),
-                                                                                                                                typeof(BindingAction));
+        public static readonly SysWindows.DependencyProperty BindingObjectProperty =
+            SysWindows.DependencyProperty.Register("BindingObject",
+                typeof(object),
+                typeof(BindingAction));
+
         public object BindingObject
         {
             get
@@ -173,20 +178,20 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         protected override void Invoke(object parameter)
         {
-
         }
 
-        protected override System.Windows.Freezable CreateInstanceCore()
+        protected override SysWindows.Freezable CreateInstanceCore()
         {
             return new BindingAction();
         }
     }
 
-    public class TimedAction : TriggerAction<System.Windows.DependencyObject>
+    public class TimedAction : TriggerAction<SysWindows.DependencyObject>
     {
-        private static int invokeToken = 0;
+        private static int invokeToken;
 
         private int order;
+
         public int Order
         {
             get { return this.order; }
@@ -194,18 +199,19 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
         protected override void Invoke(object parameter)
         {
-            this.order = TimedAction.invokeToken++;
+            this.order = invokeToken++;
         }
 
-        protected override System.Windows.Freezable CreateInstanceCore()
+        protected override SysWindows.Freezable CreateInstanceCore()
         {
             return new TimedAction();
         }
     }
 
-    public class StubAction : TriggerAction<System.Windows.DependencyObject>
+    public class StubAction : TriggerAction<SysWindows.DependencyObject>
     {
         private int invokeCount;
+
         public int InvokeCount
         {
             get { return this.invokeCount; }
@@ -227,7 +233,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
     }
 
-    public sealed class StubTargetedTriggerAction : TargetedTriggerAction<System.Windows.DependencyObject>
+    public sealed class StubTargetedTriggerAction : TargetedTriggerAction<SysWindows.DependencyObject>
     {
         public int TargetChangedCount
         {
@@ -246,7 +252,8 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             get { return base.Target; }
         }
 
-        protected override void OnTargetChanged(System.Windows.DependencyObject oldTarget, System.Windows.DependencyObject newTarget)
+        protected override void OnTargetChanged(SysWindows.DependencyObject oldTarget,
+            SysWindows.DependencyObject newTarget)
         {
             base.OnTargetChanged(oldTarget, newTarget);
             this.TargetChangedCount++;
@@ -262,7 +269,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
     public class StubDelegateCommand : ICommand
     {
-        private DelegateCommand delegateCommand;
+        private readonly DelegateCommand delegateCommand;
 
         public StubDelegateCommand(DelegateCommand delegateCommand)
         {
@@ -306,6 +313,14 @@ namespace Microsoft.Xaml.Interactions.UnitTests
 
     public class StubBehavior : Behavior<SysWindows.DependencyObject>
     {
+        private object lastParameter;
+
+        public StubBehavior()
+        {
+            this.StubCommand = new ActionCommand(this.ExecuteStub);
+            this.StubCommandWithParameter = new ActionCommand(this.ExecuteWithParameterStub);
+        }
+
         public ICommand StubCommand
         {
             get;
@@ -324,16 +339,17 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             private set;
         }
 
-        private object lastParameter;
         public object LastParameter
         {
             get { return this.lastParameter; }
         }
 
-        public StubBehavior()
+        public SysWindows.DependencyObject AttachedObject
         {
-            this.StubCommand = new ActionCommand(this.ExecuteStub);
-            this.StubCommandWithParameter = new ActionCommand(new Action<object>(this.ExecuteWithParameterStub));
+            get
+            {
+                return this.AssociatedObject;
+            }
         }
 
         private void ExecuteStub()
@@ -347,7 +363,19 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             this.lastParameter = parameter;
         }
 
-        public SysWindows.DependencyObject AttachedObject
+        public SysWindows.Freezable GetCreateInstanceCore()
+        {
+            return this.CreateInstanceCore();
+        }
+    }
+
+    public sealed class StubRectangleBehavior : Behavior<Rectangle>
+    {
+    }
+
+    public sealed class StubButtonTrigger : TriggerBase<Button>
+    {
+        public Button AttachedButton
         {
             get
             {
@@ -355,40 +383,20 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             }
         }
 
-        public SysWindows.Freezable GetCreateInstanceCore()
+        public SysWindows.Freezable CreateInstaceCoreStub()
         {
             return this.CreateInstanceCore();
         }
     }
 
-    public sealed class StubRectangleBehavior : Behavior<System.Windows.Shapes.Rectangle>
-    {
-    }
-
-    public sealed class StubButtonTrigger : TriggerBase<System.Windows.Controls.Button>
-    {
-        public System.Windows.Controls.Button AttachedButton
-        {
-            get
-            {
-                return base.AssociatedObject;
-            }
-        }
-
-        public System.Windows.Freezable CreateInstaceCoreStub()
-        {
-            return this.CreateInstanceCore();
-        }
-    }
-
-    public sealed class StubButtonTriggerAction : TriggerAction<System.Windows.Controls.Button>
+    public sealed class StubButtonTriggerAction : TriggerAction<Button>
     {
         protected override void Invoke(object parameter)
         {
         }
     }
 
-    public sealed class StubButtonEventTriggerBaseWithoutAttribute : EventTriggerBase<System.Windows.Controls.Button>
+    public sealed class StubButtonEventTriggerBaseWithoutAttribute : EventTriggerBase<Button>
     {
         protected override string GetEventName()
         {
@@ -397,7 +405,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     }
 
     [TypeConstraint(typeof(Rectangle))]
-    public sealed class StubButtonEventTriggerBaseWithAttribute : EventTriggerBase<System.Windows.Controls.Button>
+    public sealed class StubButtonEventTriggerBaseWithAttribute : EventTriggerBase<Button>
     {
         protected override string GetEventName()
         {
@@ -405,7 +413,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
     }
 
-    public sealed class StubButtonTargetedTriggerActionWithoutAttribute : TargetedTriggerAction<System.Windows.Controls.Button>
+    public sealed class StubButtonTargetedTriggerActionWithoutAttribute : TargetedTriggerAction<Button>
     {
         protected override void Invoke(object parameter)
         {
@@ -413,7 +421,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
     }
 
     [TypeConstraint(typeof(Rectangle))]
-    public sealed class StubButtonTargetedTriggerActionWithAttribute : TargetedTriggerAction<System.Windows.Controls.Button>
+    public sealed class StubButtonTargetedTriggerActionWithAttribute : TargetedTriggerAction<Button>
     {
         protected override void Invoke(object parameter)
         {
