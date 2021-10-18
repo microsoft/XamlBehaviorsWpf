@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved. 
+﻿// Copyright (c) Microsoft. All rights reserved. 
 // Licensed under the MIT license. See LICENSE file in the project root for full license information. 
 namespace Microsoft.Xaml.Behaviors.Input
 {
@@ -111,10 +111,14 @@ namespace Microsoft.Xaml.Behaviors.Input
 
             if (this.FiredOn == KeyTriggerFiredOn.KeyDown)
             {
+                //remove KeyDown event to avoid duplicate events
+                this.targetElement.KeyDown -= this.OnKeyPress;
                 this.targetElement.KeyDown += this.OnKeyPress;
             }
             else
             {
+                //remove KeyUp event to avoid duplicate events
+                this.targetElement.KeyUp -= this.OnKeyPress;
                 this.targetElement.KeyUp += this.OnKeyPress;
             }
         }
