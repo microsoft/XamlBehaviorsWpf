@@ -1,5 +1,5 @@
-﻿// Copyright (c) Microsoft. All rights reserved. 
-// Licensed under the MIT license. See LICENSE file in the project root for full license information. 
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 namespace Microsoft.Xaml.Behaviors
 {
     using System;
@@ -66,6 +66,14 @@ namespace Microsoft.Xaml.Behaviors
             {
                 triggerCollection = new TriggerCollection();
                 obj.SetValue(Interaction.TriggersProperty, triggerCollection);
+
+                if (obj is FrameworkElement frameworkElement)
+                {
+                    frameworkElement.Loaded -= FrameworkElement_Loaded;
+                    frameworkElement.Loaded += FrameworkElement_Loaded;
+                    frameworkElement.Unloaded -= FrameworkElement_Unloaded;
+                    frameworkElement.Unloaded += FrameworkElement_Unloaded;
+                }
             }
             return triggerCollection;
         }
@@ -82,6 +90,14 @@ namespace Microsoft.Xaml.Behaviors
             {
                 behaviorCollection = new BehaviorCollection();
                 obj.SetValue(Interaction.BehaviorsProperty, behaviorCollection);
+
+                if (obj is FrameworkElement frameworkElement)
+                {
+                    frameworkElement.Loaded -= FrameworkElement_Loaded;
+                    frameworkElement.Loaded += FrameworkElement_Loaded;
+                    frameworkElement.Unloaded -= FrameworkElement_Unloaded;
+                    frameworkElement.Unloaded += FrameworkElement_Unloaded;
+                }
             }
             return behaviorCollection;
         }
@@ -144,6 +160,28 @@ namespace Microsoft.Xaml.Behaviors
         internal static bool IsElementLoaded(FrameworkElement element)
         {
             return element.IsLoaded;
+        }
+
+        private static void FrameworkElement_Loaded(object sender, RoutedEventArgs e)
+        {
+            var d = sender as DependencyObject;
+
+            if (d != null)
+            {
+                GetBehaviors(d).Attach(d);
+                GetTriggers(d).Attach(d);
+            }
+        }
+
+        private static void FrameworkElement_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var d = sender as DependencyObject;
+
+            if (d != null)
+            {
+                GetBehaviors(d).Detach();
+                GetTriggers(d).Detach();
+            }
         }
     }
 }
