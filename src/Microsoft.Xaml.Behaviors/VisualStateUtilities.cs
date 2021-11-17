@@ -49,7 +49,6 @@ namespace Microsoft.Xaml.Behaviors
         /// Gets the value of the VisualStateManager.VisualStateGroups attached property.
         /// </summary>
         /// <param name="targetObject">The element from which to get the VisualStateManager.VisualStateGroups.</param>
-        /// <returns></returns>
         public static IList GetVisualStateGroups(FrameworkElement targetObject)
         {
             IList visualStateGroups = new List<VisualStateGroup>();
