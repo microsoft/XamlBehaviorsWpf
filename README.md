@@ -4,7 +4,7 @@ XAML Behaviors is an easy-to-use means of adding common and reusable interactivi
 
 Getting Started
 -------------------
-**Where to get it**
+**Where to get it**  
  - [Source Code](https://github.com/Microsoft/XamlBehaviorsWpf)
 
 **Resources**
