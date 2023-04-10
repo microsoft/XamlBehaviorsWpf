@@ -73,7 +73,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <CustomToolNamespace>Microsoft.Xaml.Behaviors.DesignTools</CustomToolNamespace>
       <SubType>Designer</SubType>
-      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
