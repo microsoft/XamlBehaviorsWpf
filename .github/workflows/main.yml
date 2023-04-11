@@ -30,7 +30,7 @@ jobs:
       run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release
     
     - name: Run Tests
-      run: dotnet test --no-restore --verbosity minimal
+      run: dotnet test src/BehaviorsSdk.sln --no-restore --verbosity minimal
 
     - name: Pack Behaviors
       if: success()
