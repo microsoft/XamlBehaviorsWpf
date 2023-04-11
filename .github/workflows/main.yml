@@ -30,10 +30,7 @@ jobs:
       run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release
     
     - name: Run Tests
-      uses: microsoft/vstest-action@v1.0.0
-      with:
-        testAssembly: UnitTests.dll
-        searchFolder: Test/UnitTests/bin/Release/
+      run: dotnet test --no-restore --verbosity minimal
 
     - name: Pack Behaviors
       if: success()
