@@ -24,7 +24,6 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
     
     - name: Restore
-      uses: nuget/setup-nuget@v1.0.5
       run: nuget restore src/BehaviorsSdk.sln
     
     - name: Build
