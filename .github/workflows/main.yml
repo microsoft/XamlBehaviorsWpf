@@ -18,11 +18,13 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - uses: nuget/setup-nuget@v1.0.5
-    - name: Restore
-      run: nuget restore src/BehaviorsSdk.sln
-    - uses: microsoft/setup-msbuild@v1.0.2
+    - name: NuGet Restore
+      run: dotnet restore
     - name: Build
-      run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release
+      run: dotnet build --configuration Release --no-restore
+    - name: Run Tests
+      run: dotnet test --no-restore --verbosity minimal
+    - uses: microsoft/setup-msbuild@v1.0.2
     - name: Pack Behaviors
       if: success()
       run: msbuild src/Microsoft.Xaml.Behaviors/Microsoft.Xaml.Behaviors.csproj /p:Configuration=Release -t:pack
