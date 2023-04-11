@@ -408,7 +408,11 @@ namespace Microsoft.Xaml.Behaviors
             }
         }
 
-        private void UnregisterLoaded(FrameworkElement associatedElement)
+        /// <summary>
+        /// Removes the event handler from the Loaded event of the associated object.
+        /// </summary>
+        /// <param name="associatedElement">The associated object</param>
+        protected void UnregisterLoaded(FrameworkElement associatedElement)
         {
             Debug.Assert(this.eventHandlerMethodInfo == null);
             if (this.IsLoadedRegistered && associatedElement != null)
