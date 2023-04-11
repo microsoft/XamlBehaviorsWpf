@@ -68,6 +68,13 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [DataRow(Key.NumPad9)]
         [DataRow(Key.Enter)]
         [DataRow(Key.Tab)]
+        [DataRow(Key.LeftCtrl)]
+        [DataRow(Key.RightCtrl)]
+        [DataRow(Key.LeftAlt)]
+        [DataRow(Key.RightAlt)]
+        [DataRow(Key.System)]
+        [DataRow(Key.LeftShift)]
+        [DataRow(Key.RightShift)]
         public void KeyTrigger_InvokesActions_WhenKeyIsPressed(Key key)
         {
             var textBox = new TextBox();
@@ -127,6 +134,13 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [DataRow(Key.NumPad9)]
         [DataRow(Key.Enter)]
         [DataRow(Key.Tab)]
+        [DataRow(Key.LeftCtrl)]
+        [DataRow(Key.RightCtrl)]
+        [DataRow(Key.LeftAlt)]
+        [DataRow(Key.RightAlt)]
+        [DataRow(Key.System)]
+        [DataRow(Key.LeftShift)]
+        [DataRow(Key.RightShift)]
         public void KeyTrigger_InvokesActions_WhenKeyIsReleased(Key key)
         {
             var textBox = new TextBox();
@@ -147,7 +161,6 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 Assert.AreEqual(1, action.InvokeCount);
             }
         }
-
 
         [TestMethod]
         [DataRow(true)]

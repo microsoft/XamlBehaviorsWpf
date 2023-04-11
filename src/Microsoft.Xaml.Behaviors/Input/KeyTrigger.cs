@@ -73,8 +73,10 @@ namespace Microsoft.Xaml.Behaviors.Input
 
         private void OnKeyPress(object sender, KeyEventArgs e)
         {
-            if (e.Key == this.Key &&
-                Keyboard.Modifiers == GetActualModifiers(e.Key, this.Modifiers))
+            bool isKeyMatch = e.Key == this.Key;
+            bool isModifiersMatch = this.Modifiers == ModifierKeys.None ? true : Keyboard.Modifiers == GetActualModifiers(e.Key, this.Modifiers);
+
+            if (isKeyMatch && isModifiersMatch)
             {
                 this.InvokeActions(e);
             }
