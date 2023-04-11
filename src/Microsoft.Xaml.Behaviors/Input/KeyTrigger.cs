@@ -117,6 +117,10 @@ namespace Microsoft.Xaml.Behaviors.Input
             {
                 this.targetElement.KeyUp += this.OnKeyPress;
             }
+
+            // Unregister the Loaded event of the Source object to prevent the KeyUp or KeyDown events from being registered multiple times.
+            // this is especially important when the KeyTrigger is used in a TabControl/TabItem.
+            UnregisterLoaded(Source as FrameworkElement);
         }
 
         protected override void OnDetaching()
