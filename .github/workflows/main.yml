@@ -32,7 +32,7 @@ jobs:
     - name: Run Tests
       uses: microsoft/vstest-action@v1.0.0
       with:
-        testAssembly: '**\bin\Release\UnitTests.dll'
+        testAssembly: Test/UnitTests/bin/Release/UnitTests.dll
 
     - name: Pack Behaviors
       if: success()
