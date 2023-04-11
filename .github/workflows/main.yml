@@ -33,7 +33,7 @@ jobs:
       uses: microsoft/vstest-action@v1.0.0
       with:
         testAssembly: UnitTests.dll
-        searchFolder: .\Test\UnitTests\bin\Release
+        searchFolder: Test/UnitTests/bin/Release/
 
     - name: Pack Behaviors
       if: success()
