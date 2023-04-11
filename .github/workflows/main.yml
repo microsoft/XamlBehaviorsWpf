@@ -9,6 +9,10 @@ on:
 jobs:
   managed-build:
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: src
+
     steps:
     - uses: actions/checkout@v3
       with:
