@@ -168,8 +168,10 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         }
         #endregion
 
+#if !NETCOREAPP
         private TraceListener[] storedListeners;
-        private DebugTraceListener debugTraceListener;
+#endif
+        private DebugTraceListener debugTraceListener = new DebugTraceListener();
 
         public List<string> Messages
         {
