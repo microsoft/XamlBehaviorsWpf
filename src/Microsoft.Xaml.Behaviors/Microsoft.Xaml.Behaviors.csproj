@@ -23,8 +23,6 @@
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
     <UseWPF>true</UseWPF>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
-  </PropertyGroup>
-  <PropertyGroup>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   
