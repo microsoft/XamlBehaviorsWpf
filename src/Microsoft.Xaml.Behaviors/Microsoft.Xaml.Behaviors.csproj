@@ -23,28 +23,10 @@
     <DefineConstants>WPF;$(DefineConstants)</DefineConstants>
     <UseWPF>true</UseWPF>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
-    <NoWarn>1701;1702;</NoWarn>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   
   <Import Project="..\Microsoft.Xaml.Behaviors.Signing.targets" />
-
-  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.XML" />
-    <Reference Include="WindowsBase">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationCore">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="ExceptionStringTable.Designer.cs">
@@ -71,10 +53,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 
   <ItemGroup>

@@ -779,6 +779,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         /// Subsequent code will check these rectangles both before and after the layout change.
         /// </summary>
         /// <param name="control">The control whose layout is changing state.</param>
+        /// <param name="templateRoot">The template root.</param>
         /// <param name="layoutStoryboard">The storyboard containing the layout changes.</param>
         /// <param name="originalValueRecords">Any previous values from previous state navigations that might be reverted.</param>
         /// <param name="movingElements">The set of elements currently in motion, if there is a state change transition ongoing.</param>
@@ -1014,8 +1015,10 @@ namespace Microsoft.Xaml.Behaviors.Core
         /// Get the opacities of elements at the time of the state change, instead of visibilities, because the state change may be in process and the current value is the most important.
         /// </summary>
         /// <param name="control">The control whose state is changing.</param>
+        /// <param name="templateRoot">The template root.</param>
         /// <param name="layoutStoryboard">The storyboard with the layout properties.</param>
         /// <param name="originalValueRecords">The set of original values.</param>
+        /// <param name="movingElements">The elements currently in motion</param>
         /// <returns></returns>
         private static Dictionary<FrameworkElement, double> GetOldOpacities(FrameworkElement control, FrameworkElement templateRoot, Storyboard layoutStoryboard, List<OriginalLayoutValueRecord> originalValueRecords, List<FrameworkElement> movingElements)
         {
@@ -1078,6 +1081,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         /// All values that are overwritten will be stored in the collection of OriginalValueRecords so that they can be replaced later.
         /// </summary>
         /// <param name="control">The control whose state is changing.</param>
+        /// <param name="templateRoot">The template root.</param>
         /// <param name="layoutStoryboard">The Storyboard holding the layout properties.</param>
         /// <param name="originalValueRecords">The store of original values.</param>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "This is done in a single pass for performance reasons.")]
@@ -1186,6 +1190,8 @@ namespace Microsoft.Xaml.Behaviors.Core
         /// they do not affect their sibling elements.
         /// </summary>
         /// <param name="movingElements">The set of elements that will be moving.</param>
+        /// <param name="oldRects">The old Rect.</param>
+        /// <param name="newRects">The new Rect.</param>
         private static void WrapMovingElementsInCanvases(List<FrameworkElement> movingElements, Dictionary<FrameworkElement, Rect> oldRects, Dictionary<FrameworkElement, Rect> newRects)
         {
             foreach (FrameworkElement movedElement in movingElements)
@@ -1286,6 +1292,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         /// </summary>
         /// <param name="source">The source of the layout properties.</param>
         /// <param name="target">The destination of the layout properties.</param>
+        /// <param name="restoring">A flag to indicate if a restore is occuring.</param>
         private static void CopyLayoutProperties(FrameworkElement source, FrameworkElement target, bool restoring)
         {
             WrapperCanvas parentCanvas = (restoring ? source : target) as WrapperCanvas;
@@ -1339,8 +1346,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         /// <summary>
         /// Create the actual Storyboard that will be used to animate the transition. Use all previously calculated results.
         /// </summary>
-        /// <param name="duration">The duration of the animation.</param>
-        /// <param name="ease">The easing function to be used in the animation.</param>
+        /// <param name="transition">The transition.</param>
         /// <param name="movingElements">The set of elements that will be moving.</param>
         /// <param name="oldOpacities">The old opacities of the elements whose visibility properties are changing.</param>
         /// <returns>The Storyboard.</returns>
