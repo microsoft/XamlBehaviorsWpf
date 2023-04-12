@@ -3,18 +3,17 @@
 namespace Microsoft.Xaml.Behaviors
 {
     using System.Windows;
-    using System.ComponentModel;
 
     ///<summary>
     /// Represents a collection of triggers with a shared AssociatedObject and provides change notifications to its contents when that AssociatedObject changes.
     /// </summary>
+    /// <remarks>Sealed, because this should not be inherited outside this assembly.</remarks>
     public sealed class TriggerCollection : AttachableCollection<TriggerBase>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TriggerCollection"/> class.
         /// </summary>
-        /// <remarks>Internal, because this should not be inherited outside this assembly.</remarks>
-        internal TriggerCollection()
+        public TriggerCollection()
         {
         }
 
