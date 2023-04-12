@@ -124,7 +124,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         public void Constructor_EventNameConstructor_SetsEventNameToSpecifiedValue()
         {
             EventTrigger eventTrigger = new EventTrigger("Click");
-            Assert.AreEqual(eventTrigger.EventName, "Click", "eventTrigger.EventName == Click");
+            Assert.AreEqual("Click", eventTrigger.EventName, "eventTrigger.EventName == Click");
         }
 
         [TestMethod]
@@ -135,7 +135,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             StubAction eventAction = AttachTriggerToObject(eventTrigger, eventStub);
 
             eventStub.FireStubEvent();
-            Assert.AreEqual(eventAction.InvokeCount, 1, "Action was invoked in response to event.");
+            Assert.AreEqual(1, eventAction.InvokeCount, "Action was invoked in response to event.");
         }
 
         [TestMethod]
@@ -167,7 +167,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 System.Windows.RoutedEventArgs args = CreateClickEvent();
 
                 button.RaiseEvent(args);
-                Assert.AreEqual(action.InvokeCount, 1, "Click on button while Source=button should not invoke the action.");
+                Assert.AreEqual(1, action.InvokeCount, "Click on button while Source=button should not invoke the action.");
             }
         }
 
@@ -190,7 +190,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 System.Windows.RoutedEventArgs args = CreateClickEvent();
 
                 rect.RaiseEvent(args);
-                Assert.AreEqual(action.InvokeCount, 0, "Click on rect while Source=button should not invoke the action.");
+                Assert.AreEqual(0, action.InvokeCount, "Click on rect while Source=button should not invoke the action.");
             }
         }
 
@@ -205,7 +205,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             eventTrigger.SourceObject = eventSource;
             eventSource.FireStubEvent();
 
-            Assert.AreEqual(action.InvokeCount, 1, "Trigger should be invoked when source object fires the event it is listening to.");
+            Assert.AreEqual(1, action.InvokeCount, "Trigger should be invoked when source object fires the event it is listening to.");
         }
 
         [TestMethod]
@@ -220,7 +220,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             eventTrigger.EventName = "StubEvent2";
             eventSource.FireStubEvent();
 
-            Assert.AreEqual(action.InvokeCount, 0, "Trigger should not be invoked when source object fires its event it is not listening to.");
+            Assert.AreEqual(0, action.InvokeCount, "Trigger should not be invoked when source object fires its event it is not listening to.");
         }
 
         [TestMethod]
@@ -235,7 +235,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             eventTrigger.EventName = "StubEvent2";
             eventSource.FireStubEvent2();
 
-            Assert.AreEqual(action.InvokeCount, 1, "Trigger should be invoked when source object fires the event it is listening to.");
+            Assert.AreEqual(1, action.InvokeCount, "Trigger should be invoked when source object fires the event it is listening to.");
         }
 
         [TestMethod]
@@ -251,7 +251,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             eventTrigger.SourceObject = newEventSource;
             oldEventSource.FireStubEvent();
 
-            Assert.AreEqual(action.InvokeCount, 0, "Trigger should not be invoked when an old source object fires the event it is listening to.");
+            Assert.AreEqual(0, action.InvokeCount, "Trigger should not be invoked when an old source object fires the event it is listening to.");
         }
 
         [TestMethod]
@@ -295,7 +295,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             EventObjectStub eventStub = CreateEventObjectStub();
             AttachTriggerToObject(eventTrigger, eventStub);
             eventTrigger.EventName = "IntEvent";
-            // With no source object set, non-existant event did not throw.
+            // With no source object set, non-existent event did not throw.
         }
 
         [TestMethod]
@@ -310,7 +310,7 @@ namespace Microsoft.Xaml.Interactions.UnitTests
             StubAction action = AttachTriggerToObject(eventTrigger, host);
 
             clrEventClass.Fire();
-            Assert.AreEqual(action.InvokeCount, 1, "Event firing on a source CLR object should fire the EventTrigger.");
+            Assert.AreEqual(1, action.InvokeCount, "Event firing on a source CLR object should fire the EventTrigger.");
         }
 
         [TestMethod]
@@ -335,9 +335,9 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 System.Windows.RoutedEventArgs args = CreateClickEvent();
 
                 sourceNameButton.RaiseEvent(args);
-                Assert.AreEqual(action.InvokeCount, 0, "Click on source name button when SourceObject is set to another object should not invoke the action.");
+                Assert.AreEqual(0, action.InvokeCount, "Click on source name button when SourceObject is set to another object should not invoke the action.");
                 sourceButton.RaiseEvent(args);
-                Assert.AreEqual(action.InvokeCount, 1, "Click on source object button should invoke the action.");
+                Assert.AreEqual(1, action.InvokeCount, "Click on source object button should invoke the action.");
             }
         }
 
@@ -364,38 +364,35 @@ namespace Microsoft.Xaml.Interactions.UnitTests
                 System.Windows.RoutedEventArgs args = CreateClickEvent();
 
                 sourceButton.RaiseEvent(args);
-                Assert.AreEqual(action.InvokeCount, 0, "Click on source object button should not invoke the action, as the SourceObject has been cleared.");
+                Assert.AreEqual(0, action.InvokeCount, "Click on source object button should not invoke the action, as the SourceObject has been cleared.");
                 sourceNameButton.RaiseEvent(args);
-                Assert.AreEqual(action.InvokeCount, 1, "Click on source name button when SourceObject has been cleared should invoke the action.");
+                Assert.AreEqual(1, action.InvokeCount, "Click on source name button when SourceObject has been cleared should invoke the action.");
             }
         }
 
         [TestMethod]
         public void TestLoadedEvent()
         {
-            Rectangle rectangle = new Rectangle();
-            EventTrigger eventTrigger1 = new EventTrigger("Loaded");
-            EventTrigger eventTrigger2 = new EventTrigger("MouseLeftButtonDown");
+            Button button = CreateButton();
+            EventTrigger eventTrigger = new EventTrigger("Loaded");
             StubAction loadedAction = new StubAction();
-            StubAction mouseDownAction = new StubAction();
+            System.Windows.RoutedEventArgs clickArgs = CreateClickEvent();
 
-            eventTrigger1.Actions.Add(loadedAction);
-            eventTrigger1.Attach(rectangle);
+            eventTrigger.Actions.Add(loadedAction);
+            eventTrigger.Attach(button);
 
-            using (StubWindow window = new StubWindow(rectangle))
+            using (StubWindow window = new StubWindow(button))
             {
-                Assert.AreEqual(loadedAction.InvokeCount, 1, "Loaded action was invoked");
-                eventTrigger1.EventName = "GotMouseCapture";
-                rectangle.CaptureMouse();
-                Assert.AreEqual(loadedAction.InvokeCount, 2, "GotMouseCapture action was invoked");
-                rectangle.ReleaseMouseCapture();
-                eventTrigger1.EventName = "Loaded";
-                rectangle.CaptureMouse();
-                Assert.AreEqual(loadedAction.InvokeCount, 2, "GotMouseCapture action was not invoked");
-                rectangle.ReleaseMouseCapture();
+                Assert.AreEqual(1, loadedAction.InvokeCount, "Loaded action was invoked");
+                eventTrigger.EventName = "Click";
+                button.RaiseEvent(clickArgs);
+                Assert.AreEqual(2, loadedAction.InvokeCount, "Click action was invoked");
+                eventTrigger.EventName = "Loaded";
+                button.RaiseEvent(clickArgs);
+                Assert.AreEqual(2, loadedAction.InvokeCount, "Click action was not invoked");
             }
-            eventTrigger1.Detach();
-            Assert.IsNull(((IAttachedObject)eventTrigger1).AssociatedObject, "Trigger was detached");
+            eventTrigger.Detach();
+            Assert.IsNull(((IAttachedObject)eventTrigger).AssociatedObject, "Trigger was detached");
         }
 
         #endregion
