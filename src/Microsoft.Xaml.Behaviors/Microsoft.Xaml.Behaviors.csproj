@@ -24,7 +24,7 @@
     <UseWPF>true</UseWPF>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);TimestampNugetPackage</GenerateNuspecDependsOn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
     <NoWarn>1701;1702;</NoWarn>
   </PropertyGroup>
   
@@ -89,12 +89,8 @@
   
   <Target Name="IncludeProjectToProjectAssets">
     <ItemGroup>
-      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net462\Design\Microsoft.Xaml.Behaviors.DesignTools.dll" Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0'))">
-        <TargetPath>Design</TargetPath>
-      </BuildOutputInPackage>
-      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net462\Design\Microsoft.Xaml.Behaviors.Design.dll" Condition="'$(TargetFramework)' == 'net462'">
-        <TargetPath>Design</TargetPath>
-      </BuildOutputInPackage>
+      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net462\Design\Microsoft.Xaml.Behaviors.Design.dll" TargetPath="Design\Microsoft.Xaml.Behaviors.Design.dll" Condition="'$(TargetFramework)' == 'net462'" />
+      <BuildOutputInPackage Include="$(ProjectDir)bin\$(Configuration)\net462\Design\Microsoft.Xaml.Behaviors.DesignTools.dll" TargetPath="Design\Microsoft.Xaml.Behaviors.DesignTools.dll" />
     </ItemGroup>
   </Target>
 
