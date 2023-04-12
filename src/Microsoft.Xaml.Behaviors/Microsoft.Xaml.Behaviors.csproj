@@ -30,22 +30,6 @@
   
   <Import Project="..\Microsoft.Xaml.Behaviors.Signing.targets" />
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.XML" />
-    <Reference Include="WindowsBase">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationCore">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Update="ExceptionStringTable.Designer.cs">
       <SubType>Code</SubType>
@@ -71,10 +55,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 
   <ItemGroup>
