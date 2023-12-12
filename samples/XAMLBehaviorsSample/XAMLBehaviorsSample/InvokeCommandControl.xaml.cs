@@ -40,12 +40,12 @@ namespace XAMLBehaviorsSample
 
         public void Execute(object parameter)
         {
-            Brush currentBackground = this.control.Grid.Background;
+            Brush currentBackground = (Brush)parameter;
+
             if (currentBackground != Brushes.DarkBlue)
             {
                 this.control.Grid.Background = Brushes.DarkBlue;
-            }
-            else
+            } else
             {
                 this.control.Grid.Background = Brushes.DeepPink;
             }

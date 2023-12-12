@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <Grid Grid.Column="0" Margin="0,0,10,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -35,7 +35,7 @@
                 <Button x:Name="button" Content="Click Me" HorizontalAlignment="Stretch" Grid.Row="1" Margin="0,10,0,10">
                     <Behaviors:Interaction.Triggers>
                         <Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-                            <Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
+                            <Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Background, ElementName=Grid}" />
                         </Behaviors:EventTrigger>
                     </Behaviors:Interaction.Triggers>
                 </Button>
@@ -48,7 +48,7 @@
                     </TextBlock>
                     <TextBlock TextWrapping="Wrap" Margin="10,20,0,0" FontSize="15" Foreground="DeepPink" xml:space="preserve">&lt;Behaviors:Interaction.Triggers>
     &lt;Behaviors:EventTrigger EventName="Click" SourceObject="{Binding ElementName=button}">
-        &lt;Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Grid.Background}" />
+        &lt;Behaviors:InvokeCommandAction Command="{Binding ColorCommand}" CommandParameter="{Binding Background, ElementName=Grid}" />
     &lt;/Behaviors:EventTrigger>
 &lt;/Behaviors:Interaction.Triggers>
                     </TextBlock>
