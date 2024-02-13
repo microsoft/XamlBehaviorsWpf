@@ -1,0 +1,142 @@
+# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
+# This pipeline will be extended to the MicroBuild template
+# The Task 'NuGetCommand@2' has been converted to an output named 'NuGet push to VS feed' in the templateContext section.
+# The Task 'NuGetCommand@2' has been converted to an output named 'NuGet push to NuGet.org' in the templateContext section.
+name: $(Date:yyyyMMdd).$(Rev:r)
+variables:
+- name: BuildParameters.vsVersion
+  value: 17.0
+- name: ArtifactServices.Symbol.AccountName
+  value: microsoftpublicsymbols
+- name: ArtifactServices.Symbol.PAT
+  value: ''
+- name: Build.OfficialRelease
+  value: false
+- name: Codeql.Enabled
+  value: true
+- name: SignType
+  value: real
+- name: TeamName
+  value: VSCX Tools Authoring
+- name: TimestampPackage
+  value: true
+trigger:
+  branches:
+    include:
+    - refs/heads/master
+resources:
+  repositories:
+  - repository: MicroBuildTemplate
+    type: git
+    name: 1ESPipelineTemplates/MicroBuildTemplate
+    ref: refs/tags/release
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
+  parameters:
+    sdl:
+      sourceAnalysisPool: <AgentPoolPlaceHolder>
+    pool:
+      name: AzurePipelines-EO
+      image: AzurePipelinesWindows2022compliantGPT
+      os: windows
+    customBuildTags:
+    - ES365AIMigrationTooling
+    stages:
+    - stage: stage
+      jobs:
+      - job: Phase_1
+        displayName: Agent job 1
+        cancelTimeoutInMinutes: 1
+        pool:
+          name: VSEngSS-MicroBuild2022-1ES
+        templateContext:
+          mb:
+            signing:
+              enabled: true
+              signType: real
+            sbom:
+              enabled: true
+          outputs:
+          - output: nuget
+            displayName: 'NuGet push to VS feed'
+            condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
+            packageParentPath: '$(Build.ArtifactStagingDirectory)'
+            searchPatternPush: src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.nupkg;!src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.symbols.nupkg
+            feedPublish: 97a41293-2972-4f48-8c0e-05493ae82010
+          - output: nuget
+            displayName: 'NuGet push to NuGet.org'
+            condition: and(and(succeeded(), eq(variables['Build.OfficialRelease'], 'true')), eq(variables['TimestampPackage'], 'false'))
+            packageParentPath: '$(Build.ArtifactStagingDirectory)'
+            searchPatternPush: src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.nupkg;!src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.symbols.nupkg
+            nuGetFeedType: external
+            externalEndpoint: XamlBehaviors-NuGet.org
+        steps:
+        - checkout: self
+          clean: true
+          fetchTags: false
+          persistCredentials: True
+        - task: DeleteFiles@1
+          displayName: Delete output files from src
+          inputs:
+            SourceFolder: src
+            Contents: |-
+              **/bin/**/*
+              **/obj/**/*
+        - task: UseDotNet@2
+          displayName: Use .NET Core SDK
+          inputs:
+            version: 6.x
+            vsVersion: $(BuildParameters.vsVersion)
+            performMultiLevelLookup: true
+        - task: NuGetToolInstaller@1
+          displayName: Use NuGet 5.8.0
+          inputs:
+            versionSpec: 5.8.0
+        - task: NuGetCommand@2
+          displayName: NuGet restore
+        - task: VSBuild@1
+          displayName: Build solution **\*.sln
+          inputs:
+            vsVersion: $(BuildParameters.vsVersion)
+            msbuildArgs: /p:NoWarn=1591 /p:DebugType=full
+            configuration: Release
+            maximumCpuCount: true
+        - task: VSTest@2
+          displayName: Run Unit Tests
+          inputs:
+            testAssemblyVer2: |-
+              **\*UnitTests.dll
+              !**\*TestAdapter.dll
+              !**\obj\**
+            runInParallel: true
+        - task: VSBuild@1
+          displayName: Build NuGet package
+          inputs:
+            solution: src/Microsoft.Xaml.Behaviors/Microsoft.Xaml.Behaviors.csproj
+            msbuildArgs: /t:Pack /p:SignType=$(SignType) /p:TimestampPackage=$(TimestampPackage) /p:NoWarn=1591 /p:DebugType=full
+            configuration: Release
+        - task: CopyFiles@2
+          displayName: 'Copy Symbols to: $(Pipeline.Workspace)\Symbols'
+          inputs:
+            SourceFolder: src/Microsoft.Xaml.Behaviors/bin/
+            Contents: '**/*.pdb'
+            TargetFolder: $(Pipeline.Workspace)\Symbols
+        - task: ms-vseng.MicroBuildShipTasks.0ffdda1d-8c7b-40da-b8b1-061660eaeea3.MicroBuildArchiveSymbols@4
+          displayName: Archive Symbols
+          condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
+          inputs:
+            SymbolsFeatureName: XamlBehaviorsWpf
+            SymbolsProject: VS
+            SymbolsAgentPath: $(Pipeline.Workspace)\Symbols
+            ConnectedServiceName: Symbols Upload (DevDiv)
+            SubmitToInternet: false
+        - task: CopyFiles@2
+          displayName: 'Copy NuGet Packages to: $(Build.ArtifactStagingDirectory)'
+          inputs:
+            SourceFolder: src/Microsoft.Xaml.Behaviors/bin/
+            Contents: '**/*.nupkg'
+            TargetFolder: $(Build.ArtifactStagingDirectory)
+            OverWrite: true
+            flattenFolders: true
+          continueOnError: true
