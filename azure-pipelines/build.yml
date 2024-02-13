@@ -31,9 +31,7 @@ extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
     pool:
-      name: AzurePipelines-EO
-      image: AzurePipelinesWindows2022compliantGPT
-      os: windows
+      name: VSEngSS-MicroBuild2022-1ES
     sdl:
       sourceAnalysisPool:
         name: AzurePipelines-EO
