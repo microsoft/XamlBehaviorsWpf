@@ -14,7 +14,7 @@ variables:
 - name: SignType
   value: real
 - name: TeamName
-  value: VSCX Tools Authoring
+  value: vscx-tools-authoring
 - name: TimestampPackage
   value: true
 trigger:
