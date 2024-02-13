@@ -7,10 +7,6 @@ name: $(Date:yyyyMMdd).$(Rev:r)
 variables:
 - name: BuildParameters.vsVersion
   value: 17.0
-- name: ArtifactServices.Symbol.AccountName
-  value: microsoftpublicsymbols
-- name: ArtifactServices.Symbol.PAT
-  value: ''
 - name: Build.OfficialRelease
   value: false
 - name: Codeql.Enabled
