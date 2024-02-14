@@ -1,8 +1,4 @@
 # This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
-# Please make sure to check all the converted content, it is your team's responsibility to make sure that the pipeline is still valid and functions as expected.
-# This pipeline will be extended to the MicroBuild template
-# The Task 'NuGetCommand@2' has been converted to an output named 'NuGet push to VS feed' in the templateContext section.
-# The Task 'NuGetCommand@2' has been converted to an output named 'NuGet push to NuGet.org' in the templateContext section.
 name: $(Date:yyyyMMdd).$(Rev:r)
 variables:
 - name: BuildParameters.vsVersion
@@ -12,7 +8,10 @@ variables:
 - name: Codeql.Enabled
   value: true
 - name: SignType
-  value: real
+  ${{ if ne( variables['Build.Reason'], 'PullRequest' ) }}:
+    value: real
+  ${{ else }}:
+    value: test
 - name: TeamName
   value: vscx-tools-authoring
 - name: TimestampPackage
@@ -43,7 +42,7 @@ extends:
     - stage: stage
       jobs:
       - job: Phase_1
-        displayName: Agent job 1
+        displayName: 'Build'
         cancelTimeoutInMinutes: 1
         pool:
           name: VSEngSS-MicroBuild2022-1ES
@@ -51,21 +50,21 @@ extends:
           mb:
             signing:
               enabled: true
-              signType: real
+              signType: $(SignType)
             sbom:
               enabled: true
           outputs:
           - output: nuget
             displayName: 'NuGet push to VS feed'
             condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
-            packageParentPath: '$(Build.ArtifactStagingDirectory)'
-            searchPatternPush: src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.nupkg;!src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.symbols.nupkg
-            feedPublish: 97a41293-2972-4f48-8c0e-05493ae82010
+            packageParentPath: '$(Build.ArtifactStagingDirectory)\Packages'
+            packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\package\*.symbols.nupkg
+            publishVstsFeed: 97a41293-2972-4f48-8c0e-05493ae82010
           - output: nuget
             displayName: 'NuGet push to NuGet.org'
             condition: and(and(succeeded(), eq(variables['Build.OfficialRelease'], 'true')), eq(variables['TimestampPackage'], 'false'))
-            packageParentPath: '$(Build.ArtifactStagingDirectory)'
-            searchPatternPush: src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.nupkg;!src/Microsoft.Xaml.Behaviors/bin/Release/Microsoft.Xaml.Behaviors.Wpf.*.symbols.nupkg
+            packageParentPath: '$(Build.ArtifactStagingDirectory)\Packages'
+            packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\package\*.symbols.nupkg
             nuGetFeedType: external
             externalEndpoint: XamlBehaviors-NuGet.org
         steps:
@@ -78,8 +77,8 @@ extends:
           inputs:
             SourceFolder: src
             Contents: |-
-              **/bin/**/*
-              **/obj/**/*
+              **\bin\**\*
+              **\obj\**\*
         - task: UseDotNet@2
           displayName: Use .NET Core SDK
           inputs:
@@ -93,9 +92,10 @@ extends:
         - task: NuGetCommand@2
           displayName: NuGet restore
         - task: VSBuild@1
-          displayName: Build solution **\*.sln
+          displayName: Build solution src\BehaviorsSDK.sln
           inputs:
             vsVersion: $(BuildParameters.vsVersion)
+            solution: src\BehaviorsSdk.sln
             msbuildArgs: /p:NoWarn=1591 /p:DebugType=full
             configuration: Release
             maximumCpuCount: true
@@ -110,16 +110,16 @@ extends:
         - task: VSBuild@1
           displayName: Build NuGet package
           inputs:
-            solution: src/Microsoft.Xaml.Behaviors/Microsoft.Xaml.Behaviors.csproj
+            solution: src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj
             msbuildArgs: /t:Pack /p:SignType=$(SignType) /p:TimestampPackage=$(TimestampPackage) /p:NoWarn=1591 /p:DebugType=full
             configuration: Release
         - task: CopyFiles@2
           displayName: 'Copy Symbols to: $(Pipeline.Workspace)\Symbols'
           inputs:
-            SourceFolder: src/Microsoft.Xaml.Behaviors/bin/
-            Contents: '**/*.pdb'
+            SourceFolder: src\Microsoft.Xaml.Behaviors\bin\
+            Contents: '**\*.pdb'
             TargetFolder: $(Pipeline.Workspace)\Symbols
-        - task: ms-vseng.MicroBuildShipTasks.0ffdda1d-8c7b-40da-b8b1-061660eaeea3.MicroBuildArchiveSymbols@4
+        - task: MicroBuildArchiveSymbols@4
           displayName: Archive Symbols
           condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
           inputs:
@@ -129,11 +129,11 @@ extends:
             ConnectedServiceName: Symbols Upload (DevDiv)
             SubmitToInternet: false
         - task: CopyFiles@2
-          displayName: 'Copy NuGet Packages to: $(Build.ArtifactStagingDirectory)'
+          displayName: 'Copy NuGet Packages to: $(Build.ArtifactStagingDirectory)\Packages'
           inputs:
-            SourceFolder: src/Microsoft.Xaml.Behaviors/bin/
-            Contents: '**/*.nupkg'
-            TargetFolder: $(Build.ArtifactStagingDirectory)
+            SourceFolder: src\Microsoft.Xaml.Behaviors\bin\
+            Contents: '**\*.nupkg'
+            TargetFolder: $(Build.ArtifactStagingDirectory)\Packages
             OverWrite: true
             flattenFolders: true
           continueOnError: true
