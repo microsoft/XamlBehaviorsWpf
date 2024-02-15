@@ -9,7 +9,7 @@ variables:
   value: true
 - name: SignType
   ${{ if ne( variables['Build.Reason'], 'PullRequest' ) }}:
-    value: real
+    value: test
   ${{ else }}:
     value: test
 - name: TeamName
