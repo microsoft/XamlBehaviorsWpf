@@ -19,7 +19,7 @@ variables:
 trigger:
   branches:
     include:
-    - refs/heads/master
+    - refs/heads/main
 resources:
   repositories:
   - repository: MicroBuildTemplate
