@@ -96,7 +96,7 @@ extends:
           inputs:
             vsVersion: $(BuildParameters.vsVersion)
             solution: src\BehaviorsSdk.sln
-            msbuildArgs: /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full
+            msbuildArgs: /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
             configuration: Release
             maximumCpuCount: true
         - task: VSTest@2
@@ -117,7 +117,7 @@ extends:
           displayName: Build NuGet package
           inputs:
             solution: src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj
-            msbuildArgs: /t:Pack /p:SignType=$(SignType) /p:TimestampPackage=$(TimestampPackage) /p:NoWarn=1591 /p:DebugType=full
+            msbuildArgs: /t:Pack /p:SignType=$(SignType) /p:TimestampPackage=$(TimestampPackage) /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
             configuration: Release
         - task: CopyFiles@2
           displayName: 'Copy Symbols to: $(Pipeline.Workspace)\Symbols'
