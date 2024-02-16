@@ -9,7 +9,7 @@ variables:
   value: true
 - name: SignType
   ${{ if ne( variables['Build.Reason'], 'PullRequest' ) }}:
-    value: real
+    value: test
   ${{ else }}:
     value: test
 - name: TeamName
@@ -19,7 +19,7 @@ variables:
 trigger:
   branches:
     include:
-    - refs/heads/master
+    - refs/heads/main
 resources:
   repositories:
   - repository: MicroBuildTemplate
@@ -107,6 +107,12 @@ extends:
               !**\*TestAdapter.dll
               !**\obj\**
             runInParallel: true
+        - task: MicroBuildSigningPlugin@4
+          inputs:
+            signType: '$(SignType)'
+            feedSource: 'https://devdiv.pkgs.visualstudio.com/DefaultCollection/_packaging/MicroBuildToolset/nuget/v3/index.json'
+          env:
+            TeamName: '$(TeamName)'
         - task: VSBuild@1
           displayName: Build NuGet package
           inputs:
