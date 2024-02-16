@@ -8,8 +8,8 @@ variables:
 - name: Codeql.Enabled
   value: true
 - name: SignType
-  ${{ if ne( variables['Build.Reason'], 'PullRequest' ) }}:
-    value: test
+  ${{ if eq(variables['Build.OfficialRelease'], 'true') }}:
+    value: real
   ${{ else }}:
     value: test
 - name: TeamName
@@ -92,11 +92,11 @@ extends:
         - task: NuGetCommand@2
           displayName: NuGet restore
         - task: VSBuild@1
-          displayName: Build solution src\BehaviorsSDK.sln
+          displayName: Build solution src\BehaviorsSdk.sln
           inputs:
             vsVersion: $(BuildParameters.vsVersion)
             solution: src\BehaviorsSdk.sln
-            msbuildArgs: /p:NoWarn=1591 /p:DebugType=full
+            msbuildArgs: /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full
             configuration: Release
             maximumCpuCount: true
         - task: VSTest@2
