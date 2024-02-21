@@ -96,7 +96,7 @@ extends:
           inputs:
             vsVersion: $(BuildParameters.vsVersion)
             solution: src\BehaviorsSdk.sln
-            msbuildArgs: /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
+            msbuildArgs: /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
             configuration: Release
             maximumCpuCount: true
         - task: VSTest@2
