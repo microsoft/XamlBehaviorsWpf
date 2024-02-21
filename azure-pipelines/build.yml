@@ -58,13 +58,13 @@ extends:
             displayName: 'NuGet push to VS feed'
             condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
             packageParentPath: '$(Build.ArtifactStagingDirectory)\Packages'
-            packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\package\*.symbols.nupkg
+            packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\Packages\*.symbols.nupkg
             publishVstsFeed: 97a41293-2972-4f48-8c0e-05493ae82010
           - output: nuget
             displayName: 'NuGet push to NuGet.org'
             condition: and(and(succeeded(), eq(variables['Build.OfficialRelease'], 'true')), eq(variables['TimestampPackage'], 'false'))
             packageParentPath: '$(Build.ArtifactStagingDirectory)\Packages'
-            packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\package\*.symbols.nupkg
+            packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\Packages\*.symbols.nupkg
             nuGetFeedType: external
             externalEndpoint: XamlBehaviors-NuGet.org
         steps:
