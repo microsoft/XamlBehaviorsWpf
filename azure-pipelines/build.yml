@@ -99,6 +99,7 @@ extends:
             msbuildArgs: /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
             configuration: Release
             maximumCpuCount: true
+            clean: true
         - task: VSTest@2
           displayName: Run Unit Tests
           inputs:
