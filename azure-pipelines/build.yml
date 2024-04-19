@@ -7,6 +7,8 @@ variables:
   value: false
 - name: Codeql.Enabled
   value: true
+- name: Codeql.Language
+  value: csharp
 - name: SignType
   ${{ if eq(variables['Build.OfficialRelease'], 'true') }}:
     value: real
@@ -16,6 +18,13 @@ variables:
   value: vscx-tools-authoring
 - name: TimestampPackage
   value: true
+schedules:
+- cron: '0 0 1 * 0'
+  displayName: Monthly CodeQL Build
+  branches:
+    include:
+    - main
+  always: true
 trigger:
   branches:
     include:
