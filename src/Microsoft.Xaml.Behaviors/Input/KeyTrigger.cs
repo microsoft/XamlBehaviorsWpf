@@ -27,6 +27,8 @@ namespace Microsoft.Xaml.Behaviors.Input
 
         public static readonly DependencyProperty FiredOnProperty = DependencyProperty.Register("FiredOn", typeof(KeyTriggerFiredOn), typeof(KeyTrigger));
 
+        public static readonly DependencyProperty UseModifiersAsKeyProperty = DependencyProperty.Register("UseModifiersAsKey", typeof(bool), typeof(KeyTrigger));
+
         private UIElement targetElement;
 
         /// <summary>
@@ -65,6 +67,14 @@ namespace Microsoft.Xaml.Behaviors.Input
             get { return (KeyTriggerFiredOn)this.GetValue(KeyTrigger.FiredOnProperty); }
             set { this.SetValue(KeyTrigger.FiredOnProperty, value); }
         }
+        /// <summary>
+        /// Determines whether to use the Modifiers as a key.
+        /// </summary>
+        public bool UseModifiersAsKey
+        {
+            get { return (bool)this.GetValue(KeyTrigger.UseModifiersAsKeyProperty); }
+            set { this.SetValue(KeyTrigger.UseModifiersAsKeyProperty, value); }
+        }
 
         protected override string GetEventName()
         {
@@ -74,8 +84,10 @@ namespace Microsoft.Xaml.Behaviors.Input
         private void OnKeyPress(object sender, KeyEventArgs e)
         {
             bool isKeyMatch = e.Key == this.Key;
-            bool isModifiersMatch = this.Modifiers == ModifierKeys.None ? true : Keyboard.Modifiers == GetActualModifiers(e.Key, this.Modifiers);
-
+            bool isModifiersMatch = this.UseModifiersAsKey ?
+                this.Modifiers == ModifierKeys.None || Keyboard.Modifiers == GetActualModifiers(e.Key, this.Modifiers) :
+                Keyboard.Modifiers == GetActualModifiers(e.Key, this.Modifiers);
+            
             if (isKeyMatch && isModifiersMatch)
             {
                 this.InvokeActions(e);
