@@ -74,7 +74,12 @@ namespace Microsoft.Xaml.Behaviors.Input
         private void OnKeyPress(object sender, KeyEventArgs e)
         {
             bool isKeyMatch = e.Key == this.Key;
-            bool isModifiersMatch = this.Modifiers == ModifierKeys.None ? true : Keyboard.Modifiers == GetActualModifiers(e.Key, this.Modifiers);
+
+            // Get the actual modifiers considering special keys like LeftCtrl, RightCtrl, etc.
+            ModifierKeys actualModifiers = GetActualModifiers();
+
+            // Check if the registered modifiers exactly match the modifiers required by the trigger.
+            bool isModifiersMatch = actualModifiers == this.Modifiers;
 
             if (isKeyMatch && isModifiersMatch)
             {
@@ -82,21 +87,25 @@ namespace Microsoft.Xaml.Behaviors.Input
             }
         }
 
-        private static ModifierKeys GetActualModifiers(Key key, ModifierKeys modifiers)
+        private static ModifierKeys GetActualModifiers()
         {
-            if (key == Key.LeftCtrl || key == Key.RightCtrl)
+            // Explicitly check each modifier key to ensure accurate current state is captured
+            ModifierKeys actualModifiers = ModifierKeys.None;
+
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                modifiers |= ModifierKeys.Control;
+                actualModifiers |= ModifierKeys.Control;
             }
-            else if (key == Key.LeftAlt || key == Key.RightAlt || key == Key.System)
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
-                modifiers |= ModifierKeys.Alt;
+                actualModifiers |= ModifierKeys.Shift;
             }
-            else if (key == Key.LeftShift || key == Key.RightShift)
+            if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt) || Keyboard.IsKeyDown(Key.System))
             {
-                modifiers |= ModifierKeys.Shift;
+                actualModifiers |= ModifierKeys.Alt;
             }
-            return modifiers;
+
+            return actualModifiers;
         }
 
         protected override void OnEvent(EventArgs eventArgs)
