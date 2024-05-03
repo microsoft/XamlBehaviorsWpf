@@ -50,7 +50,7 @@ extends:
     stages:
     - stage: stage
       jobs:
-      - job: Phase_1
+      - job: Build
         displayName: 'Build'
         cancelTimeoutInMinutes: 1
         pool:
@@ -134,14 +134,13 @@ extends:
             SourceFolder: src\Microsoft.Xaml.Behaviors\bin\
             Contents: '**\*.pdb'
             TargetFolder: $(Pipeline.Workspace)\Symbols
-        - task: MicroBuildArchiveSymbols@4
+        - task: MicroBuildArchiveSymbols@5
           displayName: Archive Symbols
           condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
           inputs:
             SymbolsFeatureName: XamlBehaviorsWpf
             SymbolsProject: VS
             SymbolsAgentPath: $(Pipeline.Workspace)\Symbols
-            ConnectedServiceName: Symbols Upload (DevDiv)
             SubmitToInternet: false
         - task: CopyFiles@2
           displayName: 'Copy NuGet Packages to: $(Build.ArtifactStagingDirectory)\Packages'
