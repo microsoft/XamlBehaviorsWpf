@@ -141,6 +141,72 @@ namespace Microsoft.Xaml.Interactions.UnitTests
         [DataRow(Key.System)]
         [DataRow(Key.LeftShift)]
         [DataRow(Key.RightShift)]
+        public void KeyTrigger_DoesNotInvokeAction_WhenKeyIsPressed(Key key)
+        {
+            var textBox = new TextBox();
+            var keyTrigger = new KeyTrigger { Key = key, Modifiers = ModifierKeys.Control }; //since we have a modifier key, the action should not be invoked
+            var action = new StubAction();
+            keyTrigger.Actions.Add(action);
+            keyTrigger.Attach(textBox);
+
+            Grid grid = new Grid();
+            grid.Children.Add(textBox);
+            using (StubWindow window = new StubWindow(grid))
+            {
+                var inputSource = PresentationSource.FromVisual(textBox) ?? new HwndSource(0, 0, 0, 0, 0, "", IntPtr.Zero);
+                var keyEventArgs = new KeyEventArgs(Keyboard.PrimaryDevice, inputSource, 0, key);
+                keyEventArgs.RoutedEvent = Keyboard.KeyDownEvent;
+                textBox.RaiseEvent(keyEventArgs);
+
+                Assert.AreEqual(0, action.InvokeCount);
+            }
+        }
+
+        [TestMethod]
+        [DataRow(Key.A)]
+        [DataRow(Key.B)]
+        [DataRow(Key.C)]
+        [DataRow(Key.D)]
+        [DataRow(Key.E)]
+        [DataRow(Key.F)]
+        [DataRow(Key.G)]
+        [DataRow(Key.H)]
+        [DataRow(Key.I)]
+        [DataRow(Key.J)]
+        [DataRow(Key.K)]
+        [DataRow(Key.L)]
+        [DataRow(Key.M)]
+        [DataRow(Key.N)]
+        [DataRow(Key.O)]
+        [DataRow(Key.P)]
+        [DataRow(Key.Q)]
+        [DataRow(Key.R)]
+        [DataRow(Key.S)]
+        [DataRow(Key.T)]
+        [DataRow(Key.U)]
+        [DataRow(Key.V)]
+        [DataRow(Key.W)]
+        [DataRow(Key.X)]
+        [DataRow(Key.Y)]
+        [DataRow(Key.Z)]
+        [DataRow(Key.NumPad1)]
+        [DataRow(Key.NumPad2)]
+        [DataRow(Key.NumPad3)]
+        [DataRow(Key.NumPad4)]
+        [DataRow(Key.NumPad5)]
+        [DataRow(Key.NumPad6)]
+        [DataRow(Key.NumPad7)]
+        [DataRow(Key.NumPad8)]
+        [DataRow(Key.NumPad9)]
+        [DataRow(Key.Enter)]
+        [DataRow(Key.Tab)]
+        [DataRow(Key.LeftCtrl)]
+        [DataRow(Key.RightCtrl)]
+        [DataRow(Key.LeftAlt)]
+        [DataRow(Key.RightAlt)]
+        [DataRow(Key.System)]
+        [DataRow(Key.LeftShift)]
+        [DataRow(Key.RightShift)]
         public void KeyTrigger_InvokesActions_WhenKeyIsReleased(Key key)
         {
             var textBox = new TextBox();
