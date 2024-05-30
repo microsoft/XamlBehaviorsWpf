@@ -23,13 +23,6 @@ variables:
   value: vscx-tools-authoring
 - name: TimestampPackage
   value: ${{ not (parameters.OfficialRelease) }}
-schedules:
-- cron: '0 0 * * 0'
-  displayName: Weekly CodeQL Build (Sunday @ Midnight)
-  branches:
-    include:
-    - main
-  always: true
 trigger:
   branches:
     include:
