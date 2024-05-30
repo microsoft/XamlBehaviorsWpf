@@ -1,30 +1,28 @@
 # This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
 name: $(Date:yyyyMMdd).$(Rev:r)
+parameters:
+- name: OfficialRelease
+  displayName: "Build and publish an official release"
+  type: boolean
+  default: false
 variables:
 - name: BuildParameters.vsVersion
   value: 17.0
 - name: Build.OfficialRelease
-  value: false
+  value: ${{ parameters.OfficialRelease }}
 - name: Codeql.Enabled
   value: true
 - name: Codeql.Language
   value: csharp
 - name: SignType
-  ${{ if eq(variables['Build.OfficialRelease'], 'true') }}:
+  ${{ if eq(parameters.OfficialRelease, true) }}:
     value: real
   ${{ else }}:
     value: test
 - name: TeamName
   value: vscx-tools-authoring
 - name: TimestampPackage
-  value: true
-schedules:
-- cron: '0 0 1 * 0'
-  displayName: Monthly CodeQL Build
-  branches:
-    include:
-    - main
-  always: true
+  value: ${{ not (parameters.OfficialRelease) }}
 trigger:
   branches:
     include:
@@ -71,7 +69,7 @@ extends:
             publishVstsFeed: 97a41293-2972-4f48-8c0e-05493ae82010
           - output: nuget
             displayName: 'NuGet push to NuGet.org'
-            condition: and(and(succeeded(), eq(variables['Build.OfficialRelease'], 'true')), eq(variables['TimestampPackage'], 'false'))
+            condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
             packageParentPath: '$(Build.ArtifactStagingDirectory)\Packages'
             packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\Packages\*.symbols.nupkg
             nuGetFeedType: external
