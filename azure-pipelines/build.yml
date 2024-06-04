@@ -93,9 +93,9 @@ extends:
             vsVersion: $(BuildParameters.vsVersion)
             performMultiLevelLookup: true
         - task: NuGetToolInstaller@1
-          displayName: Use NuGet 5.8.0
+          displayName: Use NuGet 6.x
           inputs:
-            versionSpec: 5.8.0
+            versionSpec: 6.x
         - task: NuGetCommand@2
           displayName: NuGet restore
         - task: VSBuild@1
