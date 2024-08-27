@@ -30,7 +30,9 @@ jobs:
       run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release /p:SignType=real
     
     - name: Run Tests
-      run: vstest.console.exe Test\UnitTests\bin\Release\net462\UnitTests.dll
+      uses: microsoft-approved-actions/vstest@1
+      with:
+        testAssembly: Test\UnitTests\bin\Release\net462\UnitTests.dll
 
     - name: Pack Behaviors
       if: success()
