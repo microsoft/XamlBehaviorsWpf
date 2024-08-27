@@ -43,12 +43,6 @@
     <DefineConstants>$(DefineConstants);SurfaceIsolation</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.DesignTools.Extensibility, Version=16.10.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.DesignTools.Extensibility.16.10.31320.204\lib\net45\Microsoft.VisualStudio.DesignTools.Extensibility.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.DesignTools.Interaction, Version=16.10.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.DesignTools.Extensibility.16.10.31320.204\lib\net45\Microsoft.VisualStudio.DesignTools.Interaction.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -59,6 +53,13 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.DesignTools.Extensibility" Version="16.10.31320.204" />
+    <PackageReference Include="Microsoft.VisualStudioEng.MicroBuild.Core" Version="0.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MetadataTableProvider.cs" />
