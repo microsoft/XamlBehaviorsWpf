@@ -30,7 +30,7 @@ jobs:
       run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release /p:SignType=real
     
     - name: Run Tests
-      uses: microsoft-approved-actions/vstest@1
+      uses: microsoft/vstest-action@v1.0.0
       with:
         testAssembly: Test\UnitTests\bin\Release\net462\UnitTests.dll
 
