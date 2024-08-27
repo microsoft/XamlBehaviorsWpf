@@ -27,7 +27,7 @@ jobs:
       run: nuget restore src/BehaviorsSdk.sln
     
     - name: Build
-      run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release /p:SignType=test
+      run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release /p:SignType=real
     
     - name: Run Tests
       run: dotnet test src/BehaviorsSdk.sln --no-restore --verbosity minimal
