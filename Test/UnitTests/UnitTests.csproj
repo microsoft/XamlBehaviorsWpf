@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>UnitTests</AssemblyName>
     <RootNamespace>UnitTests</RootNamespace>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\UnitTests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
