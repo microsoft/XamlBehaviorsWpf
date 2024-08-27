@@ -24,10 +24,10 @@ jobs:
       uses: microsoft/setup-msbuild@v1.0.2
     
     - name: Restore
-      run: nuget restore src/BehaviorsSdk.sln
+      run: nuget restore src\BehaviorsSdk.sln
     
     - name: Build
-      run: msbuild src/BehaviorsSdk.sln /p:Configuration=Release /p:SignType=real
+      run: msbuild src\BehaviorsSdk.sln /p:Configuration=Release /p:SignType=real
     
     - name: Run Tests
       uses: microsoft/vstest-action@v1.0.0
@@ -36,10 +36,10 @@ jobs:
 
     - name: Pack Behaviors
       if: success()
-      run: msbuild src/Microsoft.Xaml.Behaviors/Microsoft.Xaml.Behaviors.csproj /p:Configuration=Release -t:pack
+      run: msbuild src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj /p:Configuration=Release -t:pack
     
     - name: Upload NuGet Artifacts
       if: success()
       uses: actions/upload-artifact@v2
       with:
-        path: src/Microsoft.Xaml.Behaviors/bin/Release/*.nupkg
+        path: src\Microsoft.Xaml.Behaviors\bin\Release\*.nupkg
