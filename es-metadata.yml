@@ -1,0 +1,8 @@
+schemaVersion: 0.0.1
+isProduction: true
+accountableOwners:
+  service: 06445c8a-9250-4c04-b5cb-284812866a50
+routing:
+  defaultAreaPath:
+    org: devdiv
+    path: DevDiv\VS Core\IDE Experience\XAML IntelliSense
