@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net462;net9.0-windows</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <UseWPF>true</UseWPF>
     <OutputType>Library</OutputType>

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net462;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net462;net9.0-windows</TargetFrameworks>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeProjectToProjectAssets</TargetsForTfmSpecificBuildOutput>
     <OutputType>Library</OutputType>
     <PackageId>Microsoft.Xaml.Behaviors.Wpf</PackageId>

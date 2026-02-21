@@ -5,4 +5,4 @@ accountableOwners:
 routing:
   defaultAreaPath:
     org: devdiv
-    path: DevDiv\VS Core\IDE Experience\XAML IntelliSense
+    path: DevDiv\VS Core\XAML tools

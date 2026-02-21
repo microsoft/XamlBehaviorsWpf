@@ -11,31 +11,31 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
-    
+
     - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.0.x
-    
+        dotnet-version: 9.0.x
+
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
-    
+      uses: microsoft/setup-msbuild@v2
+
     - name: Restore
       run: nuget restore src\BehaviorsSdk.sln
-    
+
     - name: Build
       run: msbuild src\BehaviorsSdk.sln /p:Configuration=Release /p:SignType=real
-    
+
     - name: Run Tests
       run: dotnet test Test\UnitTests\UnitTests.csproj
 
     - name: Pack Behaviors
       if: success()
       run: msbuild src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj /p:Configuration=Release -t:pack
-    
+
     - name: Upload NuGet Artifacts
       if: success()
       uses: actions/upload-artifact@v4

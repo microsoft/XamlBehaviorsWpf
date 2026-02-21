@@ -1,8 +1,18 @@
-# This Yaml Document has been converted by ESAI Yaml Pipeline Conversion Tool.
+trigger: none
+pr: none
+schedules:
+- cron: 0 3 * * 1,2,3,4,5
+  branches:
+    include:
+    - refs/heads/main
 name: $(Date:yyyyMMdd).$(Rev:r)
 parameters:
 - name: OfficialRelease
   displayName: "Build and publish an official release"
+  type: boolean
+  default: true
+- name: PushNuGetPackages
+  displayName: "Push NuGet packages to NuGet.org"
   type: boolean
   default: false
 variables:
@@ -23,14 +33,6 @@ variables:
   value: vscx-tools-authoring
 - name: TimestampPackage
   value: ${{ not (parameters.OfficialRelease) }}
-trigger:
-  branches:
-    include:
-    - refs/heads/main
-pr:
-  branches:
-    include:
-    - main
 resources:
   repositories:
   - repository: MicroBuildTemplate
@@ -54,7 +56,7 @@ extends:
       jobs:
       - job: Build
         displayName: 'Build'
-        cancelTimeoutInMinutes: 1
+        cancelTimeoutInMinutes: 30
         pool:
           name: VSEngSS-MicroBuild2022-1ES
         templateContext:
@@ -62,12 +64,23 @@ extends:
             signing:
               enabled: true
               signType: $(SignType)
+              ${{ if eq(variables['SignType'], 'real') }}:
+                signWithProd: true
             sbom:
               enabled: true
           outputs:
+          - output: pipelineArtifact
+            displayName: 'Publish Package Artifacts'
+            targetPath: $(Build.ArtifactStagingDirectory)\Packages
+            artifactName: Packages
+          - output: pipelineArtifact
+            displayName: 'Publish Logs'
+            targetPath: $(Build.ArtifactStagingDirectory)\Logs
+            artifactName: Logs
+            condition: always()
           - output: nuget
             displayName: 'NuGet push to NuGet.org'
-            condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
+            condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'), eq('${{ parameters.PushNuGetPackages }}', 'true'))
             packageParentPath: '$(Build.ArtifactStagingDirectory)\Packages'
             packagesToPush: $(Build.ArtifactStagingDirectory)\Packages\*.nupkg;!$(Build.ArtifactStagingDirectory)\Packages\*.symbols.nupkg
             nuGetFeedType: external
@@ -87,7 +100,7 @@ extends:
         - task: UseDotNet@2
           displayName: Use .NET Core SDK
           inputs:
-            version: 6.x
+            version: 9.0.x
             vsVersion: $(BuildParameters.vsVersion)
             performMultiLevelLookup: true
         - task: NuGetToolInstaller@1
@@ -101,7 +114,7 @@ extends:
           inputs:
             vsVersion: $(BuildParameters.vsVersion)
             solution: src\BehaviorsSdk.sln
-            msbuildArgs: /p:PublicRelease=$(Build.OfficialRelease) /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
+            msbuildArgs: /p:PublicRelease=$(Build.OfficialRelease) /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full /bl:$(Build.ArtifactStagingDirectory)\Logs\behaviors_sdk_wpf.binlog
             configuration: Release
             maximumCpuCount: true
         - task: VSTest@2
@@ -122,7 +135,7 @@ extends:
           displayName: Build NuGet package
           inputs:
             solution: src\Microsoft.Xaml.Behaviors\Microsoft.Xaml.Behaviors.csproj
-            msbuildArgs: /t:Pack /p:PublicRelease=$(Build.OfficialRelease) /p:SignType=$(SignType) /p:TimestampPackage=$(TimestampPackage) /p:NoWarn=1591 /p:DebugType=full /v:diagnostic
+            msbuildArgs: /t:Pack /p:PublicRelease=$(Build.OfficialRelease) /p:SignType=$(SignType) /p:TimestampPackage=$(TimestampPackage) /p:NoWarn=1591 /p:DebugType=full
             configuration: Release
         - task: CopyFiles@2
           displayName: 'Copy Symbols to: $(Pipeline.Workspace)\Symbols'
@@ -130,14 +143,17 @@ extends:
             SourceFolder: src\Microsoft.Xaml.Behaviors\bin\
             Contents: '**\*.pdb'
             TargetFolder: $(Pipeline.Workspace)\Symbols
-        - task: MicroBuildArchiveSymbols@5
+        - task: MicroBuildArchiveSymbols@6
           displayName: Archive Symbols
           condition: and(succeeded(), eq(variables['Build.OfficialRelease'], 'true'))
           inputs:
+            azureSubscription: VSEng-SymbolsUpload
             SymbolsFeatureName: XamlBehaviorsWpf
             SymbolsProject: VS
             SymbolsAgentPath: $(Pipeline.Workspace)\Symbols
             SubmitToInternet: false
+          env:
+            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         - task: CopyFiles@2
           displayName: 'Copy NuGet Packages to: $(Build.ArtifactStagingDirectory)\Packages'
           inputs:
