@@ -16,8 +16,6 @@ parameters:
   type: boolean
   default: false
 variables:
-- name: BuildParameters.vsVersion
-  value: 17.0
 - name: Build.OfficialRelease
   value: ${{ parameters.OfficialRelease }}
 - name: Codeql.Enabled
@@ -64,7 +62,7 @@ extends:
             signing:
               enabled: true
               signType: $(SignType)
-              ${{ if eq(variables['SignType'], 'real') }}:
+              ${{ if eq(variables.SignType, 'real') }}:
                 signWithProd: true
             sbom:
               enabled: true
@@ -101,7 +99,6 @@ extends:
           displayName: Use .NET Core SDK
           inputs:
             version: 9.0.x
-            vsVersion: $(BuildParameters.vsVersion)
             performMultiLevelLookup: true
         - task: NuGetToolInstaller@1
           displayName: Use NuGet 6.x
@@ -109,14 +106,19 @@ extends:
             versionSpec: 6.x
         - task: NuGetCommand@2
           displayName: NuGet restore
+        - task: MicroBuildSigningPlugin@4
+          inputs:
+            signType: '$(SignType)'
+            feedSource: 'https://devdiv.pkgs.visualstudio.com/DefaultCollection/_packaging/MicroBuildToolset/nuget/v3/index.json'
+          env:
+            TeamName: '$(TeamName)'
         - task: VSBuild@1
           displayName: Build solution src\BehaviorsSdk.sln
           inputs:
-            vsVersion: $(BuildParameters.vsVersion)
             solution: src\BehaviorsSdk.sln
-            msbuildArgs: /p:PublicRelease=$(Build.OfficialRelease) /p:SignType=$(SignType) /p:NoWarn=1591 /p:DebugType=full /bl:$(Build.ArtifactStagingDirectory)\Logs\behaviors_sdk_wpf.binlog
+            msbuildArgs: /p:PublicRelease=$(Build.OfficialRelease) /p:NoWarn=1591 /p:DebugType=full /bl:$(Build.ArtifactStagingDirectory)\Logs\behaviors_sdk_wpf.binlog
             configuration: Release
-            maximumCpuCount: true
+            clean: true
         - task: VSTest@2
           displayName: Run Unit Tests
           inputs:
@@ -125,12 +127,6 @@ extends:
               !**\*TestAdapter.dll
               !**\obj\**
             runInParallel: true
-        - task: MicroBuildSigningPlugin@4
-          inputs:
-            signType: '$(SignType)'
-            feedSource: 'https://devdiv.pkgs.visualstudio.com/DefaultCollection/_packaging/MicroBuildToolset/nuget/v3/index.json'
-          env:
-            TeamName: '$(TeamName)'
         - task: VSBuild@1
           displayName: Build NuGet package
           inputs:
