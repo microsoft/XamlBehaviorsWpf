@@ -46,7 +46,7 @@ namespace Microsoft.Xaml.Behaviors.Core
         protected override void OnDetaching()
         {
             this.PreviewInvoke -= this.OnPreviewInvoke;
-            this.OnDetaching();
+            base.OnDetaching();
         }
 
         void OnPreviewInvoke(object sender, PreviewInvokeEventArgs e)
