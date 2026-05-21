@@ -28,7 +28,7 @@ variables:
   ${{ else }}:
     value: test
 - name: TeamName
-  value: vscx-tools-authoring
+  value: XAMLTools
 - name: TimestampPackage
   value: ${{ not (parameters.OfficialRelease) }}
 resources:
@@ -49,6 +49,9 @@ extends:
         name: AzurePipelines-EO
         image: 1ESPT-Windows2022
         os: windows
+      policheck:
+        enabled: true
+        exclusionsFile: $(System.DefaultWorkingDirectory)\azure-pipelines\PoliCheckExclusions.xml
     customBuildTags:
     - ES365AIMigrationTooling
     stages:
