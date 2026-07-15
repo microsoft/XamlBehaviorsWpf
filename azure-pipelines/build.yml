@@ -40,8 +40,6 @@ resources:
 extends:
   template: azure-pipelines/MicroBuild.1ES.Official.yml@MicroBuildTemplate
   parameters:
-    settings:
-      networkIsolationPolicy: Permissive
     pool:
       name: VSEngSS-MicroBuild2022-1ES
     sdl:
@@ -109,8 +107,13 @@ extends:
           displayName: Use NuGet 6.x
           inputs:
             versionSpec: 6.x
+        - task: NuGetAuthenticate@1
+          displayName: NuGet Authenticate
         - task: NuGetCommand@2
           displayName: NuGet restore
+          inputs:
+            selectOrConfig: config
+            nugetConfigPath: azure-pipelines/nuget.config
         - task: MicroBuildSigningPlugin@4
           inputs:
             signType: '$(SignType)'
