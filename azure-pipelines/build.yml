@@ -43,12 +43,10 @@ extends:
     settings:
       networkIsolationPolicy: Permissive,CFSClean,CFSClean2,CFSClean3
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
+      os: windows
     sdl:
-      sourceAnalysisPool:
-        name: AzurePipelines-EO
-        image: 1ESPT-Windows2022
-        os: windows
+      sourceAnalysisPool: VSEng-MicroBuildVSStable
       policheck:
         enabled: true
         exclusionsFile: $(System.DefaultWorkingDirectory)\azure-pipelines\PoliCheckExclusions.xml
@@ -61,7 +59,7 @@ extends:
         displayName: 'Build'
         cancelTimeoutInMinutes: 30
         pool:
-          name: VSEngSS-MicroBuild2022-1ES
+          name: VSEng-MicroBuildVSStable
         templateContext:
           mb:
             signing:
@@ -103,12 +101,12 @@ extends:
         - task: UseDotNet@2
           displayName: Use .NET Core SDK
           inputs:
-            version: 9.0.x
+            version: 10.0.x
             performMultiLevelLookup: true
         - task: NuGetToolInstaller@1
-          displayName: Use NuGet 6.x
+          displayName: Use NuGet 7.x
           inputs:
-            versionSpec: 6.x
+            versionSpec: 7.x
         - task: NuGetAuthenticate@1
           displayName: NuGet Authenticate
         - task: NuGetCommand@2
@@ -157,6 +155,7 @@ extends:
             SymbolsProject: VS
             SymbolsAgentPath: $(Pipeline.Workspace)\Symbols
             SubmitToInternet: false
+            SuppressSymwebOnlyWarning: true
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         - task: CopyFiles@2
