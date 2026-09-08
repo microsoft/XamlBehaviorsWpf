@@ -99,7 +99,12 @@ extends:
               **\bin\**\*
               **\obj\**\*
         - task: UseDotNet@2
-          displayName: Use .NET Core SDK
+          displayName: Use .NET 8 SDK
+          inputs:
+            version: 8.0.x
+            performMultiLevelLookup: true
+        - task: UseDotNet@2
+          displayName: Use .NET 10 SDK
           inputs:
             version: 10.0.x
             performMultiLevelLookup: true
