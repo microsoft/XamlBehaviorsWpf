@@ -126,14 +126,12 @@ extends:
             solution: src\BehaviorsSdk.sln
             msbuildArgs: /p:PublicRelease=$(Build.OfficialRelease) /p:NoWarn=1591 /p:DebugType=full /bl:$(Build.ArtifactStagingDirectory)\Logs\behaviors_sdk_wpf.binlog
             configuration: Release
-        - task: VSTest@2
+        - task: DotNetCoreCLI@2
           displayName: Run Unit Tests
           inputs:
-            testAssemblyVer2: |-
-              **\*UnitTests.dll
-              !**\*TestAdapter.dll
-              !**\obj\**
-            runInParallel: true
+            command: test
+            projects: Test\UnitTests\UnitTests.csproj
+            arguments: --configuration Release --no-build
         - task: VSBuild@1
           displayName: Build NuGet package
           inputs:
