@@ -43,12 +43,10 @@ extends:
     settings:
       networkIsolationPolicy: Permissive,CFSClean,CFSClean2,CFSClean3
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
+      name: VSEng-MicroBuildVSStable
+      os: windows
     sdl:
-      sourceAnalysisPool:
-        name: AzurePipelines-EO
-        image: 1ESPT-Windows2022
-        os: windows
+      sourceAnalysisPool: VSEng-MicroBuildVSStable
       policheck:
         enabled: true
         exclusionsFile: $(System.DefaultWorkingDirectory)\azure-pipelines\PoliCheckExclusions.xml
@@ -61,7 +59,7 @@ extends:
         displayName: 'Build'
         cancelTimeoutInMinutes: 30
         pool:
-          name: VSEngSS-MicroBuild2022-1ES
+          name: VSEng-MicroBuildVSStable
         templateContext:
           mb:
             signing:
@@ -101,14 +99,19 @@ extends:
               **\bin\**\*
               **\obj\**\*
         - task: UseDotNet@2
-          displayName: Use .NET Core SDK
+          displayName: Use .NET 8 SDK
           inputs:
-            version: 9.0.x
+            version: 8.0.x
+            performMultiLevelLookup: true
+        - task: UseDotNet@2
+          displayName: Use .NET 10 SDK
+          inputs:
+            version: 10.0.x
             performMultiLevelLookup: true
         - task: NuGetToolInstaller@1
-          displayName: Use NuGet 6.x
+          displayName: Use NuGet 7.x
           inputs:
-            versionSpec: 6.x
+            versionSpec: 7.x
         - task: NuGetAuthenticate@1
           displayName: NuGet Authenticate
         - task: NuGetCommand@2
@@ -128,14 +131,12 @@ extends:
             solution: src\BehaviorsSdk.sln
             msbuildArgs: /p:PublicRelease=$(Build.OfficialRelease) /p:NoWarn=1591 /p:DebugType=full /bl:$(Build.ArtifactStagingDirectory)\Logs\behaviors_sdk_wpf.binlog
             configuration: Release
-        - task: VSTest@2
+        - task: DotNetCoreCLI@2
           displayName: Run Unit Tests
           inputs:
-            testAssemblyVer2: |-
-              **\*UnitTests.dll
-              !**\*TestAdapter.dll
-              !**\obj\**
-            runInParallel: true
+            command: test
+            projects: Test\UnitTests\UnitTests.csproj
+            arguments: --configuration Release --no-build
         - task: VSBuild@1
           displayName: Build NuGet package
           inputs:
@@ -157,6 +158,7 @@ extends:
             SymbolsProject: VS
             SymbolsAgentPath: $(Pipeline.Workspace)\Symbols
             SubmitToInternet: false
+            SuppressSymwebOnlyWarning: true
           env:
             SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         - task: CopyFiles@2
